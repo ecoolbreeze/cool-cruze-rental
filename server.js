@@ -121,15 +121,18 @@ app.post('/rent/:id', (req, res) => {
     if (SMTP_HOST && SMTP_USER && SMTP_PASS && NOTIFY_EMAIL) {
       try {
         const transporter = getTransporter();
+        console.log('Sending email via', SMTP_HOST, 'to', NOTIFY_EMAIL);
         transporter.sendMail({
           from: SMTP_USER,
           to: NOTIFY_EMAIL,
           subject: `New Rental Lead - ${product.name}`,
           html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-        }).catch(e => console.log('Email failed:', e.message));
+        }).then(r => console.log('Email sent:', r.messageId)).catch(e => console.log('Email failed:', e.message, e.code));
       } catch (e) {
         console.log('Email setup failed:', e.message);
       }
+    } else {
+      console.log('Email not configured - SMTP_HOST=' + (SMTP_HOST||'') + ' SMTP_USER=' + (SMTP_USER||'') + ' SMTP_PASS=' + (SMTP_PASS?'***':'') + ' NOTIFY_EMAIL=' + (NOTIFY_EMAIL||''));
     }
 
     return res.json({
@@ -208,7 +211,9 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
   res.redirect('/admin/leads');
 });
 
-console.log('Starting Cool Cruze on PORT:', PORT);
+const hasEmail = SMTP_HOST && SMTP_USER && SMTP_PASS && NOTIFY_EMAIL;
+console.log('SMTP config: host=' + (SMTP_HOST || '(not set)') + ' user=' + (SMTP_USER || '(not set)') + ' notify=' + (NOTIFY_EMAIL || '(not set)') + ' status=' + (hasEmail ? 'ENABLED' : 'DISABLED'));
+
 app.listen(PORT, () => {
   console.log('Cool Cruze running at http://localhost:' + PORT);
 });
