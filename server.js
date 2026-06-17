@@ -2,24 +2,18 @@ const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-process.on('uncaughtException', err => {
-  console.log('UNCAUGHT ERROR:', err.message, err.stack);
-});
-process.on('unhandledRejection', err => {
-  console.log('UNHANDLED REJECTION:', err.message, err.stack);
-});
+console.log('Starting Cool Cruze...');
 
 const db = require('./db');
 
-// Auto-seed if database is empty (first deployment)
 try {
   if (db.getAllProducts().length === 0) {
     const seed = require('./seed');
     seed.run();
+    console.log('Seeding complete');
   }
 } catch (e) {
   console.log('Seed error:', e.message);
@@ -27,13 +21,11 @@ try {
 
 const app = express();
 
-// Config
 const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
 
-// Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -44,18 +36,15 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, 'public', 'uploads')),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'))
 });
 const upload = multer({ storage });
 
-// Nodemailer transporter
 function getTransporter() {
   return nodemailer.createTransport({
     service: 'gmail',
@@ -66,20 +55,16 @@ function getTransporter() {
   });
 }
 
-// Auth middleware
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
   res.redirect('/admin/login');
 }
 
-// Public variables
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.whatsappNumber = WHATSAPP_NUMBER;
   next();
 });
-
-// ========== PUBLIC ROUTES ==========
 
 app.get('/', (req, res) => {
   const products = db.getAllProducts();
@@ -116,7 +101,6 @@ app.post('/rent/:id', async (req, res) => {
     return res.status(400).json({ error: 'Please fill all required fields' });
   }
 
-  // Save lead
   db.addLead({
     product_id: product.id,
     product_name: product.name,
@@ -126,35 +110,19 @@ app.post('/rent/:id', async (req, res) => {
     message: message || ''
   });
 
-  // Send email notification (non-blocking)
   const gmailUser = process.env.GMAIL_USER;
   if (gmailUser && gmailUser !== 'your-email@gmail.com' && process.env.GMAIL_PASS && process.env.GMAIL_PASS !== 'your-app-password') {
     try {
       const transporter = getTransporter();
-      const mailOptions = {
+      await transporter.sendMail({
         from: gmailUser,
         to: process.env.NOTIFY_EMAIL || gmailUser,
         subject: `New Rental Lead - ${product.name}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px;">
-            <h2 style="color: #1a56db;">New Rental Inquiry - Cool Cruze</h2>
-            <table style="width:100%; border-collapse: collapse;">
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Product</strong></td><td style="padding:8px; border:1px solid #ddd;">${product.name}</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Customer Name</strong></td><td style="padding:8px; border:1px solid #ddd;">${customer_name}</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Phone</strong></td><td style="padding:8px; border:1px solid #ddd;">${phone}</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Address</strong></td><td style="padding:8px; border:1px solid #ddd;">${address}</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Message</strong></td><td style="padding:8px; border:1px solid #ddd;">${message || 'N/A'}</td></tr>
-              <tr><td style="padding:8px; border:1px solid #ddd;"><strong>Date</strong></td><td style="padding:8px; border:1px solid #ddd;">${new Date().toLocaleString()}</td></tr>
-            </table>
-          </div>
-        `
-      };
-      await transporter.sendMail(mailOptions);
+        html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
+      });
     } catch (e) {
-      console.log('Email sending failed (check GMAIL_USER/PASS in .env):', e.message);
+      console.log('Email failed:', e.message);
     }
-  } else {
-    console.log('Email not configured — skipping notification. Edit .env to enable.');
   }
 
   res.json({
@@ -162,8 +130,6 @@ app.post('/rent/:id', async (req, res) => {
     whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${customer_name}.`)}`
   });
 });
-
-// ========== ADMIN ROUTES ==========
 
 app.get('/admin/login', (req, res) => {
   if (req.session && req.session.isAdmin) return res.redirect('/admin');
@@ -188,13 +154,7 @@ app.get('/admin', requireAuth, (req, res) => {
   const leadCount = db.getLeadCount().count;
   const todayLeadCount = db.getTodayLeadCount().count;
   const recentLeads = db.getAllLeads().slice(0, 5);
-  res.render('admin/dashboard', {
-    title: 'Dashboard',
-    productCount,
-    leadCount,
-    todayLeadCount,
-    recentLeads
-  });
+  res.render('admin/dashboard', { title: 'Dashboard', productCount, leadCount, todayLeadCount, recentLeads });
 });
 
 app.get('/admin/products', requireAuth, (req, res) => {
@@ -237,12 +197,7 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
   res.redirect('/admin/leads');
 });
 
-// Start
-console.log('Starting Cool Cruze on PORT:', PORT);
-try {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Cool Cruze running at http://localhost:${PORT}`);
-  });
-} catch (e) {
-  console.log('FAILED TO START SERVER:', e.message, e.stack);
-}
+console.log('Cool Cruze ready on PORT:', PORT);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Cool Cruze running at http://localhost:${PORT}`);
+});
