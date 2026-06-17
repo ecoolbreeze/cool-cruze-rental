@@ -92,7 +92,7 @@ app.post('/rent-test/:id', (req, res) => {
   return res.json({ success: true, test: true });
 });
 
-app.post('/rent/:id', async (req, res) => {
+app.post('/rent/:id', (req, res) => {
   try {
     const product = db.getProduct(req.params.id);
     if (!product) return res.status(404).json({ error: 'Product not found' });
@@ -106,7 +106,7 @@ app.post('/rent/:id', async (req, res) => {
       return res.status(400).json({ error: 'Please fill all required fields' });
     }
 
-    const lead = db.addLead({
+    db.addLead({
       product_id: product.id,
       product_name: product.name,
       customer_name,
@@ -115,37 +115,29 @@ app.post('/rent/:id', async (req, res) => {
       message: message || ''
     });
 
-    if (!lead || !lead.id) {
-      console.log('Lead saved without id:', JSON.stringify(lead));
-    }
-
     const gmailUser = process.env.GMAIL_USER;
     if (gmailUser && gmailUser !== 'your-email@gmail.com' && process.env.GMAIL_PASS && process.env.GMAIL_PASS !== 'your-app-password') {
       try {
         const transporter = getTransporter();
-        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000));
-        await Promise.race([
-          transporter.sendMail({
-            from: gmailUser,
-            to: process.env.NOTIFY_EMAIL || gmailUser,
-            subject: `New Rental Lead - ${product.name}`,
-            html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-          }),
-          timeout
-        ]);
+        transporter.sendMail({
+          from: gmailUser,
+          to: process.env.NOTIFY_EMAIL || gmailUser,
+          subject: `New Rental Lead - ${product.name}`,
+          html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
+        }).catch(e => console.log('Email failed:', e.message));
       } catch (e) {
-        console.log('Email failed:', e.message);
+        console.log('Email setup failed:', e.message);
       }
     }
 
-  return res.json({
-    success: true,
-    whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${customer_name}.`)}`
-  });
-} catch (err) {
-  console.error('Rent POST error:', err.message, err.stack);
-  return res.status(500).json({ error: 'Server error: ' + err.message });
-}
+    return res.json({
+      success: true,
+      whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${customer_name}.`)}`
+    });
+  } catch (err) {
+    console.error('Rent POST error:', err.message, err.stack);
+    return res.status(500).json({ error: 'Server error: ' + err.message });
+  }
 });
 
 app.get('/admin/login', (req, res) => {
