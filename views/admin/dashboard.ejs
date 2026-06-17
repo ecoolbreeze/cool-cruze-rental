@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+<style>
+body { display: block; }
+.navbar { display: none; }
+.footer { display: none; }
+.whatsapp-float { display: none; }
+</style>
+
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="logo">❄️ Cool Cruze</div>
+    <a href="/admin" class="active">📊 Dashboard</a>
+    <a href="/admin/products">📦 Products</a>
+    <a href="/admin/leads">📋 Leads</a>
+    <a href="/admin/logout">🚪 Logout</a>
+    <a href="/">← Website</a>
+  </div>
+
+  <div class="admin-main">
+    <h1>Dashboard</h1>
+    <div class="admin-cards">
+      <div class="admin-card">
+        <div class="number"><%= productCount %></div>
+        <div class="label">Total Products</div>
+      </div>
+      <div class="admin-card">
+        <div class="number"><%= leadCount %></div>
+        <div class="label">Total Leads</div>
+      </div>
+      <div class="admin-card">
+        <div class="number"><%= todayLeadCount %></div>
+        <div class="label">Today's Leads</div>
+      </div>
+    </div>
+
+    <h2 style="font-size:20px;margin-bottom:16px;">Recent Leads</h2>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Phone</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (recentLeads.length === 0) { %>
+        <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-light);">No leads yet</td></tr>
+        <% } else { %>
+          <% recentLeads.forEach(lead => { %>
+          <tr>
+            <td><strong><%= lead.customer_name %></strong></td>
+            <td><%= lead.product_name %></td>
+            <td><%= lead.phone %></td>
+            <td><%= new Date(lead.created_at).toLocaleDateString() %></td>
+            <td><span class="badge badge-<%= (lead.status || 'New').toLowerCase() %>"><%= lead.status || 'New' %></span></td>
+          </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>

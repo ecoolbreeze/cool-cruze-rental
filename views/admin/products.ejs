@@ -1,0 +1,214 @@
+<%- include('../partials/header') %>
+<style>
+body { display: block; }
+.navbar { display: none; }
+.footer { display: none; }
+.whatsapp-float { display: none; }
+</style>
+
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="logo">❄️ Cool Cruze</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/products" class="active">📦 Products</a>
+    <a href="/admin/leads">📋 Leads</a>
+    <a href="/admin/logout">🚪 Logout</a>
+    <a href="/">← Website</a>
+  </div>
+
+  <div class="admin-main">
+    <h1>Manage Products</h1>
+
+    <button onclick="toggleForm()" class="btn btn-primary" style="margin-bottom:24px;background:var(--primary);color:white;padding:12px 24px;border:none;border-radius:50px;font-weight:700;cursor:pointer;">+ Add New Product</button>
+
+    <div id="addForm" class="admin-form" style="display:none;">
+      <h2 style="font-size:20px;margin-bottom:20px;">Add New Product</h2>
+      <form method="POST" action="/admin/products" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" name="name" required>
+          </div>
+          <div class="form-group">
+            <label>Brand *</label>
+            <input type="text" name="brand" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Capacity</label>
+            <select name="capacity">
+              <option value="1.5 Ton">1.5 Ton</option>
+              <option value="3.5 Ton" selected>3.5 Ton</option>
+              <option value="5.5 Ton">5.5 Ton</option>
+              <option value="8.5 Ton">8.5 Ton</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select name="type">
+              <option value="Split">Portabel AC</option>
+              <option value="Window">Tower AC</option>
+              <option value="Tower">Ductable AC</option>
+              <option value="Cassette">Cassette AC</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Daily Price (₹) *</label>
+            <input type="number" name="monthly_price" step="0.01" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Product Image</label>
+          <input type="file" name="image" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" rows="3" placeholder="Brief description of the product"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Features (comma separated)</label>
+          <input type="text" name="features" placeholder="e.g. 5-star energy rating, Sleep mode, Turbo cooling">
+        </div>
+        <button type="submit" class="btn-submit">Add Product</button>
+      </form>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Brand</th>
+          <th>Capacity</th>
+          <th>Type</th>
+          <th>Price/mo</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length === 0) { %>
+        <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-light);">No products added yet. Click "Add New Product" to get started.</td></tr>
+        <% } else { %>
+          <% products.forEach(product => { %>
+          <tr>
+            <td>
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+              <% } else { %>
+                <span style="font-size:24px;">❄️</span>
+              <% } %>
+            </td>
+            <td><strong><%= product.name %></strong></td>
+            <td><%= product.brand %></td>
+            <td><%= product.capacity %></td>
+            <td><%= product.type %></td>
+            <td>₹<%= Number(product.monthly_price).toLocaleString() %></td>
+            <td><%= product.stock %></td>
+            <td>
+              <div class="admin-actions">
+                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>)">Edit</button>
+                <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
+                  <button class="btn-sm btn-delete">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeEdit()">
+  <div style="background:white;border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
+    <h2 style="font-size:20px;margin-bottom:20px;">Edit Product</h2>
+    <form method="POST" id="editForm" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" name="name" id="edit_name" required>
+        </div>
+        <div class="form-group">
+          <label>Brand *</label>
+          <input type="text" name="brand" id="edit_brand" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Capacity</label>
+          <select name="capacity" id="edit_capacity">
+            <option value="1 Ton">1 Ton</option>
+            <option value="1.5 Ton">1.5 Ton</option>
+            <option value="2 Ton">2 Ton</option>
+            <option value="2.5 Ton">2.5 Ton</option>
+            <option value="3 Ton">3 Ton</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="type" id="edit_type">
+            <option value="Split">Split AC</option>
+            <option value="Window">Window AC</option>
+            <option value="Tower">Tower AC</option>
+            <option value="Cassette">Cassette AC</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Monthly Price (₹) *</label>
+          <input type="number" name="monthly_price" id="edit_price" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" name="stock" id="edit_stock" value="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Product Image (leave empty to keep current)</label>
+        <input type="file" name="image" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" id="edit_desc" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Features</label>
+        <input type="text" name="features" id="edit_features">
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn-submit">Update Product</button>
+        <button type="button" onclick="closeEdit()" style="padding:14px 32px;border-radius:50px;font-weight:700;border:2px solid #e2e8f0;background:white;cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleForm() {
+  const f = document.getElementById('addForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock) {
+  document.getElementById('editForm').action = '/admin/products/edit/' + id;
+  document.getElementById('edit_name').value = name;
+  document.getElementById('edit_brand').value = brand;
+  document.getElementById('edit_capacity').value = capacity;
+  document.getElementById('edit_type').value = type;
+  document.getElementById('edit_price').value = price;
+  document.getElementById('edit_stock').value = stock;
+  document.getElementById('edit_desc').value = desc;
+  document.getElementById('edit_features').value = features;
+  document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEdit() {
+  document.getElementById('editModal').style.display = 'none';
+}
+</script>

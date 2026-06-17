@@ -1,0 +1,631 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-slideshow">
+    <img class="hero-slide active" src="/uploads/hero.png" alt="Hero">
+    <img class="hero-slide" src="/uploads/hero-1.png" alt="Hero 1">
+    <img class="hero-slide" src="/uploads/hero-2.png" alt="Hero 2">
+    <img class="hero-slide full-bleed" src="/uploads/hero-3.png" alt="Hero 3">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Stay Cool with Cool Cruze</h1>
+    <p>Premium Tower AC Rentals  Affordable, Reliable, and Delivered to your Doorstep.</p>
+    <div class="hero-buttons">
+      <a href="/products" class="btn btn-primary">Browse Products</a>
+      <a href="/about" class="btn btn-outline">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <h2>Why Choose Cool Cruze?</h2>
+    <div class="accent-line"></div>
+    <p>We make AC rental hassle-free with premium service and support</p>
+  </div>
+  <div class="benefits-grid-2col">
+    <div class="benefit-card-square">
+      <div class="benefit-icon">💰</div>
+      <h3>Zero Deposit</h3>
+      <p>No upfront security deposit required. Just pay the monthly rental and enjoy.</p>
+    </div>
+    <div class="benefit-card-square">
+      <div class="benefit-icon">🔧</div>
+      <h3>Free Maintenance</h3>
+      <p>Regular servicing and maintenance included in your rental.</p>
+    </div>
+    <div class="benefit-card-square">
+      <div class="benefit-icon">💎</div>
+      <h3>Premium Brands</h3>
+      <p>Top brands like LG, Samsung, Voltas, Daikin, and more.</p>
+    </div>
+    <div class="benefit-card-square">
+      <div class="benefit-icon">🔄</div>
+      <h3>Flexible Plans</h3>
+      <p>Monthly, quarterly, and yearly rental plans to suit your needs.</p>
+    </div>
+  </div>
+</section>
+
+<% if (featured && featured.length > 0) { %>
+<section class="section" style="padding-top: 0;">
+  <div class="section-title">
+    <h2>Featured Products</h2>
+    <div class="accent-line"></div>
+    <p>Our most popular AC units available for rent</p>
+  </div>
+  <div class="carousel-wrap">
+    <div class="carousel-track" id="featuredCarousel">
+      <% for (let i = 0; i < 2; i++) { %>
+        <% featured.forEach(product => { %>
+        <div class="carousel-card">
+          <div class="carousel-img" style="<%= product.image ? 'background-image:url('+product.image+')' : '' %>">
+            <% if (!product.image) { %>❄️<% } %>
+          </div>
+          <div class="carousel-body">
+            <div class="product-brand"><%= product.brand %></div>
+            <div class="product-name"><%= product.name %></div>
+            <div class="product-specs">
+              <span class="product-spec"><%= product.capacity %></span>
+              <span class="product-spec"><%= product.type %></span>
+            </div>
+            <div class="product-price">₹<%= Number(product.monthly_price).toLocaleString() %> <span>/month</span></div>
+            <div class="product-actions" style="margin-top:auto;">
+              <button onclick="openRentModal(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent">Rent Now</button>
+              <a href="/product/<%= product.id %>" class="btn-details">Details</a>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="section" style="padding-top: 0;">
+  <div class="section-title">
+    <h2>How It Works</h2>
+    <div class="accent-line"></div>
+    <p>Get your AC in three simple steps</p>
+  </div>
+  <div class="steps-row">
+    <div class="step-card-square">
+      <div class="step-number">1</div>
+      <div class="step-icon">📋</div>
+      <h3>Choose Your AC</h3>
+      <p>Browse our collection and select the perfect AC for your space.</p>
+    </div>
+    <div class="step-connector"><span>›</span></div>
+    <div class="step-card-square">
+      <div class="step-number">2</div>
+      <div class="step-icon">📞</div>
+      <h3>Submit Request</h3>
+      <p>Fill in your details and we'll get in touch within minutes.</p>
+    </div>
+    <div class="step-connector"><span>›</span></div>
+    <div class="step-card-square">
+      <div class="step-number">3</div>
+      <div class="step-icon">✅</div>
+      <h3>Get Installed</h3>
+      <p>We deliver and install your AC. You enjoy cool comfort!</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0;">
+  <div class="section-title">
+    <h2>What Our Customers Say</h2>
+    <div class="accent-line"></div>
+    <p>Hear from people who chose Cool Cruze</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Rented a 2-ton split AC for my office. Installation was done within 24 hours and the AC works perfectly. Highly recommend Cool Cruze!"</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">RK</div>
+        <div>
+          <div class="testimonial-name">Rahul Kumar</div>
+          <div class="testimonial-title">Office Manager, Andheri</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Great service and affordable pricing. The AC was delivered on time and the team handled everything from installation to setup. Very professional."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">PS</div>
+        <div>
+          <div class="testimonial-name">Priya Sharma</div>
+          <div class="testimonial-title">Homeowner, Bandra</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"I needed ACs for my restaurant and Cool Cruze provided the best rental deal. Free maintenance is a huge plus. Saved over 60% compared to buying!"</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">AV</div>
+        <div>
+          <div class="testimonial-name">Amit Verma</div>
+          <div class="testimonial-title">Restaurant Owner, Powai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0;">
+  <div class="section-title">
+    <h2>Frequently Asked Questions</h2>
+    <div class="accent-line"></div>
+    <p>Everything you need to know about AC rentals</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>What AC brands do you offer for rent?</span>
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>We offer top brands including LG, Samsung, Voltas, Daikin, Blue Star, Hitachi, and more. All our ACs are well-maintained, regularly serviced, and fully functional before delivery.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>What is the minimum rental period?</span>
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>The minimum rental period is 3 months. However, we also offer flexible monthly, quarterly, and yearly plans. Longer rental commitments come with discounted rates.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Is installation and maintenance included?</span>
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes! Free installation, regular maintenance, and servicing are included in your rental price. If your AC requires any repairs, our technician will visit free of cost.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Can I upgrade or swap my AC during the rental?</span>
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>Absolutely. If you need a higher capacity AC or want to upgrade to a different model, you can swap your unit anytime. A nominal relocation fee may apply.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>What happens if the AC stops working?</span>
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>We provide 24/7 customer support. If your AC develops any issue, simply contact us and we'll send a technician within 24 hours. If the issue cannot be resolved, we will replace the unit at no extra cost.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Why Choose - 2-column square grid */
+.benefits-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.benefit-card-square {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+}
+
+.benefit-card-square:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.benefit-card-square .benefit-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-light), var(--accent));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 24px;
+  color: white;
+}
+
+.benefit-card-square h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.benefit-card-square p {
+  color: var(--text-light);
+  font-size: 13px;
+  max-width: 220px;
+}
+
+/* Featured Products - Auto-scroll carousel */
+.carousel-wrap {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  animation: scrollFeatured 45s linear infinite;
+  width: max-content;
+}
+
+.carousel-wrap:hover .carousel-track {
+  animation-play-state: paused;
+}
+
+@keyframes scrollFeatured {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.carousel-card {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.carousel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.carousel-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  color: var(--text-light);
+  background-size: cover;
+  background-position: center;
+}
+
+.carousel-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.carousel-body .product-brand {
+  font-size: 11px;
+}
+
+.carousel-body .product-name {
+  font-size: 15px;
+}
+
+.carousel-body .product-price {
+  font-size: 20px;
+}
+
+.carousel-body .product-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-body .btn-rent {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.carousel-body .btn-details {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+/* How It Works - single row square cards */
+.steps-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.step-card-square {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 20px;
+  text-align: center;
+  flex: 1;
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+
+.step-card-square:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.step-number {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  font-size: 42px;
+  font-weight: 900;
+  color: #e2e8f0;
+  line-height: 1;
+}
+
+.step-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.step-card-square h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.step-card-square p {
+  color: var(--text-light);
+  font-size: 13px;
+  max-width: 200px;
+}
+
+.step-connector {
+  font-size: 32px;
+  color: var(--primary-light);
+  font-weight: 700;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.step-connector span {
+  display: block;
+}
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.testimonial-stars {
+  color: #f59e0b;
+  font-size: 18px;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.testimonial-text {
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.7;
+  flex: 1;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.testimonial-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.testimonial-title {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* FAQ Accordion */
+.faq-list {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.faq-question:hover {
+  background: #f8fafc;
+}
+
+.faq-arrow {
+  font-size: 12px;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: var(--primary);
+}
+
+.faq-item.open .faq-arrow {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 22px;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 300px;
+  padding: 0 22px 18px;
+}
+
+.faq-answer p {
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .benefits-grid-2col {
+    grid-template-columns: 1fr 1fr;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-row {
+    flex-direction: column;
+    gap: 12px;
+    max-width: 300px;
+  }
+
+  .step-connector {
+    transform: rotate(90deg);
+    padding: 4px 0;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 500px) {
+  .benefits-grid-2col {
+    grid-template-columns: 1fr;
+    max-width: 260px;
+  }
+}
+</style>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Hero slideshow
+(function() {
+  const slides = document.querySelectorAll('.hero-slide');
+  const overlay = document.querySelector('.hero-overlay');
+  const content = document.querySelector('.hero-content');
+  if (slides.length < 2) return;
+  let current = 0;
+  setInterval(() => {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+    if (slides[current].classList.contains('full-bleed')) {
+      overlay.style.display = 'none';
+      content.style.display = 'none';
+    } else {
+      overlay.style.display = '';
+      content.style.display = '';
+    }
+  }, 3000);
+})();
+</script>
+
+<%- include('partials/footer') %>

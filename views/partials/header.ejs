@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cool Cruze - <%= title %> | Tower AC Rental</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">❄️</span>
+      Cool Cruze
+    </a>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Home</a>
+      <a href="/products" class="<%= currentPath === '/products' ? 'active' : '' %>">Products</a>
+      <a href="/about" class="<%= currentPath === '/about' ? 'active' : '' %>">About</a>
+      <a href="/products" class="nav-cta">Rent Now</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Rent Now Modal -->
+<div id="rentModal" class="modal-overlay" onclick="if(event.target===this)closeRentModal()">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeRentModal()">&times;</button>
+    <h2 class="modal-title">Rent Now</h2>
+    <p class="modal-subtitle">Fill in your details and we'll contact you within minutes</p>
+    <div id="modalError" class="form-error"></div>
+    <form id="rentModalForm">
+      <input type="hidden" id="rentProductId" name="product_id">
+      <div class="form-group">
+        <label>Product</label>
+        <input type="text" id="rentProductName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="modalName">Full Name *</label>
+        <input type="text" id="modalName" name="customer_name" required placeholder="Enter your full name">
+      </div>
+      <div class="form-group">
+        <label for="modalPhone">Phone Number *</label>
+        <input type="tel" id="modalPhone" name="phone" required placeholder="Enter your phone number">
+      </div>
+      <div class="form-group">
+        <label for="modalAddress">Delivery Address *</label>
+        <textarea id="modalAddress" name="address" required placeholder="Enter your complete address with pincode"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="modalMessage">Message (Optional)</label>
+        <textarea id="modalMessage" name="message" placeholder="Any specific requirements or questions?"></textarea>
+      </div>
+      <button type="submit" class="btn-submit" id="modalSubmitBtn">Submit & Chat on WhatsApp</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  animation: modalIn 0.25s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--text-light);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.modal-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  color: var(--text-light);
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.modal-success {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.modal-success .check {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.modal-success h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.modal-success p {
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+@media (max-width: 500px) {
+  .modal-content {
+    padding: 28px 20px;
+  }
+}
+</style>
+
+<script>
+function openRentModal(id, name, brand, capacity, price) {
+  document.getElementById('rentProductId').value = id;
+  document.getElementById('rentProductName').value = name + ' (' + brand + ', ' + capacity + ', \u20B9' + Number(price).toLocaleString() + '/mo)';
+  document.getElementById('modalName').value = '';
+  document.getElementById('modalPhone').value = '';
+  document.getElementById('modalAddress').value = '';
+  document.getElementById('modalMessage').value = '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('rentModal').classList.add('active');
+}
+
+function closeRentModal() {
+  document.getElementById('rentModal').classList.remove('active');
+}
+
+document.getElementById('rentModalForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('modalSubmitBtn');
+  const errorEl = document.getElementById('modalError');
+  const productId = document.getElementById('rentProductId').value;
+
+  const data = {
+    customer_name: document.getElementById('modalName').value.trim(),
+    phone: document.getElementById('modalPhone').value.trim(),
+    address: document.getElementById('modalAddress').value.trim(),
+    message: document.getElementById('modalMessage').value.trim()
+  };
+
+  if (!data.customer_name || !data.phone || !data.address) {
+    errorEl.textContent = 'Please fill all required fields';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const res = await fetch('/rent/' + productId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      document.getElementById('rentModalForm').innerHTML =
+        '<div class="modal-success">' +
+        '<div class="check">✅</div>' +
+        '<h3>Request Submitted!</h3>' +
+        '<p>Redirecting to WhatsApp...</p>' +
+        '</div>';
+      window.open(result.whatsappUrl, '_blank');
+      setTimeout(closeRentModal, 2500);
+    } else {
+      errorEl.textContent = result.error || 'Something went wrong';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit & Chat on WhatsApp';
+    }
+  } catch (err) {
+    errorEl.textContent = 'Network error. Please try again.';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit & Chat on WhatsApp';
+  }
+});
+</script>
