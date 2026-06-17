@@ -88,10 +88,6 @@ app.get('/rent/:id', (req, res) => {
   res.redirect('/product/' + req.params.id);
 });
 
-app.post('/rent-test/:id', (req, res) => {
-  return res.json({ success: true, test: true });
-});
-
 app.post('/rent/:id', (req, res) => {
   try {
     const product = db.getProduct(req.params.id);
