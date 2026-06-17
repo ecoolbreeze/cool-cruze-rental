@@ -161,20 +161,23 @@ ul { list-style: none; }
   width: 100%;
   height: auto;
   display: block;
-  opacity: 0;
   transition: opacity 1s ease-in-out;
   position: absolute;
   top: 0;
   left: 0;
+  opacity: 0;
 }
 
 .hero-slide:first-child {
   position: relative;
-  opacity: 1;
 }
 
 .hero-slide.active {
   opacity: 1;
+}
+
+.hero-slide:first-child:not(.active) {
+  opacity: 0;
 }
 
 .hero-overlay {
