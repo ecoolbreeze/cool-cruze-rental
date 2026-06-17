@@ -88,6 +88,10 @@ app.get('/rent/:id', (req, res) => {
   res.redirect('/product/' + req.params.id);
 });
 
+app.post('/rent-test/:id', (req, res) => {
+  return res.json({ success: true, test: true });
+});
+
 app.post('/rent/:id', async (req, res) => {
   try {
     const product = db.getProduct(req.params.id);
@@ -134,14 +138,14 @@ app.post('/rent/:id', async (req, res) => {
       }
     }
 
-    return res.json({
-      success: true,
-      whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${customer_name}.`)}`
-    });
-  } catch (err) {
-    console.error('Rent POST error:', err);
-    return res.status(500).json({ error: 'Server error. Please try again.' });
-  }
+  return res.json({
+    success: true,
+    whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${customer_name}.`)}`
+  });
+} catch (err) {
+  console.error('Rent POST error:', err.message, err.stack);
+  return res.status(500).json({ error: 'Server error: ' + err.message });
+}
 });
 
 app.get('/admin/login', (req, res) => {
