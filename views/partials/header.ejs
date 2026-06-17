@@ -188,10 +188,11 @@ document.getElementById('rentModalForm').addEventListener('submit', async functi
   btn.textContent = 'Submitting...';
 
   try {
+    const params = new URLSearchParams(data);
     const res = await fetch('/rent/' + productId, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
     });
     const result = await res.json();
 
