@@ -195,6 +195,6 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
 });
 
 console.log('Starting Cool Cruze on PORT:', PORT);
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log('Cool Cruze running at http://localhost:' + PORT);
 });
