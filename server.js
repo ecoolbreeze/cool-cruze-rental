@@ -119,12 +119,16 @@ app.post('/rent/:id', async (req, res) => {
     if (gmailUser && gmailUser !== 'your-email@gmail.com' && process.env.GMAIL_PASS && process.env.GMAIL_PASS !== 'your-app-password') {
       try {
         const transporter = getTransporter();
-        await transporter.sendMail({
-          from: gmailUser,
-          to: process.env.NOTIFY_EMAIL || gmailUser,
-          subject: `New Rental Lead - ${product.name}`,
-          html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-        });
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000));
+        await Promise.race([
+          transporter.sendMail({
+            from: gmailUser,
+            to: process.env.NOTIFY_EMAIL || gmailUser,
+            subject: `New Rental Lead - ${product.name}`,
+            html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
+          }),
+          timeout
+        ]);
       } catch (e) {
         console.log('Email failed:', e.message);
       }
