@@ -22,6 +22,11 @@ const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+const SMTP_HOST = process.env.SMTP_HOST || '';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
@@ -44,10 +49,12 @@ const upload = multer({ storage });
 
 function getTransporter() {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS
+      user: SMTP_USER,
+      pass: SMTP_PASS
     }
   });
 }
@@ -111,13 +118,12 @@ app.post('/rent/:id', (req, res) => {
       message: message || ''
     });
 
-    const gmailUser = process.env.GMAIL_USER;
-    if (gmailUser && gmailUser !== 'your-email@gmail.com' && process.env.GMAIL_PASS && process.env.GMAIL_PASS !== 'your-app-password') {
+    if (SMTP_HOST && SMTP_USER && SMTP_PASS && NOTIFY_EMAIL) {
       try {
         const transporter = getTransporter();
         transporter.sendMail({
-          from: gmailUser,
-          to: process.env.NOTIFY_EMAIL || gmailUser,
+          from: SMTP_USER,
+          to: NOTIFY_EMAIL,
           subject: `New Rental Lead - ${product.name}`,
           html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
         }).catch(e => console.log('Email failed:', e.message));
