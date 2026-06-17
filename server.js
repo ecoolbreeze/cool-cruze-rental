@@ -2,15 +2,27 @@ const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+process.on('uncaughtException', err => {
+  console.log('UNCAUGHT ERROR:', err.message, err.stack);
+});
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION:', err.message, err.stack);
+});
 
 const db = require('./db');
 
 // Auto-seed if database is empty (first deployment)
-if (db.getAllProducts().length === 0) {
-  const seed = require('./seed');
-  seed.run();
+try {
+  if (db.getAllProducts().length === 0) {
+    const seed = require('./seed');
+    seed.run();
+  }
+} catch (e) {
+  console.log('Seed error:', e.message);
 }
 
 const app = express();
@@ -226,6 +238,11 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
 });
 
 // Start
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Cool Cruze running at http://localhost:${PORT}`);
-});
+console.log('Starting Cool Cruze on PORT:', PORT);
+try {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Cool Cruze running at http://localhost:${PORT}`);
+  });
+} catch (e) {
+  console.log('FAILED TO START SERVER:', e.message, e.stack);
+}
