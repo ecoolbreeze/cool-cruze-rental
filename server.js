@@ -23,7 +23,7 @@ const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
 const SMTP_HOST = process.env.SMTP_HOST || '';
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587');
 const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
@@ -48,10 +48,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 function getTransporter() {
+  const secure = SMTP_PORT === 465;
   return nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
+    secure,
+    requireTLS: !secure,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
