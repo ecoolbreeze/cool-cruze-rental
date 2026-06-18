@@ -191,7 +191,24 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
   res.redirect('/admin/leads');
 });
 
-console.log('SendGrid: ' + (SENDGRID_API_KEY ? 'API key set' : 'NOT configured') + ' | From: ' + SENDER_EMAIL + ' | To: ' + (NOTIFY_EMAIL || '(not set)'));
+const emailOk = SENDGRID_API_KEY && NOTIFY_EMAIL;
+console.log('SendGrid: ' + (emailOk ? 'READY' : 'NOT configured') + ' | From: ' + SENDER_EMAIL + ' | To: ' + (NOTIFY_EMAIL || '(not set)'));
+
+app.get('/test-email', async (req, res) => {
+  if (!SENDGRID_API_KEY) return res.send('SENDGRID_API_KEY not set');
+  if (!NOTIFY_EMAIL) return res.send('NOTIFY_EMAIL not set');
+  try {
+    await sgMail.send({
+      from: SENDER_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: 'Test from Cool Cruze',
+      html: '<p>Test email sent successfully!</p>'
+    });
+    res.send('Test email sent to ' + NOTIFY_EMAIL);
+  } catch (e) {
+    res.send('Failed: ' + e.message);
+  }
+});
 
 app.listen(PORT, () => {
   console.log('Cool Cruze running at http://localhost:' + PORT);
