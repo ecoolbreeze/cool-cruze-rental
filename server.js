@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 
 const db = require('./db');
@@ -22,10 +22,8 @@ const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const SMTP_HOST = process.env.SMTP_HOST || '';
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587');
-const SMTP_USER = process.env.SMTP_USER || '';
-const SMTP_PASS = process.env.SMTP_PASS || '';
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
+const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@coolcruze.in';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -47,19 +45,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-function getTransporter() {
-  const secure = SMTP_PORT === 465;
-  return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure,
-    requireTLS: !secure,
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS
-    }
-  });
-}
+if (SENDGRID_API_KEY) sgMail.setApiKey(SENDGRID_API_KEY);
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
@@ -120,21 +106,13 @@ app.post('/rent/:id', (req, res) => {
       message: message || ''
     });
 
-    if (SMTP_HOST && SMTP_USER && SMTP_PASS && NOTIFY_EMAIL) {
-      try {
-        const transporter = getTransporter();
-        console.log('Sending email via', SMTP_HOST, 'to', NOTIFY_EMAIL);
-        transporter.sendMail({
-          from: SMTP_USER,
-          to: NOTIFY_EMAIL,
-          subject: `New Rental Lead - ${product.name}`,
-          html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-        }).then(r => console.log('Email sent:', r.messageId)).catch(e => console.log('Email failed:', e.message, e.code));
-      } catch (e) {
-        console.log('Email setup failed:', e.message);
-      }
-    } else {
-      console.log('Email not configured - SMTP_HOST=' + (SMTP_HOST||'') + ' SMTP_USER=' + (SMTP_USER||'') + ' SMTP_PASS=' + (SMTP_PASS?'***':'') + ' NOTIFY_EMAIL=' + (NOTIFY_EMAIL||''));
+    if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
+      sgMail.send({
+        from: SENDER_EMAIL,
+        to: NOTIFY_EMAIL,
+        subject: `New Rental Lead - ${product.name}`,
+        html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
+      }).then(() => console.log('Email sent via SendGrid')).catch(e => console.log('Email failed:', e.message));
     }
 
     return res.json({
@@ -213,8 +191,7 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
   res.redirect('/admin/leads');
 });
 
-const hasEmail = SMTP_HOST && SMTP_USER && SMTP_PASS && NOTIFY_EMAIL;
-console.log('SMTP config: host=' + (SMTP_HOST || '(not set)') + ' user=' + (SMTP_USER || '(not set)') + ' notify=' + (NOTIFY_EMAIL || '(not set)') + ' status=' + (hasEmail ? 'ENABLED' : 'DISABLED'));
+console.log('SendGrid: ' + (SENDGRID_API_KEY ? 'API key set' : 'NOT configured') + ' | From: ' + SENDER_EMAIL + ' | To: ' + (NOTIFY_EMAIL || '(not set)'));
 
 app.listen(PORT, () => {
   console.log('Cool Cruze running at http://localhost:' + PORT);
