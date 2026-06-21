@@ -452,7 +452,9 @@ function switchImage(el, src) {
     const days = parseInt(slider.value);
     let total = 0, rate = 0;
     if (useFlat && flatDays > 0) {
-      total = days <= flatDays ? flatPrice : flatPrice + (days - flatDays) * extraRate;
+      for (let d = 1; d <= days; d++) {
+        total += d <= flatDays ? flatPrice : flatPrice + (d - flatDays) * extraRate;
+      }
       rate = Math.round(total / days);
     } else if (tiers.length) {
       for (let d = 1; d <= days; d++) {
