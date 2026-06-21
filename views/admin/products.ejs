@@ -64,7 +64,7 @@ body { display: block; }
         <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
           <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
             <input type="checkbox" name="use_flat_pricing" value="1" onchange="document.getElementById('flatPricingFields').style.display=this.checked?'block':'none'">
-            Use Progressive Pricing (escalating rate after first N days)
+            Use Flat Rate (first N days at fixed total)
           </label>
           <div id="flatPricingFields" class="fp-container" style="display:none;">
             <div class="form-row">
@@ -73,15 +73,15 @@ body { display: block; }
                 <input type="number" name="flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
               </div>
               <div class="form-group">
-                <label style="font-size:13px;">Rate per Day (₹)</label>
+                <label style="font-size:13px;">Flat Total (₹) for first N days</label>
                 <input type="number" name="flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
               </div>
             </div>
             <div class="form-group">
-              <label style="font-size:13px;">Extra per Extra Day (₹ added each day)</label>
+              <label style="font-size:13px;">Extra per Extra Day (₹)</label>
               <input type="number" name="extra_day_rate" placeholder="e.g. 1000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
             </div>
-            <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">Day 1-<span class="fpDays">2</span> at ₹<span class="fpRate">8000</span>/day. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
+            <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">1-<span class="fpDays">2</span> days: ₹<span class="fpRate">8000</span> total. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
           </div>
         </div>
 
@@ -217,7 +217,7 @@ body { display: block; }
       <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
         <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
           <input type="checkbox" name="use_flat_pricing" value="1" id="edit_use_flat_pricing" onchange="document.getElementById('editFlatPricingFields').style.display=this.checked?'block':'none'">
-          Use Progressive Pricing (escalating rate after first N days)
+          Use Flat Rate (first N days at fixed total)
         </label>
         <div id="editFlatPricingFields" class="fp-container" style="display:none;">
           <div class="form-row">
@@ -226,15 +226,15 @@ body { display: block; }
               <input type="number" name="flat_days" id="edit_flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
             </div>
             <div class="form-group">
-              <label style="font-size:13px;">Rate per Day (₹)</label>
+              <label style="font-size:13px;">Flat Total (₹) for first N days</label>
               <input type="number" name="flat_price" id="edit_flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
             </div>
           </div>
           <div class="form-group">
-            <label style="font-size:13px;">Extra per Extra Day (₹ added each day)</label>
+            <label style="font-size:13px;">Extra per Extra Day (₹)</label>
             <input type="number" name="extra_day_rate" id="edit_extra_day_rate" placeholder="e.g. 1000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
           </div>
-          <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">Day 1-<span class="fpDays">2</span> at ₹<span class="fpRate">8000</span>/day. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
+          <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">1-<span class="fpDays">2</span> days: ₹<span class="fpRate">8000</span> total. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
         </div>
       </div>
 
