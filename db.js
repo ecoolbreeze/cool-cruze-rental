@@ -25,17 +25,29 @@ function nextId(items) {
 }
 
 // Products
+function normalizeProduct(p) {
+  if (!p.images || !p.images.length) {
+    if (p.image) p.images = [p.image];
+    else p.images = [];
+  }
+  delete p.image;
+  return p;
+}
+
 function getAllProducts() {
-  return read().products;
+  return read().products.map(normalizeProduct);
 }
 
 function getProduct(id) {
-  return read().products.find(p => p.id === Number(id)) || null;
+  const p = read().products.find(p => p.id === Number(id));
+  return p ? normalizeProduct(p) : null;
 }
 
 function addProduct(data) {
   const db = read();
   const product = { id: nextId(db.products), ...data, created_at: new Date().toISOString() };
+  if (!product.images) product.images = product.image ? [product.image] : [];
+  delete product.image;
   db.products.push(product);
   write(db);
   return product;
@@ -45,7 +57,12 @@ function updateProduct(id, data) {
   const db = read();
   const idx = db.products.findIndex(p => p.id === Number(id));
   if (idx === -1) return null;
-  db.products[idx] = { ...db.products[idx], ...data };
+  const updated = { ...db.products[idx], ...data };
+  delete updated.image;
+  if (!updated.images || !updated.images.length) {
+    updated.images = [];
+  }
+  db.products[idx] = updated;
   write(db);
   return db.products[idx];
 }

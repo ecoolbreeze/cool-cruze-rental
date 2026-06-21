@@ -156,18 +156,19 @@ app.get('/admin/products', requireAuth, (req, res) => {
   res.render('admin/products', { title: 'Manage Products', products });
 });
 
-app.post('/admin/products', requireAuth, upload.single('image'), (req, res) => {
+app.post('/admin/products', requireAuth, upload.array('images', 5), (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock } = req.body;
-  const image = req.file ? '/uploads/' + req.file.filename : '';
-  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), image, description, features, stock: parseInt(stock) || 1 });
+  const images = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
+  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1 });
   res.redirect('/admin/products');
 });
 
-app.post('/admin/products/edit/:id', requireAuth, upload.single('image'), (req, res) => {
+app.post('/admin/products/edit/:id', requireAuth, upload.array('images', 5), (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock } = req.body;
   const existing = db.getProduct(req.params.id);
-  const image = req.file ? '/uploads/' + req.file.filename : (existing.image || '');
-  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), image, description, features, stock: parseInt(stock) || 1 });
+  const newImgs = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
+  const images = newImgs.length ? newImgs : (existing.images && existing.images.length ? existing.images : (existing.image ? [existing.image] : []));
+  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1 });
   res.redirect('/admin/products');
 });
 
@@ -193,6 +194,10 @@ app.post('/admin/leads/delete/:id', requireAuth, (req, res) => {
 
 const emailOk = SENDGRID_API_KEY && NOTIFY_EMAIL;
 console.log('SendGrid: ' + (emailOk ? 'READY' : 'NOT configured') + ' | From: ' + SENDER_EMAIL + ' | To: ' + (NOTIFY_EMAIL || '(not set)'));
+
+app.get('/offline', (req, res) => {
+  res.render('offline', { title: 'Offline' });
+});
 
 app.get('/test-email', async (req, res) => {
   if (!SENDGRID_API_KEY) return res.send('SENDGRID_API_KEY not set');

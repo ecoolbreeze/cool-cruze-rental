@@ -36,8 +36,9 @@
     <% } %>
     <% products.forEach(product => { %>
     <div class="product-card" data-name="<%= product.name.toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
-      <div class="product-img" style="<%= product.image ? 'background-image:url('+product.image+');background-size:cover;background-position:center' : '' %>">
-        <% if (!product.image) { %>❄️<% } %>
+      <% const img = product.images && product.images.length ? product.images[0] : product.image; %>
+      <div class="product-img" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+        <% if (!img) { %>❄️<% } %>
       </div>
       <div class="product-body">
         <div class="product-brand"><%= product.brand %></div>

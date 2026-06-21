@@ -61,8 +61,8 @@ body { display: block; }
           </div>
         </div>
         <div class="form-group">
-          <label>Product Image</label>
-          <input type="file" name="image" accept="image/*">
+          <label>Product Images (up to 5)</label>
+          <input type="file" name="images" accept="image/*" multiple>
         </div>
         <div class="form-group">
           <label>Description</label>
@@ -96,8 +96,12 @@ body { display: block; }
           <% products.forEach(product => { %>
           <tr>
             <td>
-              <% if (product.image) { %>
-                <img src="<%= product.image %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+              <% const imgs = product.images && product.images.length ? product.images : (product.image ? [product.image] : []); %>
+              <% if (imgs.length) { %>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <img src="<%= imgs[0] %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+                  <% if (imgs.length > 1) { %><span style="font-size:11px;color:var(--text-light);font-weight:600;">+<%= imgs.length-1 %></span><% } %>
+                </div>
               <% } else { %>
                 <span style="font-size:24px;">❄️</span>
               <% } %>
@@ -110,7 +114,7 @@ body { display: block; }
             <td><%= product.stock %></td>
             <td>
               <div class="admin-actions">
-                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>)">Edit</button>
+                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>)">Edit</button>
                 <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
                   <button class="btn-sm btn-delete">Delete</button>
                 </form>
@@ -170,8 +174,12 @@ body { display: block; }
         </div>
       </div>
       <div class="form-group">
-        <label>Product Image (leave empty to keep current)</label>
-        <input type="file" name="image" accept="image/*">
+        <label>Product Images (up to 5, leave empty to keep current)</label>
+        <input type="file" name="images" accept="image/*" multiple>
+      </div>
+      <div class="form-group" id="edit_existing_images" style="display:none;">
+        <label>Current Images</label>
+        <div id="edit_image_previews" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
       </div>
       <div class="form-group">
         <label>Description</label>
@@ -195,7 +203,7 @@ function toggleForm() {
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
 }
 
-function editProduct(id, name, brand, capacity, type, price, desc, features, stock) {
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images) {
   document.getElementById('editForm').action = '/admin/products/edit/' + id;
   document.getElementById('edit_name').value = name;
   document.getElementById('edit_brand').value = brand;
@@ -205,6 +213,18 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   document.getElementById('edit_stock').value = stock;
   document.getElementById('edit_desc').value = desc;
   document.getElementById('edit_features').value = features;
+  container = document.getElementById('edit_image_previews');
+  container.innerHTML = '';
+  if (images && images.length) {
+    document.getElementById('edit_existing_images').style.display = 'block';
+    images.forEach(src => {
+      if (!src) return;
+      img = document.createElement('img');
+      img.src = src;
+      img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;';
+      container.appendChild(img);
+    });
+  }
   document.getElementById('editModal').style.display = 'flex';
 }
 

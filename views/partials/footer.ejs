@@ -31,6 +31,11 @@ function openWA(text) {
   const num = '<%= whatsappNumber %>';
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(text), '_blank');
 }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
 </script>
 </body>
 </html>
