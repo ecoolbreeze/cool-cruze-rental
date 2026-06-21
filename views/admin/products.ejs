@@ -342,6 +342,7 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   document.getElementById('edit_flat_days').value = flatDays || '';
   document.getElementById('edit_flat_price').value = flatPrice || '';
   document.getElementById('edit_extra_day_rate').value = extraRate || '';
+  updateFpPreview(document.getElementById('editFlatPricingFields'));
   const tc = document.getElementById('editTierRows');
   tc.innerHTML = '';
   if (tiers && tiers.length) {
