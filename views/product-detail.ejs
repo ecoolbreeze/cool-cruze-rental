@@ -52,7 +52,7 @@
         <div class="detail-price">₹<%= Number(product.monthly_price).toLocaleString() %><span>/day</span></div>
         <div class="detail-price-sub">No hidden charges • Free installation & maintenance</div>
 
-        <% const tiers = product.tiers && product.tiers.length ? product.tiers : []; if (tiers.length) { %>
+        <% const tiers = product.tiers && product.tiers.length ? product.tiers : []; if (tiers.length || product.use_flat_pricing) { %>
         <div class="rent-calculator">
           <div class="calc-header">
             <span class="calc-header-icon">📊</span>
@@ -65,10 +65,10 @@
             <div class="calc-slider-header">
               <span id="calcDays">1</span> <span id="calcDaysLabel">day</span>
             </div>
-            <input type="range" id="rentSlider" min="1" max="30" value="1" class="calc-slider">
+            <input type="range" id="rentSlider" min="1" max="15" value="1" class="calc-slider">
             <div class="calc-slider-labels">
               <span id="calcMinLabel">1 day</span>
-              <span id="calcMaxLabel">30 days</span>
+              <span id="calcMaxLabel">15 days</span>
             </div>
           </div>
           <div class="calc-results">
@@ -436,24 +436,30 @@ function switchImage(el, src) {
 
 (function() {
   const tiers = <%- JSON.stringify(product.tiers || []) %>;
+  const useFlat = <%- product.use_flat_pricing ? 'true' : 'false' %>;
+  const flatDays = <%- product.flat_days || 0 %>;
+  const flatPrice = <%- product.flat_price || 0 %>;
+  const extraRate = <%- product.extra_day_rate || 0 %>;
   const slider = document.getElementById('rentSlider');
-  if (!slider || !tiers.length) return;
-  const minDay = Math.min(...tiers.map(t => t.min));
-  const maxDay = Math.max(...tiers.map(t => t.max));
-  slider.min = minDay;
-  slider.max = maxDay;
-  slider.value = minDay;
-  document.getElementById('calcMinLabel').textContent = minDay + ' day' + (minDay > 1 ? 's' : '');
-  document.getElementById('calcMaxLabel').textContent = maxDay + ' days';
+  if (!slider || (!tiers.length && !useFlat)) return;
 
   function updateCalc() {
     const days = parseInt(slider.value);
-    const tier = tiers.find(t => days >= t.min && days <= t.max) || tiers[tiers.length - 1];
-    if (!tier) return;
-    const total = days * tier.price;
+    let total, rate;
+    if (useFlat && flatDays > 0) {
+      total = days <= flatDays ? flatPrice : flatPrice + (days - flatDays) * extraRate;
+      rate = Math.round(total / days);
+    } else if (tiers.length) {
+      const tier = tiers.find(t => days >= t.min && days <= t.max) || tiers[tiers.length - 1];
+      if (!tier) return;
+      rate = tier.price;
+      total = days * tier.price;
+    } else {
+      return;
+    }
     document.getElementById('calcDays').textContent = days;
     document.getElementById('calcDaysLabel').textContent = days === 1 ? 'day' : 'days';
-    document.getElementById('calcRate').textContent = '₹' + Number(tier.price).toLocaleString();
+    document.getElementById('calcRate').textContent = '₹' + Number(rate).toLocaleString();
     document.getElementById('calcTotal').textContent = '₹' + Number(total).toLocaleString();
     document.getElementById('calcCtaPrice').textContent = '₹' + Number(total).toLocaleString();
   }

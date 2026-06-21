@@ -174,20 +174,20 @@ function parseTiers(body) {
 }
 
 app.post('/admin/products', requireAuth, upload.array('images', 5), (req, res) => {
-  const { name, brand, capacity, type, monthly_price, description, features, stock } = req.body;
+  const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const images = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
   const tiers = parseTiers(req.body);
-  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers });
+  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 });
 
 app.post('/admin/products/edit/:id', requireAuth, upload.array('images', 5), (req, res) => {
-  const { name, brand, capacity, type, monthly_price, description, features, stock } = req.body;
+  const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const existing = db.getProduct(req.params.id);
   const newImgs = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
   const images = newImgs.length ? newImgs : (existing.images && existing.images.length ? existing.images : (existing.image ? [existing.image] : []));
   const tiers = parseTiers(req.body);
-  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers });
+  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 });
 

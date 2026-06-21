@@ -61,9 +61,32 @@ body { display: block; }
           </div>
         </div>
 
+        <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" name="use_flat_pricing" value="1" onchange="document.getElementById('flatPricingFields').style.display=this.checked?'block':'none'">
+            Use Flat Rate Pricing (first N days at fixed total)
+          </label>
+          <div id="flatPricingFields" style="display:none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label style="font-size:13px;">Flat Days</label>
+                <input type="number" name="flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+              </div>
+              <div class="form-group">
+                <label style="font-size:13px;">Flat Total (₹)</label>
+                <input type="number" name="flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;">Extra Day Rate (₹ per day after flat days)</label>
+              <input type="number" name="extra_day_rate" placeholder="e.g. 500" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+          </div>
+        </div>
+
         <div class="form-section">
           <h3 style="font-size:16px;margin:16px 0 4px;font-weight:700;">Rental Pricing Tiers</h3>
-          <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Define day ranges with per-day pricing. The slider on the product page will use these tiers.</p>
+          <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Per-day pricing for different day ranges. The slider on the product page will use these tiers.</p>
           <div id="tierRows">
             <div class="tier-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
               <input type="number" name="tier_min[]" placeholder="Min days" value="1" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
@@ -130,7 +153,7 @@ body { display: block; }
             <td><%= product.stock %></td>
             <td>
               <div class="admin-actions">
-                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>)">Edit</button>
+                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>)">Edit</button>
                 <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
                   <button class="btn-sm btn-delete">Delete</button>
                 </form>
@@ -190,9 +213,32 @@ body { display: block; }
         </div>
       </div>
 
+      <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
+          <input type="checkbox" name="use_flat_pricing" value="1" id="edit_use_flat_pricing" onchange="document.getElementById('editFlatPricingFields').style.display=this.checked?'block':'none'">
+          Use Flat Rate Pricing (first N days at fixed total)
+        </label>
+        <div id="editFlatPricingFields" style="display:none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label style="font-size:13px;">Flat Days</label>
+              <input type="number" name="flat_days" id="edit_flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;">Flat Total (₹)</label>
+              <input type="number" name="flat_price" id="edit_flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:13px;">Extra Day Rate (₹ per day after flat days)</label>
+            <input type="number" name="extra_day_rate" id="edit_extra_day_rate" placeholder="e.g. 500" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+          </div>
+        </div>
+      </div>
+
       <div class="form-section">
         <h3 style="font-size:16px;margin:16px 0 4px;font-weight:700;">Rental Pricing Tiers</h3>
-        <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Day ranges with per-day pricing for the rent calculator slider.</p>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Per-day pricing for different day ranges.</p>
         <div id="editTierRows"></div>
         <button type="button" onclick="addEditTierRow()" style="background:var(--primary);color:white;border:none;padding:8px 20px;border-radius:50px;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;">+ Add Tier</button>
       </div>
@@ -245,7 +291,7 @@ function addEditTierRow(minVal, maxVal, priceVal) {
   addTierRow('editTierRows', minVal, maxVal, priceVal);
 }
 
-function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers) {
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate) {
   document.getElementById('editForm').action = '/admin/products/edit/' + id;
   document.getElementById('edit_name').value = name;
   document.getElementById('edit_brand').value = brand;
@@ -267,6 +313,12 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
       container.appendChild(img);
     });
   }
+  const cb = document.getElementById('edit_use_flat_pricing');
+  cb.checked = !!useFlat;
+  document.getElementById('editFlatPricingFields').style.display = useFlat ? 'block' : 'none';
+  document.getElementById('edit_flat_days').value = flatDays || '';
+  document.getElementById('edit_flat_price').value = flatPrice || '';
+  document.getElementById('edit_extra_day_rate').value = extraRate || '';
   const tc = document.getElementById('editTierRows');
   tc.innerHTML = '';
   if (tiers && tiers.length) {
