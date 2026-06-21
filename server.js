@@ -156,10 +156,28 @@ app.get('/admin/products', requireAuth, (req, res) => {
   res.render('admin/products', { title: 'Manage Products', products });
 });
 
+function parseTiers(body) {
+  const mins = body.tier_min;
+  const maxs = body.tier_max;
+  const prices = body.tier_price;
+  if (!mins || !maxs || !prices) return [];
+  const tiers = [];
+  for (let i = 0; i < mins.length; i++) {
+    const mn = parseInt(mins[i]);
+    const mx = parseInt(maxs[i]);
+    const pr = parseFloat(prices[i]);
+    if (!isNaN(mn) && !isNaN(mx) && !isNaN(pr)) {
+      tiers.push({ min: mn, max: mx, price: pr });
+    }
+  }
+  return tiers;
+}
+
 app.post('/admin/products', requireAuth, upload.array('images', 5), (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock } = req.body;
   const images = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
-  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1 });
+  const tiers = parseTiers(req.body);
+  db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers });
   res.redirect('/admin/products');
 });
 
@@ -168,7 +186,8 @@ app.post('/admin/products/edit/:id', requireAuth, upload.array('images', 5), (re
   const existing = db.getProduct(req.params.id);
   const newImgs = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
   const images = newImgs.length ? newImgs : (existing.images && existing.images.length ? existing.images : (existing.image ? [existing.image] : []));
-  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1 });
+  const tiers = parseTiers(req.body);
+  db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), images, description, features, stock: parseInt(stock) || 1, tiers });
   res.redirect('/admin/products');
 });
 
