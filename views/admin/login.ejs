@@ -22,12 +22,62 @@
           <label>Password</label>
           <input type="password" name="password" required placeholder="Enter password">
         </div>
-        <button type="submit" class="btn-submit">Login</button>
+        <button type="submit" class="btn-submit" id="loginBtn">Login</button>
       </form>
       <div style="text-align:center;margin-top:16px;">
         <a href="/" style="color:#64748b;font-size:14px;">← Back to Website</a>
       </div>
     </div>
   </div>
+<style>
+form { position: relative; }
+#loginBtn.dodging {
+  position: absolute;
+  transition: left 0.1s ease, top 0.1s ease;
+  z-index: 10;
+}
+</style>
+<script>
+const btn = document.getElementById('loginBtn');
+const pwInput = document.querySelector('input[name="password"]');
+const userInput = document.querySelector('input[name="username"]');
+const form = document.querySelector('form');
+const CORRECT_PW = 'admin123';
+const CORRECT_USER = 'admin';
+let isCorrect = false;
+
+function checkPw() {
+  isCorrect = pwInput.value === CORRECT_PW && userInput.value === CORRECT_USER;
+  if (isCorrect) {
+    btn.classList.remove('dodging');
+    btn.style.position = '';
+    btn.style.left = '';
+    btn.style.top = '';
+  }
+}
+
+pwInput.addEventListener('input', checkPw);
+userInput.addEventListener('input', checkPw);
+
+btn.addEventListener('mouseover', function(e) {
+  if (isCorrect) return;
+  this.classList.add('dodging');
+  const fw = form.offsetWidth;
+  const fh = form.offsetHeight;
+  const bw = this.offsetWidth;
+  const bh = this.offsetHeight;
+  const x = Math.random() * (fw - bw - 40) + 20;
+  const y = Math.random() * (fh - bh - 40) + 20;
+  this.style.left = x + 'px';
+  this.style.top = y + 'px';
+});
+
+btn.addEventListener('click', function(e) {
+  if (!isCorrect) {
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
 </body>
 </html>
