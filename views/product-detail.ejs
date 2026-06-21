@@ -72,10 +72,6 @@
             </div>
           </div>
           <div class="calc-results">
-            <div class="calc-result-row">
-              <span class="calc-result-label">Price per day</span>
-              <span class="calc-result-value" id="calcRate">₹0</span>
-            </div>
             <div class="calc-result-row calc-total-row">
               <span class="calc-result-label">Total Rent</span>
               <span class="calc-result-value" id="calcTotal">₹0</span>
@@ -450,20 +446,17 @@ function switchImage(el, src) {
 
   function updateCalc() {
     const days = parseInt(slider.value);
-    let total = 0, rate = 0;
+    let total = 0;
     if (useFlat && flatDays > 0) {
       total = days <= flatDays ? flatPrice : flatPrice + (days - flatDays) * extraRate;
-      rate = Math.round(total / days);
     } else if (tiers.length) {
       for (let d = 1; d <= days; d++) {
         const t = getTierForDay(d);
         if (t) total += t.price;
       }
-      rate = Math.round(total / days);
     }
     document.getElementById('calcDays').textContent = days;
     document.getElementById('calcDaysLabel').textContent = days === 1 ? 'day' : 'days';
-    document.getElementById('calcRate').textContent = '₹' + Number(rate).toLocaleString();
     document.getElementById('calcTotal').textContent = '₹' + Number(total).toLocaleString();
     document.getElementById('calcCtaPrice').textContent = '₹' + Number(total).toLocaleString();
   }
