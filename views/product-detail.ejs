@@ -52,7 +52,7 @@
         <div class="detail-price">₹<%= Number(product.monthly_price).toLocaleString() %><span>/day</span></div>
         <div class="detail-price-sub">No hidden charges • Free installation & maintenance</div>
 
-        <% const tiers = product.tiers && product.tiers.length ? product.tiers : []; if (tiers.length || product.use_flat_pricing) { %>
+        <% const pTiers = product.tiers && product.tiers.length ? product.tiers : []; if (pTiers.length || product.use_flat_pricing) { %>
         <div class="rent-calculator">
           <div class="calc-header">
             <span class="calc-header-icon">📊</span>
@@ -442,20 +442,24 @@ function switchImage(el, src) {
   const extraRate = <%- product.extra_day_rate || 0 %>;
   const slider = document.getElementById('rentSlider');
   if (!slider || (!tiers.length && !useFlat)) return;
+  tiers.sort((a, b) => a.min - b.min);
+
+  function getTierForDay(day) {
+    return tiers.find(t => day >= t.min && day <= t.max) || null;
+  }
 
   function updateCalc() {
     const days = parseInt(slider.value);
-    let total, rate;
+    let total = 0, rate = 0;
     if (useFlat && flatDays > 0) {
       total = days <= flatDays ? flatPrice : flatPrice + (days - flatDays) * extraRate;
       rate = Math.round(total / days);
     } else if (tiers.length) {
-      const tier = tiers.find(t => days >= t.min && days <= t.max) || tiers[tiers.length - 1];
-      if (!tier) return;
-      rate = tier.price;
-      total = days * tier.price;
-    } else {
-      return;
+      for (let d = 1; d <= days; d++) {
+        const t = getTierForDay(d);
+        if (t) total += t.price;
+      }
+      rate = Math.round(total / days);
     }
     document.getElementById('calcDays').textContent = days;
     document.getElementById('calcDaysLabel').textContent = days === 1 ? 'day' : 'days';
