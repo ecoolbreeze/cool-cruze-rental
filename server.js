@@ -57,7 +57,7 @@ app.use((req, res, next) => {
 
 app.get('/', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
-  const featured = products.slice(0, 4);
+  const featured = [...products].reverse().slice(0, 4);
   res.render('index', { title: 'Home', featured, products });
 }));
 
