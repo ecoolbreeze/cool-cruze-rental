@@ -2,52 +2,52 @@ const db = require('./db');
 
 const sampleProducts = [
   {
-    name: '1.5 Ton 5-Star Inverter Split AC',
+    name: '1.5 Ton 5-Star Inverter Portable AC',
     brand: 'LG',
     capacity: '1.5 Ton',
-    type: 'Split',
+    type: 'Portable',
     monthly_price: 1499,
-    description: 'Premium LG 1.5 Ton 5-Star Inverter Split AC with dual inverter compressor, 100% copper, and anti-virus filter. Perfect for medium-sized rooms.',
+    description: 'Premium LG 1.5 Ton 5-Star Inverter Portable AC with dual inverter compressor, 100% copper, and anti-virus filter. Perfect for medium-sized rooms.',
     features: '5-Star Energy Rating,Dual Inverter Compressor,100% Copper,Hindi+English Display,Anti-Virus Filter',
     stock: 5
   },
   {
-    name: '2 Ton 3-Star Window AC',
+    name: '2 Ton 3-Star Tower AC',
     brand: 'Voltas',
     capacity: '2 Ton',
-    type: 'Window',
+    type: 'Tower',
     monthly_price: 1299,
-    description: 'Reliable Voltas 2 Ton Window AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for large rooms and small offices.',
+    description: 'Reliable Voltas 2 Ton Tower AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for large rooms and small offices.',
     features: '3-Star Energy Rating,Turbo Mode,Anti-Dust Filter,High Ambient Cooling',
     stock: 3
   },
   {
-    name: '1.5 Ton 4-Star Inverter Split AC',
+    name: '1.5 Ton 4-Star Inverter Portable AC',
     brand: 'Samsung',
     capacity: '1.5 Ton',
-    type: 'Split',
+    type: 'Portable',
     monthly_price: 1399,
-    description: 'Samsung 1.5 Ton 4-Star Inverter Split AC with digital inverter technology, fast cooling, and auto-clean feature.',
+    description: 'Samsung 1.5 Ton 4-Star Inverter Portable AC with digital inverter technology, fast cooling, and auto-clean feature.',
     features: '4-Star Energy Rating,Digital Inverter,Auto Clean,Fast Cooling,Triple Protector Plus',
     stock: 4
   },
   {
-    name: '2 Ton 5-Star Inverter Split AC',
+    name: '2 Ton 5-Star Inverter Ductable AC',
     brand: 'Daikin',
     capacity: '2 Ton',
-    type: 'Split',
+    type: 'Ductable',
     monthly_price: 1799,
-    description: 'Daikin 2 Ton 5-Star Inverter Split AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces.',
+    description: 'Daikin 2 Ton 5-Star Inverter Ductable AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces.',
     features: '5-Star Energy Rating,Swing Compressor,PM 2.5 Filter,Powerful Cooling,Coanda Airflow',
     stock: 2
   },
   {
-    name: '1 Ton 3-Star Window AC',
+    name: '1 Ton 3-Star Tower AC',
     brand: 'Blue Star',
     capacity: '1 Ton',
-    type: 'Window',
+    type: 'Tower',
     monthly_price: 999,
-    description: 'Blue Star 1 Ton Window AC — budget-friendly cooling for small rooms. Features anti-bacterial filter and sleep mode.',
+    description: 'Blue Star 1 Ton Tower AC — budget-friendly cooling for small rooms. Features anti-bacterial filter and sleep mode.',
     features: '3-Star Energy Rating,Anti-Bacterial Filter,Sleep Mode,Compact Design',
     stock: 6
   },
