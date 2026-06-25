@@ -63,14 +63,17 @@ const sampleProducts = [
   }
 ];
 
-function run() {
-  if (db.getAllProducts().length > 0) return;
-  sampleProducts.forEach(p => db.addProduct(p));
+async function run() {
+  const all = await db.getAllProducts();
+  if (all.length > 0) return;
+  for (const p of sampleProducts) {
+    await db.addProduct(p);
+  }
   console.log('Seeded ' + sampleProducts.length + ' sample products.');
 }
 
-if (require.main === module) {
-  run();
-}
-
 module.exports = { run };
+
+if (require.main === module) {
+  run().catch(e => console.error(e));
+}
