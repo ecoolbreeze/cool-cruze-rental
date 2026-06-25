@@ -48,6 +48,10 @@ async function init() {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  // Migrate existing table: add new columns if missing
+  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS card_image TEXT DEFAULT ''"); } catch(e) { /* ignore */ }
+  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS featured_image TEXT DEFAULT ''"); } catch(e) { /* ignore */ }
+  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS detail_images JSONB DEFAULT '[]'"); } catch(e) { /* ignore */ }
   const { count } = (await query('SELECT COUNT(*) FROM products')).rows[0];
   if (parseInt(count) === 0) {
     const seed = require('./seed');

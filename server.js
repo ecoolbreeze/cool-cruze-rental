@@ -281,6 +281,11 @@ app.post('/admin/import', requireAuth, multerImport.single('backup'), asyncRoute
   }
 }));
 
+app.use((err, req, res, next) => {
+  console.error('ERROR:', err.message, err.stack);
+  res.status(500).send('Internal Server Error: ' + err.message);
+});
+
 app.listen(PORT, () => {
   console.log('Cool Cruze running at http://localhost:' + PORT);
 });
