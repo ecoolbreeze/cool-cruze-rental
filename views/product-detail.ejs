@@ -6,7 +6,7 @@
 
     <div class="detail-layout">
       <div class="detail-gallery">
-        <% const imgs = product.images && product.images.length ? product.images : (product.image ? [product.image] : []); %>
+        <% const imgs = product.detail_images && product.detail_images.length ? product.detail_images : (product.card_image ? [product.card_image] : (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))); %>
         <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+')' : '' %>">
           <% if (!imgs.length) { %>
             <div class="detail-img-placeholder">❄️</div>

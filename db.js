@@ -37,6 +37,11 @@ if (DATABASE_URL) {
   }
 
   function normalizeProduct(p) {
+    if (!p.card_image && p.image) p.card_image = p.image;
+    if (!p.featured_image && p.image) p.featured_image = p.image;
+    if (!p.detail_images || !p.detail_images.length) {
+      p.detail_images = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+    }
     if (!p.images || !p.images.length) {
       p.images = p.image ? [p.image] : [];
     }
@@ -56,6 +61,11 @@ if (DATABASE_URL) {
   function addProduct(data) {
     const db = read();
     const product = { id: nextId(db.products), ...data, created_at: new Date().toISOString() };
+    if (!product.card_image && product.image) product.card_image = product.image;
+    if (!product.featured_image && product.image) product.featured_image = product.image;
+    if (!product.detail_images || !product.detail_images.length) {
+      product.detail_images = product.images && product.images.length ? product.images : (product.image ? [product.image] : []);
+    }
     if (!product.images) product.images = product.image ? [product.image] : [];
     delete product.image;
     db.products.push(product);
@@ -69,6 +79,11 @@ if (DATABASE_URL) {
     if (idx === -1) return null;
     const updated = { ...db.products[idx], ...data };
     delete updated.image;
+    if (!updated.card_image && updated.image) updated.card_image = updated.image;
+    if (!updated.featured_image && updated.image) updated.featured_image = updated.image;
+    if (!updated.detail_images || !updated.detail_images.length) {
+      updated.detail_images = updated.images && updated.images.length ? updated.images : (updated.image ? [updated.image] : []);
+    }
     if (!updated.images || !updated.images.length) updated.images = [];
     db.products[idx] = updated;
     write(db);

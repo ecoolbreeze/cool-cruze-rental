@@ -30,7 +30,7 @@
       <% for (let i = 0; i < 2; i++) { %>
         <% featured.forEach(product => { %>
         <div class="carousel-card">
-          <% const img = product.images && product.images.length ? product.images[0] : product.image; %>
+          <% const img = product.featured_image || product.card_image || (product.images && product.images.length ? product.images[0] : product.image); %>
           <div class="carousel-img" style="<%= img ? 'background-image:url('+img+')' : '' %>">
             <% if (!img) { %>❄️<% } %>
           </div>

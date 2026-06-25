@@ -20,6 +20,9 @@ async function init() {
       capacity TEXT DEFAULT '',
       type TEXT DEFAULT '',
       monthly_price NUMERIC DEFAULT 0,
+      card_image TEXT DEFAULT '',
+      featured_image TEXT DEFAULT '',
+      detail_images JSONB DEFAULT '[]',
       images JSONB DEFAULT '[]',
       description TEXT DEFAULT '',
       features TEXT DEFAULT '',
@@ -60,6 +63,12 @@ function rowToProduct(r) {
   p.extra_day_rate = parseFloat(p.extra_day_rate) || 0;
   try { p.images = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []); } catch(e) { p.images = []; }
   try { p.tiers = typeof p.tiers === 'string' ? JSON.parse(p.tiers) : (p.tiers || []); } catch(e) { p.tiers = []; }
+  try { p.detail_images = typeof p.detail_images === 'string' ? JSON.parse(p.detail_images) : (p.detail_images || []); } catch(e) { p.detail_images = []; }
+  if (!p.card_image && p.image) p.card_image = p.image;
+  if (!p.featured_image && p.image) p.featured_image = p.image;
+  if (!p.detail_images || !p.detail_images.length) {
+    p.detail_images = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+  }
   p.created_at = p.created_at ? new Date(p.created_at).toISOString() : new Date().toISOString();
   delete p.image;
   return p;
@@ -84,12 +93,12 @@ async function getProduct(id) {
 }
 
 async function addProduct(data) {
-  const { name, brand, capacity, type, monthly_price, images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate } = data;
-  const imgs = images && images.length ? JSON.stringify(images) : '[]';
+  const { name, brand, capacity, type, monthly_price, card_image, featured_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate } = data;
+  const dimgs = detail_images && detail_images.length ? JSON.stringify(detail_images) : '[]';
   const t = tiers && tiers.length ? JSON.stringify(tiers) : '[]';
   const { rows } = await query(
-    'INSERT INTO products (name, brand, capacity, type, monthly_price, images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *',
-    [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, imgs, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
+    'INSERT INTO products (name, brand, capacity, type, monthly_price, card_image, featured_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *',
+    [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, card_image||'', featured_image||'', dimgs, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
   );
   return rowToProduct(rows[0]);
 }
@@ -98,11 +107,11 @@ async function updateProduct(id, data) {
   const existing = await getProduct(id);
   if (!existing) return null;
   const merged = { ...existing, ...data };
-  const imgs = merged.images && merged.images.length ? JSON.stringify(merged.images) : '[]';
+  const dimgs = merged.detail_images && merged.detail_images.length ? JSON.stringify(merged.detail_images) : '[]';
   const t = merged.tiers && merged.tiers.length ? JSON.stringify(merged.tiers) : '[]';
   const { rows } = await query(
-    'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, images=$6, description=$7, features=$8, stock=$9, tiers=$10, use_flat_pricing=$11, flat_days=$12, flat_price=$13, extra_day_rate=$14 WHERE id=$15 RETURNING *',
-    [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, imgs, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
+    'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, card_image=$6, featured_image=$7, detail_images=$8, description=$9, features=$10, stock=$11, tiers=$12, use_flat_pricing=$13, flat_days=$14, flat_price=$15, extra_day_rate=$16 WHERE id=$17 RETURNING *',
+    [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.card_image||'', merged.featured_image||'', dimgs, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
   );
   return rows.length ? rowToProduct(rows[0]) : null;
 }

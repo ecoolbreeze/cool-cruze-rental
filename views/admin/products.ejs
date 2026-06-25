@@ -101,8 +101,16 @@ body { display: block; }
         </div>
 
         <div class="form-group">
-          <label>Product Images (up to 5)</label>
-          <input type="file" name="images" accept="image/*" multiple>
+          <label>Card Image (product grid, 280×220)</label>
+          <input type="file" name="card_image" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Featured Image (homepage carousel, 250×180)</label>
+          <input type="file" name="featured_image" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Detail Gallery Images (product page, 4:3 ratio)</label>
+          <input type="file" name="detail_images" accept="image/*" multiple>
         </div>
         <div class="form-group">
           <label>Description</label>
@@ -136,11 +144,12 @@ body { display: block; }
           <% products.forEach(product => { %>
           <tr>
             <td>
-              <% const imgs = product.images && product.images.length ? product.images : (product.image ? [product.image] : []); %>
-              <% if (imgs.length) { %>
+              <% const cardImg = product.card_image || (product.images && product.images.length ? product.images[0] : product.image || ''); %>
+              <% if (cardImg) { %>
                 <div style="display:flex;align-items:center;gap:4px;">
-                  <img src="<%= imgs[0] %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
-                  <% if (imgs.length > 1) { %><span style="font-size:11px;color:var(--text-light);font-weight:600;">+<%= imgs.length-1 %></span><% } %>
+                  <img src="<%= cardImg %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+                  <% const detailCount = product.detail_images ? product.detail_images.length : (product.images ? product.images.length : (product.image ? 1 : 0)); %>
+                  <% if (detailCount > 1) { %><span style="font-size:11px;color:var(--text-light);font-weight:600;">+<%= detailCount-1 %></span><% } %>
                 </div>
               <% } else { %>
                 <span style="font-size:24px;">❄️</span>
@@ -154,7 +163,7 @@ body { display: block; }
             <td><%= product.stock %></td>
             <td>
               <div class="admin-actions">
-                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>)">Edit</button>
+                <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>, '<%= (product.card_image || '').replace(/'/g, "\\'") %>', '<%= (product.featured_image || '').replace(/'/g, "\\'") %>', <%= JSON.stringify(product.detail_images && product.detail_images.length ? product.detail_images : []) %>)">Edit</button>
                 <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
                   <button class="btn-sm btn-delete">Delete</button>
                 </form>
@@ -246,12 +255,19 @@ body { display: block; }
       </div>
 
       <div class="form-group">
-        <label>Product Images (up to 5, leave empty to keep current)</label>
-        <input type="file" name="images" accept="image/*" multiple>
+        <label>Card Image (product grid, leave empty to keep current)</label>
+        <input type="file" name="card_image" accept="image/*">
+        <div id="edit_card_preview" style="margin-top:4px;"></div>
       </div>
-      <div class="form-group" id="edit_existing_images" style="display:none;">
-        <label>Current Images</label>
-        <div id="edit_image_previews" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      <div class="form-group">
+        <label>Featured Image (homepage carousel, leave empty to keep current)</label>
+        <input type="file" name="featured_image" accept="image/*">
+        <div id="edit_featured_preview" style="margin-top:4px;"></div>
+      </div>
+      <div class="form-group">
+        <label>Detail Gallery Images (product page, leave empty to keep current)</label>
+        <input type="file" name="detail_images" accept="image/*" multiple>
+        <div id="edit_detail_previews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"></div>
       </div>
       <div class="form-group">
         <label>Description</label>
@@ -314,7 +330,7 @@ function addEditTierRow(minVal, maxVal, priceVal) {
   addTierRow('editTierRows', minVal, maxVal, priceVal);
 }
 
-function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate) {
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate, cardImg, featuredImg, detailImgs) {
   document.getElementById('editForm').action = '/admin/products/edit/' + id;
   document.getElementById('edit_name').value = name;
   document.getElementById('edit_brand').value = brand;
@@ -324,18 +340,26 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   document.getElementById('edit_stock').value = stock;
   document.getElementById('edit_desc').value = desc;
   document.getElementById('edit_features').value = features;
-  container = document.getElementById('edit_image_previews');
-  container.innerHTML = '';
-  if (images && images.length) {
-    document.getElementById('edit_existing_images').style.display = 'block';
-    images.forEach(src => {
+
+  function showPreview(elId, src) {
+    const el = document.getElementById(elId);
+    if (src) { el.innerHTML = '<img src="' + src + '" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">'; }
+    else { el.innerHTML = ''; }
+  }
+  showPreview('edit_card_preview', cardImg);
+  showPreview('edit_featured_preview', featuredImg);
+  const dp = document.getElementById('edit_detail_previews');
+  dp.innerHTML = '';
+  if (detailImgs && detailImgs.length) {
+    detailImgs.forEach(function(src) {
       if (!src) return;
-      img = document.createElement('img');
+      var img = document.createElement('img');
       img.src = src;
       img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;';
-      container.appendChild(img);
+      dp.appendChild(img);
     });
   }
+
   const cb = document.getElementById('edit_use_flat_pricing');
   cb.checked = !!useFlat;
   document.getElementById('editFlatPricingFields').style.display = useFlat ? 'block' : 'none';
