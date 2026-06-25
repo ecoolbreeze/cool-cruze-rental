@@ -115,11 +115,23 @@ async function addProduct(data) {
   const { name, brand, capacity, type, monthly_price, card_image, featured_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate } = data;
   const dimgs = detail_images && detail_images.length ? JSON.stringify(detail_images) : '[]';
   const t = tiers && tiers.length ? JSON.stringify(tiers) : '[]';
-  const { rows } = await query(
-    'INSERT INTO products (name, brand, capacity, type, monthly_price, card_image, featured_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *',
-    [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, card_image||'', featured_image||'', dimgs, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
-  );
-  return rowToProduct(rows[0]);
+  try {
+    const { rows } = await query(
+      'INSERT INTO products (name, brand, capacity, type, monthly_price, card_image, featured_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *',
+      [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, card_image||'', featured_image||'', dimgs, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
+    );
+    return rowToProduct(rows[0]);
+  } catch (e) {
+    if (e.code === '42703') { // undefined_column
+      console.error('New columns missing, falling back to legacy insert:', e.message);
+      const { rows } = await query(
+        'INSERT INTO products (name, brand, capacity, type, monthly_price, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *',
+        [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
+      );
+      return rowToProduct(rows[0]);
+    }
+    throw e;
+  }
 }
 
 async function updateProduct(id, data) {
@@ -128,11 +140,23 @@ async function updateProduct(id, data) {
   const merged = { ...existing, ...data };
   const dimgs = merged.detail_images && merged.detail_images.length ? JSON.stringify(merged.detail_images) : '[]';
   const t = merged.tiers && merged.tiers.length ? JSON.stringify(merged.tiers) : '[]';
-  const { rows } = await query(
-    'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, card_image=$6, featured_image=$7, detail_images=$8, description=$9, features=$10, stock=$11, tiers=$12, use_flat_pricing=$13, flat_days=$14, flat_price=$15, extra_day_rate=$16 WHERE id=$17 RETURNING *',
-    [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.card_image||'', merged.featured_image||'', dimgs, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
-  );
-  return rows.length ? rowToProduct(rows[0]) : null;
+  try {
+    const { rows } = await query(
+      'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, card_image=$6, featured_image=$7, detail_images=$8, description=$9, features=$10, stock=$11, tiers=$12, use_flat_pricing=$13, flat_days=$14, flat_price=$15, extra_day_rate=$16 WHERE id=$17 RETURNING *',
+      [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.card_image||'', merged.featured_image||'', dimgs, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
+    );
+    return rows.length ? rowToProduct(rows[0]) : null;
+  } catch (e) {
+    if (e.code === '42703') {
+      console.error('New columns missing, falling back to legacy update:', e.message);
+      const { rows } = await query(
+        'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, description=$6, features=$7, stock=$8, tiers=$9, use_flat_pricing=$10, flat_days=$11, flat_price=$12, extra_day_rate=$13 WHERE id=$14 RETURNING *',
+        [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
+      );
+      return rows.length ? rowToProduct(rows[0]) : null;
+    }
+    throw e;
+  }
 }
 
 async function deleteProduct(id) {
