@@ -49,9 +49,24 @@ async function init() {
     )
   `);
   // Migrate existing table: add new columns if missing
-  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS card_image TEXT DEFAULT ''"); } catch(e) { /* ignore */ }
-  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS featured_image TEXT DEFAULT ''"); } catch(e) { /* ignore */ }
-  try { await query("ALTER TABLE products ADD COLUMN IF NOT EXISTS detail_images JSONB DEFAULT '[]'"); } catch(e) { /* ignore */ }
+  try {
+    await query(`DO $$ BEGIN
+      ALTER TABLE products ADD COLUMN card_image TEXT DEFAULT '';
+      EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$`);
+  } catch(e) { console.error('Migration card_image failed:', e.message); }
+  try {
+    await query(`DO $$ BEGIN
+      ALTER TABLE products ADD COLUMN featured_image TEXT DEFAULT '';
+      EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$`);
+  } catch(e) { console.error('Migration featured_image failed:', e.message); }
+  try {
+    await query(`DO $$ BEGIN
+      ALTER TABLE products ADD COLUMN detail_images JSONB DEFAULT '[]';
+      EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$`);
+  } catch(e) { console.error('Migration detail_images failed:', e.message); }
   const { count } = (await query('SELECT COUNT(*) FROM products')).rows[0];
   if (parseInt(count) === 0) {
     const seed = require('./seed');
