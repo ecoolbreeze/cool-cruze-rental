@@ -12,12 +12,12 @@ const sampleProducts = [
     stock: 5
   },
   {
-    name: '2 Ton 3-Star Tower AC',
+    name: '3.5 Ton 3-Star Tower AC',
     brand: 'Voltas',
-    capacity: '2 Ton',
+    capacity: '3.5 Ton',
     type: 'Tower',
     monthly_price: 1299,
-    description: 'Reliable Voltas 2 Ton Tower AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for large rooms and small offices.',
+    description: 'Reliable Voltas 3.5 Ton Tower AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for large rooms and small offices.',
     features: '3-Star Energy Rating,Turbo Mode,Anti-Dust Filter,High Ambient Cooling',
     stock: 3
   },
@@ -32,32 +32,32 @@ const sampleProducts = [
     stock: 4
   },
   {
-    name: '2 Ton 5-Star Inverter Ductable AC',
+    name: '5.5 Ton 5-Star Inverter Ductable AC',
     brand: 'Daikin',
-    capacity: '2 Ton',
+    capacity: '5.5 Ton',
     type: 'Ductable',
     monthly_price: 1799,
-    description: 'Daikin 2 Ton 5-Star Inverter Ductable AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces.',
+    description: 'Daikin 5.5 Ton 5-Star Inverter Ductable AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces.',
     features: '5-Star Energy Rating,Swing Compressor,PM 2.5 Filter,Powerful Cooling,Coanda Airflow',
     stock: 2
   },
   {
-    name: '1 Ton 3-Star Tower AC',
+    name: '3.5 Ton 3-Star Tower AC',
     brand: 'Blue Star',
-    capacity: '1 Ton',
+    capacity: '3.5 Ton',
     type: 'Tower',
     monthly_price: 999,
-    description: 'Blue Star 1 Ton Tower AC — budget-friendly cooling for small rooms. Features anti-bacterial filter and sleep mode.',
+    description: 'Blue Star 3.5 Ton Tower AC — budget-friendly cooling for small rooms. Features anti-bacterial filter and sleep mode.',
     features: '3-Star Energy Rating,Anti-Bacterial Filter,Sleep Mode,Compact Design',
     stock: 6
   },
   {
-    name: '3 Ton Tower AC',
+    name: '8.5 Ton Tower AC',
     brand: 'LG',
-    capacity: '3 Ton',
+    capacity: '8.5 Ton',
     type: 'Tower',
     monthly_price: 2499,
-    description: 'LG 3 Ton Tower AC for large commercial spaces. Powerful cooling with wide airflow distribution and smart inverter technology.',
+    description: 'LG 8.5 Ton Tower AC for large commercial spaces. Powerful cooling with wide airflow distribution and smart inverter technology.',
     features: 'Inverter Technology,Wide Airflow,Commercial Grade,Smart Diagnosis,Anti-Bacterial',
     stock: 2
   }
