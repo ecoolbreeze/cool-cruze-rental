@@ -33,6 +33,21 @@ body { display: block; }
       </div>
     </div>
 
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:20px;">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:8px;">📦 Database Backup</h3>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Export your data before deploying to avoid losing products and leads.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/admin/export" class="btn-submit" style="text-decoration:none;display:inline-block;padding:10px 24px;font-size:14px;">⬇ Export Backup</a>
+        <form method="POST" action="/admin/import" enctype="multipart/form-data" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="file" name="backup" accept=".json" required style="font-size:13px;">
+          <button type="submit" class="btn-submit" style="padding:10px 24px;font-size:14px;background:var(--text-light);">⬆ Restore Backup</button>
+        </form>
+      </div>
+      <% if (req.query.import === 'ok') { %><p style="color:#059669;font-weight:600;margin-top:8px;font-size:14px;">✓ Backup restored successfully.</p><% } %>
+      <% if (req.query.import === 'error') { %><p style="color:#dc2626;font-weight:600;margin-top:8px;font-size:14px;">✗ Invalid backup file.</p><% } %>
+      <% if (req.query.import === 'no-file') { %><p style="color:#dc2626;font-weight:600;margin-top:8px;font-size:14px;">✗ No file selected.</p><% } %>
+    </div>
+
     <h2 style="font-size:20px;margin-bottom:16px;">Recent Leads</h2>
     <table class="admin-table">
       <thead>

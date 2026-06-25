@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 
@@ -148,7 +149,7 @@ app.get('/admin', requireAuth, (req, res) => {
   const leadCount = db.getLeadCount().count;
   const todayLeadCount = db.getTodayLeadCount().count;
   const recentLeads = db.getAllLeads().slice(0, 5);
-  res.render('admin/dashboard', { title: 'Dashboard', productCount, leadCount, todayLeadCount, recentLeads });
+  res.render('admin/dashboard', { title: 'Dashboard', productCount, leadCount, todayLeadCount, recentLeads, req });
 });
 
 app.get('/admin/products', requireAuth, (req, res) => {
@@ -231,6 +232,26 @@ app.get('/test-email', async (req, res) => {
     res.send('Test email sent to ' + NOTIFY_EMAIL);
   } catch (e) {
     res.send('Failed: ' + e.message);
+  }
+});
+
+app.get('/admin/export', requireAuth, (req, res) => {
+  res.download(db.getDataFile(), 'cool-cruze-backup.json');
+});
+
+const multerImport = multer({ dest: path.join(__dirname, 'data', 'import') });
+app.post('/admin/import', requireAuth, multerImport.single('backup'), (req, res) => {
+  if (!req.file) return res.redirect('/admin?import=no-file');
+  const dest = db.getDataFile();
+  const src = req.file.path;
+  try {
+    const data = JSON.parse(fs.readFileSync(src, 'utf-8'));
+    fs.writeFileSync(dest, JSON.stringify(data, null, 2));
+    try { fs.unlinkSync(src); } catch(e) {}
+    res.redirect('/admin?import=ok');
+  } catch (e) {
+    try { fs.unlinkSync(src); } catch(e) {}
+    res.redirect('/admin?import=error');
   }
 });
 

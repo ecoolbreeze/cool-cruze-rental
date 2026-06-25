@@ -3,13 +3,20 @@ const path = require('path');
 
 const dataDir = path.join(__dirname, 'data');
 const dataFile = path.join(dataDir, 'db.json');
+const seedFile = path.join(dataDir, 'seed.json');
 
 function init() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
   if (!fs.existsSync(dataFile)) {
-    fs.writeFileSync(dataFile, JSON.stringify({ products: [], leads: [] }, null, 2));
+    if (fs.existsSync(seedFile)) {
+      fs.copyFileSync(seedFile, dataFile);
+    } else {
+      fs.writeFileSync(dataFile, JSON.stringify({ products: [], leads: [] }, null, 2));
+    }
   }
 }
+
+function getDataFile() { return dataFile; }
 
 function read() {
   init();
@@ -132,5 +139,6 @@ module.exports = {
   deleteLead,
   getLeadCount,
   getProductCount,
-  getTodayLeadCount
+  getTodayLeadCount,
+  getDataFile
 };
