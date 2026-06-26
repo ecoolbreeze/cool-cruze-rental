@@ -720,7 +720,7 @@ function toggleFaq(btn) {
 
   function resetAuto() {
     clearInterval(autoScroll);
-    autoScroll = setInterval(() => goTo((current + 1) % cards.length), 4000);
+    autoScroll = setInterval(() => goTo((current + 1) % cards.length), 2000);
   }
 
   track.addEventListener('scroll', () => {
