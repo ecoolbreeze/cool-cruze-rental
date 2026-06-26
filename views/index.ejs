@@ -366,18 +366,18 @@
 @media (max-width: 767px) {
   .carousel-wrap {
     overflow: hidden;
+    padding: 0 40px;
   }
   .carousel-track {
     display: flex;
     animation: none;
-    gap: 16px;
+    gap: 0;
     width: auto;
     transition: transform 0.5s ease;
   }
   .carousel-track::-webkit-scrollbar { display: none; }
   .carousel-card {
-    width: 290px;
-    flex-shrink: 0;
+    min-width: 100%;
   }
   .carousel-btn {
     display: flex;
@@ -714,9 +714,7 @@ function toggleFaq(btn) {
   function goTo(idx) {
     current = ((idx % slideCount) + slideCount) % slideCount;
     var wrapW = track.parentElement.clientWidth;
-    var cardW = cards[0].offsetWidth;
-    var offset = Math.max(0, (wrapW - cardW) / 2);
-    track.style.transform = 'translateX(' + (offset - current * (cardW + 16)) + 'px)';
+    track.style.transform = 'translateX(-' + (current * wrapW) + 'px)';
     if (dotsContainer) {
       dotsContainer.querySelectorAll('span').forEach(function(d, i) {
         d.className = i === current ? 'active' : '';
