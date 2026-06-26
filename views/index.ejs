@@ -516,8 +516,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 900px;
-  margin: 0 auto;
 }
 .fc-viewport {
   overflow: hidden;
@@ -579,6 +577,7 @@
   .fc-card { min-width: calc(33.33% - 14px); }
 }
 @media (max-width: 767px) {
+  .fc-wrap { max-width: 900px; margin: 0 auto; }
   .fc-btn { width: 32px; height: 32px; font-size: 20px; }
   .fc-card { min-width: 100%; }
   .fc-actions .btn-rent { padding: 8px 12px; font-size: 12px; }
