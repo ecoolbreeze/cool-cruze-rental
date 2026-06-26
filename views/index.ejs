@@ -17,42 +17,7 @@
     </div>
   </div>
 </section>
-<% if (featured && featured.length > 0) { %>
-<section class="section">
-  <div class="section-title">
-    <h2>Featured Products</h2>
-    <div class="accent-line"></div>
-    <p>Our most popular AC units available for rent</p>
-  </div>
-  <div class="fc-wrap">
-    <button class="fc-btn fc-prev" id="fcPrev">‹</button>
-    <div class="fc-viewport">
-      <div class="fc-track" id="fcTrack">
-        <% featured.forEach(product => { %>
-        <div class="fc-card">
-          <div class="fc-img" style="background-image:url(<%= product.card_image || (product.images && product.images.length ? product.images[0] : '') %>)"></div>
-          <div class="fc-body">
-            <div class="fc-brand"><%= product.brand %></div>
-            <div class="fc-name"><%= product.name %></div>
-            <div class="fc-specs">
-              <span><%= product.capacity %></span>
-              <span><%= product.type %></span>
-            </div>
-            <div class="fc-price">₹<%= Number(product.monthly_price).toLocaleString() %> <span>/day</span></div>
-            <div class="fc-actions">
-              <button onclick="openRentModal(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent">Rent Now</button>
-              <a href="/product/<%= product.id %>" class="btn-details">Details</a>
-            </div>
-          </div>
-        </div>
-        <% }) %>
-      </div>
-    </div>
-    <button class="fc-btn fc-next" id="fcNext">›</button>
-    <div class="fc-dots" id="fcDots"></div>
-  </div>
-</section>
-<% } %>
+
 
 <section class="section">
   <div class="section-title">
@@ -511,90 +476,6 @@
 }
 
 /* Featured Carousel - manual scroll */
-.fc-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.fc-viewport {
-  overflow: hidden;
-  flex: 1;
-}
-.fc-track {
-  display: flex;
-  gap: 24px;
-  transition: transform 0.4s ease;
-}
-.fc-card {
-  width: 100px;
-  height: 320px;
-  flex-shrink: 0;
-  background: var(--white);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.fc-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-.fc-img {
-  width: 100%;
-  height: 175px;
-  flex-shrink: 0;
-  background-size: cover;
-  background-position: center;
-  background-color: #e2e8f0;
-}
-.fc-body {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
-}
-.fc-brand { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
-.fc-name { font-size: 15px; font-weight: 700; }
-.fc-specs { display: flex; gap: 8px; }
-.fc-specs span { font-size: 12px; color: var(--text-light); background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
-.fc-price { font-size: 20px; font-weight: 700; color: var(--primary); }
-.fc-price span { font-size: 13px; font-weight: 400; color: var(--text-light); }
-.fc-actions { display: flex; gap: 8px; margin-top: auto; }
-.fc-actions .btn-rent { padding: 8px 16px; font-size: 13px; }
-.fc-actions .btn-details { padding: 8px 14px; font-size: 12px; }
-.fc-btn {
-  width: 40px; height: 40px; border-radius: 50%; border: none;
-  background: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  font-size: 24px; cursor: pointer; color: var(--primary);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: background 0.2s;
-}
-.fc-btn:hover { background: var(--primary); color: var(--white); }
-.fc-dots { display: none; }
-
-@media (max-width: 767px) {
-  .fc-btn { width: 32px; height: 32px; font-size: 20px; }
-  .fc-card { width: 100%; min-width: 0; }
-  .fc-actions .btn-rent { padding: 8px 12px; font-size: 12px; }
-  .fc-actions .btn-details { padding: 8px 12px; font-size: 12px; }
-  .fc-body { padding: 12px 14px; }
-  .fc-name { font-size: 14px; }
-  .fc-price { font-size: 18px; }
-  .fc-img { height: 200px; }
-  .fc-dots {
-    display: flex; justify-content: center; gap: 8px; margin-top: 12px;
-    position: absolute; bottom: -24px; left: 0; right: 0;
-  }
-  .fc-dots span {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #cbd5e1; cursor: pointer; transition: background 0.3s;
-  }
-  .fc-dots span.active { background: var(--primary); }
-}
 </style>
 
 <script>
@@ -626,65 +507,7 @@ function toggleFaq(btn) {
   }, 3000);
 })();
 
-// Featured carousel - manual scroll
-(function() {
-  var track = document.getElementById('fcTrack');
-  var prev = document.getElementById('fcPrev');
-  var next = document.getElementById('fcNext');
-  var dots = document.getElementById('fcDots');
-  if (!track) return;
-  var cards = track.querySelectorAll('.fc-card');
-  if (!cards.length) return;
-  var current = 0;
 
-  function getCardWidth() {
-    return cards[0].getBoundingClientRect().width + 24;
-  }
-
-  function goTo(idx) {
-    var total = cards.length;
-    var viewW = track.parentElement.clientWidth;
-    var visible = Math.max(1, Math.floor(viewW / getCardWidth()));
-    var max = Math.max(0, total - visible);
-    current = Math.max(0, Math.min(idx, max));
-    track.style.transform = 'translateX(-' + (current * getCardWidth()) + 'px)';
-    if (dots) {
-      var spans = dots.querySelectorAll('span');
-      for (var i = 0; i < spans.length; i++) {
-        spans[i].className = i === current ? 'active' : '';
-      }
-    }
-  }
-
-  function onResize() {
-    var vw = window.innerWidth;
-    if (vw >= 768) {
-      if (dots) dots.style.display = 'none';
-    } else {
-      if (dots) dots.style.display = 'flex';
-    }
-    goTo(current);
-  }
-
-  prev.addEventListener('click', function() { goTo(current - 1); });
-  next.addEventListener('click', function() { goTo(current + 1); });
-
-  if (dots) {
-    for (var i = 0; i < cards.length; i++) {
-      var d = document.createElement('span');
-      if (i === 0) d.className = 'active';
-      d.onclick = (function(idx) { return function() { goTo(idx); }; })(i);
-      dots.appendChild(d);
-    }
-  }
-
-  var resizeTimer;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(onResize, 150);
-  });
-  onResize();
-})();
 
 </script>
 
