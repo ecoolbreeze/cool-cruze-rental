@@ -1136,3 +1136,86 @@ ul { list-style: none; }
 .mt-20 { margin-top: 20px; }
 .mb-20 { margin-bottom: 20px; }
 .flex-center { display: flex; align-items: center; justify-content: center; }
+
+/* ========== COMPREHENSIVE MOBILE ========== */
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar { padding: 0 16px; }
+  .navbar-inner { height: 60px; }
+  .logo { font-size: 20px; gap: 8px; }
+  .logo-icon { width: 34px; height: 34px; font-size: 16px; }
+  .mobile-toggle { font-size: 24px; padding-left: 8px; }
+  .nav-links { top: 60px; }
+
+  /* Hero */
+  .hero-content { padding: 24px 16px; }
+  .hero h1 { font-size: 26px; }
+  .hero p { font-size: 14px; margin-bottom: 20px; }
+  .hero-buttons { gap: 10px; }
+  .btn { padding: 12px 24px; font-size: 14px; }
+
+  /* Sections - reduce whitespace */
+  .section { padding: 40px 16px; }
+  .section-title { margin-bottom: 28px; }
+  .section-title h2 { font-size: 24px; }
+  .section-title p { font-size: 15px; }
+
+  /* Benefits grid - full width cards on mobile */
+  .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
+  .benefit-card { padding: 24px 16px; }
+  .benefit-card h3 { font-size: 17px; }
+
+  /* Product details page */
+  .detail-layout { flex-direction: column; }
+  .detail-gallery,
+  .detail-info { width: 100%; }
+
+  /* Footer */
+  .footer { padding: 32px 16px 20px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+
+  /* About */
+  .about-hero { padding: 48px 16px; }
+  .about-content { padding: 32px 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 20px; }
+  .stat-number { font-size: 28px; }
+
+  /* Filters */
+  .filters select,
+  .filters input { width: 100%; min-width: 0; }
+
+  /* Form pages */
+  .form-card { padding: 24px; }
+  .form-card h1 { font-size: 22px; }
+
+  /* Product cards */
+  .product-img { height: 180px; }
+}
+
+@media (max-width: 480px) {
+  /* Hero */
+  .hero-content { padding: 16px 12px; }
+  .hero h1 { font-size: 22px; margin-bottom: 8px; }
+  .hero p { font-size: 13px; margin-bottom: 16px; }
+  .hero-buttons { flex-direction: column; align-items: center; }
+  .btn { width: 100%; max-width: 280px; justify-content: center; padding: 12px 20px; font-size: 14px; }
+
+  /* Sections */
+  .section { padding: 28px 12px; }
+  .section-title { margin-bottom: 20px; }
+  .section-title h2 { font-size: 20px; }
+  .section-title p { font-size: 14px; }
+
+  /* Product cards */
+  .product-img { height: 160px; }
+  .product-name { font-size: 16px; }
+  .product-price { font-size: 20px; }
+
+  /* Detail page */
+  .detail-container { padding: 16px 12px; }
+
+  /* Footer */
+  .footer { padding: 24px 12px 16px; }
+  .footer h3 { font-size: 16px; }
+}
