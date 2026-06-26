@@ -377,7 +377,8 @@
   }
   .carousel-track::-webkit-scrollbar { display: none; }
   .carousel-card {
-    min-width: 100%;
+    width: 100%;
+    min-width: 0;
   }
   .carousel-btn {
     display: flex;
@@ -741,6 +742,9 @@ function toggleFaq(btn) {
       dotsContainer.appendChild(dot);
     }
   }
+
+  // Position first card
+  goTo(0);
 
   // Handle resize
   window.addEventListener('resize', function() {
