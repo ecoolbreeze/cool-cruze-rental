@@ -51,6 +51,9 @@
         <% }) %>
       <% } %>
     </div>
+    <button class="carousel-btn carousel-prev" onclick="moveSlide(-1)">‹</button>
+    <button class="carousel-btn carousel-next" onclick="moveSlide(1)">›</button>
+    <div class="carousel-dots" id="carouselDots"></div>
   </div>
 </section>
 <% } %>
@@ -356,6 +359,65 @@
   font-size: 12px;
 }
 
+/* Mobile carousel: one card at a time */
+.carousel-btn { display: none; }
+.carousel-dots { display: none; }
+
+@media (max-width: 767px) {
+  .carousel-track {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    animation: none;
+    gap: 0;
+    width: 100%;
+    scroll-behavior: smooth;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-card {
+    width: 85%;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    margin: 0 auto;
+  }
+  .carousel-btn {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    color: var(--primary);
+    font-weight: bold;
+  }
+  .carousel-prev { left: 4px; }
+  .carousel-next { right: 4px; }
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .carousel-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .carousel-dots span.active { background: var(--primary); }
+}
+
 /* How It Works - single row square cards */
 .steps-row {
   display: flex;
@@ -626,6 +688,48 @@ function toggleFaq(btn) {
       content.style.display = '';
     }
   }, 3000);
+})();
+
+// Mobile carousel one-at-a-time
+(function() {
+  const track = document.getElementById('featuredCarousel');
+  if (!track || window.innerWidth >= 768) return;
+  const cards = track.querySelectorAll('.carousel-card');
+  if (cards.length < 2) return;
+  const dotsContainer = document.getElementById('carouselDots');
+  let current = 0;
+  let autoScroll;
+
+  cards.forEach((_, i) => {
+    const dot = document.createElement('span');
+    if (i === 0) dot.className = 'active';
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  });
+
+  function goTo(i) {
+    current = Math.max(0, Math.min(i, cards.length - 1));
+    cards[current].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    dotsContainer.querySelectorAll('span').forEach((d, idx) => d.className = idx === current ? 'active' : '');
+  }
+
+  function moveSlide(dir) {
+    goTo(current + dir);
+    resetAuto();
+  }
+
+  function resetAuto() {
+    clearInterval(autoScroll);
+    autoScroll = setInterval(() => goTo((current + 1) % cards.length), 4000);
+  }
+
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.clientWidth);
+    if (idx !== current) { current = idx; resetAuto(); }
+  });
+
+  resetAuto();
+  window.moveSlide = moveSlide;
 })();
 </script>
 
