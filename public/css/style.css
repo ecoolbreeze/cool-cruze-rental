@@ -826,6 +826,100 @@ ul { list-style: none; }
 .admin-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 24px;
+}
+
+.tier-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tier-row input {
+  width: 100px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.tier-row .tier-price {
+  width: 120px;
+}
+
+/* Admin sidebar toggle */
+.admin-toggle {
+  display: none;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .admin-layout { position: relative; }
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    width: 240px;
+  }
+  .admin-sidebar.open { left: 0; }
+  .admin-sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .admin-sidebar-overlay.show { display: block; }
+  .admin-toggle { display: inline-block; }
+  .admin-main {
+    padding: 16px;
+  }
+  .admin-main h1 { font-size: 22px; }
+  .admin-form { padding: 16px; }
+  .admin-form .form-row { grid-template-columns: 1fr; }
+  .admin-table th,
+  .admin-table td { padding: 8px 10px; font-size: 13px; white-space: nowrap; }
+  .tier-row input { width: 80px; }
+  .tier-row .tier-price { width: 100px; }
+  .edit-modal-inner {
+    padding: 20px !important;
+    max-width: 95% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main { padding: 12px; }
+  .admin-main h1 { font-size: 18px; margin-bottom: 16px; }
+  .admin-card { padding: 16px; }
+  .admin-card .number { font-size: 24px; }
+  .admin-form { padding: 12px; }
+  .admin-form .form-row { gap: 10px; }
+  .admin-table th,
+  .admin-table td { padding: 6px 8px; font-size: 12px; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .tier-row input { width: 70px; font-size: 13px; padding: 6px 8px; }
+  .tier-row .tier-price { width: 80px; }
+  .admin-sidebar { width: 200px; left: -220px; }
+  .admin-sidebar .logo { font-size: 16px; }
+  .admin-sidebar a { font-size: 13px; padding: 10px 16px; }
 }
 
 .btn-sm {

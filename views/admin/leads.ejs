@@ -7,7 +7,8 @@ body { display: block; }
 </style>
 
 <div class="admin-layout">
-  <div class="admin-sidebar">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="admin-sidebar" id="adminSidebar">
     <div class="logo">❄️ Cool Cruze</div>
     <a href="/admin">📊 Dashboard</a>
     <a href="/admin/products">📦 Products</a>
@@ -17,9 +18,10 @@ body { display: block; }
   </div>
 
   <div class="admin-main">
+    <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
     <h1>Leads Management</h1>
 
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr>
           <th>#</th>
@@ -71,6 +73,12 @@ body { display: block; }
           <% }) %>
         <% } %>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
+<script>
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+</script>

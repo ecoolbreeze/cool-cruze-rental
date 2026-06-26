@@ -7,7 +7,8 @@ body { display: block; }
 </style>
 
 <div class="admin-layout">
-  <div class="admin-sidebar">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="admin-sidebar" id="adminSidebar">
     <div class="logo">❄️ Cool Cruze</div>
     <a href="/admin">📊 Dashboard</a>
     <a href="/admin/products" class="active">📦 Products</a>
@@ -17,6 +18,7 @@ body { display: block; }
   </div>
 
   <div class="admin-main">
+    <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
     <h1>Manage Products</h1>
 
     <button onclick="toggleForm()" class="btn btn-primary" style="margin-bottom:24px;background:var(--primary);color:white;padding:12px 24px;border:none;border-radius:50px;font-weight:700;cursor:pointer;">+ Add New Product</button>
@@ -89,11 +91,11 @@ body { display: block; }
           <h3 style="font-size:16px;margin:16px 0 4px;font-weight:700;">Rental Pricing Tiers</h3>
           <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Per-day pricing for different day ranges. The slider on the product page will use these tiers.</p>
           <div id="tierRows">
-            <div class="tier-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-              <input type="number" name="tier_min[]" placeholder="Min days" value="1" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            <div class="tier-row">
+              <input type="number" name="tier_min[]" placeholder="Min days" value="1">
               <span style="color:var(--text-light);">to</span>
-              <input type="number" name="tier_max[]" placeholder="Max days" value="7" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
-              <input type="number" name="tier_price[]" placeholder="₹/day" step="1" style="width:120px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+              <input type="number" name="tier_max[]" placeholder="Max days" value="7">
+              <input type="number" name="tier_price[]" placeholder="₹/day" step="1" class="tier-price">
               <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;font-size:20px;color:#ef4444;cursor:pointer;padding:4px;">×</button>
             </div>
           </div>
@@ -124,7 +126,7 @@ body { display: block; }
       </form>
     </div>
 
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr>
           <th>Image</th>
@@ -173,12 +175,12 @@ body { display: block; }
           <% }) %>
         <% } %>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
 <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeEdit()">
-  <div style="background:white;border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
+  <div class="edit-modal-inner" style="background:white;border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
     <h2 style="font-size:20px;margin-bottom:20px;">Edit Product</h2>
     <form method="POST" id="editForm" enctype="multipart/form-data">
       <div class="form-row">
@@ -315,7 +317,6 @@ function addTierRow(containerId, minVal, maxVal, priceVal) {
   const container = document.getElementById(containerId || 'tierRows');
   const div = document.createElement('div');
   div.className = 'tier-row';
-  div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
   div.innerHTML =
     '<input type="number" name="tier_min[]" placeholder="Min days" value="' + (minVal || '') + '" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">' +
     '<span style="color:var(--text-light);">to</span>' +
@@ -376,5 +377,10 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
 
 function closeEdit() {
   document.getElementById('editModal').style.display = 'none';
+}
+
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
 }
 </script>
