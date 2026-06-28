@@ -2,7 +2,7 @@
 
 <section class="section">
   <div class="section-title">
-    <h2>Our AC Collection</h2>
+    <h1>Our AC Collection</h1>
     <div class="accent-line"></div>
     <p>Premium air conditioners for rent — choose your perfect match</p>
   </div>
@@ -36,7 +36,7 @@
     <% products.forEach(product => { %>
     <div class="product-card" data-name="<%= product.name.toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
       <% const img = product.card_image || (product.images && product.images.length ? product.images[0] : product.image); %>
-      <div class="product-img" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+      <div class="product-img" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC for rent" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
         <% if (!img) { %>❄️<% } %>
       </div>
       <div class="product-body">
@@ -58,6 +58,24 @@
   </div>
 </section>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    <% products.forEach(function(p, i) { %>
+    {
+      "@type": "ListItem",
+      "position": <%= i + 1 %>,
+      "url": "https://coolcruze.in/product/<%= p.id %>",
+      "name": "<%= p.name.replace(/"/g, '\\"') %>"
+    }<%= i < products.length - 1 ? ',' : '' %>
+    <% }) %>
+  ],
+  "name": "Our AC Collection",
+  "description": "Premium air conditioners for rent from Cool Cruze"
+}
+</script>
 <script>
 function filterProducts() {
   const search = document.getElementById('search').value.toLowerCase();

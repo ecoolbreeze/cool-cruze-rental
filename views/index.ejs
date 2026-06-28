@@ -2,10 +2,10 @@
 
 <section class="hero">
   <div class="hero-slideshow">
-    <img class="hero-slide active" src="/uploads/hero.png" alt="Hero">
-    <img class="hero-slide" src="/uploads/hero-1.png" alt="Hero 1">
-    <img class="hero-slide" src="/uploads/hero-2.png" alt="Hero 2">
-    <img class="hero-slide full-bleed" src="/uploads/hero-3.png" alt="Hero 3">
+    <img class="hero-slide active" src="/uploads/hero.png" alt="Cool Cruze - Premium AC rental services banner">
+    <img class="hero-slide" src="/uploads/hero-1.png" alt="Tower AC units available for rent from Cool Cruze">
+    <img class="hero-slide" src="/uploads/hero-2.png" alt="Portable and split AC rental options from Cool Cruze">
+    <img class="hero-slide full-bleed" src="/uploads/hero-3.png" alt="Cool Cruze AC installation and maintenance service">
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
@@ -507,8 +507,56 @@ function toggleFaq(btn) {
   }, 3000);
 })();
 
+</script>
 
-
+<!-- FAQPage Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What AC brands do you offer for rent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer top brands including LG, Samsung, Voltas, Daikin, Blue Star, Hitachi, and more. All our ACs are well-maintained, regularly serviced, and fully functional before delivery."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the minimum rental period?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The minimum rental period is 3 months. However, we also offer flexible monthly, quarterly, and yearly plans. Longer rental commitments come with discounted rates."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is installation and maintenance included?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Free installation, regular maintenance, and servicing are included in your rental price. If your AC requires any repairs, our technician will visit free of cost."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I upgrade or swap my AC during the rental?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. If you need a higher capacity AC or want to upgrade to a different model, you can swap your unit anytime. A nominal relocation fee may apply."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the AC stops working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We provide 24/7 customer support. If your AC develops any issue, simply contact us and we'll send a technician within 24 hours. If the issue cannot be resolved, we will replace the unit at no extra cost."
+      }
+    }
+  ]
+}
 </script>
 
 <%- include('partials/footer') %>

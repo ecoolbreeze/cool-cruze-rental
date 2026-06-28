@@ -51,31 +51,63 @@ function asyncRoute(fn) {
   return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 }
 
+// www redirect
+app.use((req, res, next) => {
+  if (req.headers.host && req.headers.host.startsWith('www.')) {
+    return res.redirect(301, 'https://' + req.headers.host.replace('www.', '') + req.url);
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.whatsappNumber = WHATSAPP_NUMBER;
+  res.locals.robotsMeta = req.path.startsWith('/admin') ? 'noindex, nofollow' : 'index, follow';
+  const desc = 'Cool Cruze offers premium tower, portable, ductable & cassette AC rentals at affordable prices. Zero deposit, free installation & maintenance. Rent ACs from LG, Voltas, Daikin & more.';
+  res.locals.metaDescription = desc;
+  res.locals.ogImage = '/uploads/hero.png';
   next();
 });
+
+const BASE_URL = 'https://coolcruze.in';
 
 app.get('/', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   const featured = [...products].reverse().slice(0, 4);
-  res.render('index', { title: 'Home', featured, products });
+  res.render('index', {
+    title: 'Home',
+    metaDescription: 'Premium AC rentals at affordable prices. Zero deposit, free installation & maintenance. Rent tower, portable & split ACs from top brands. AC on rent in Mumbai.',
+    ogDescription: 'Rent premium ACs from Cool Cruze. Zero deposit, free installation, and maintenance included.',
+    featured, products
+  });
 }));
 
 app.get('/products', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
-  res.render('products', { title: 'Products', products });
+  res.render('products', {
+    title: 'Products',
+    metaDescription: 'Browse our collection of tower, portable, ductable & cassette ACs for rent. LG, Samsung, Voltas, Daikin — affordable daily rental plans with zero deposit.',
+    products
+  });
 }));
 
 app.get('/about', (req, res) => {
-  res.render('about', { title: 'About Us' });
+  res.render('about', {
+    title: 'About Us',
+    metaDescription: 'Learn about Cool Cruze — your trusted partner for premium AC rentals. Affordable, reliable, and hassle-free air conditioning solutions.',
+  });
 });
 
 app.get('/product/:id', asyncRoute(async (req, res) => {
   const product = await db.getProduct(req.params.id);
   if (!product) return res.redirect('/products');
-  res.render('product-detail', { title: product.name, product });
+  res.render('product-detail', {
+    title: product.name + ' - ' + product.brand + ' ' + product.capacity + ' AC Rental',
+    metaDescription: (product.description || '').substring(0, 160) || 'Rent ' + product.name + ' ' + product.brand + ' ' + product.capacity + ' AC from Cool Cruze. Affordable daily rental, zero deposit, free installation.',
+    ogDescription: 'Rent ' + product.name + ' by ' + product.brand + '. ₹' + Number(product.monthly_price).toLocaleString() + '/day. Zero deposit, free delivery & maintenance.',
+    ogImage: product.card_image || (product.images && product.images.length ? product.images[0] : '/uploads/hero.png'),
+    product
+  });
 }));
 
 app.get('/rent/:id', (req, res) => {
@@ -277,6 +309,67 @@ app.post('/admin/import', requireAuth, multerImport.single('backup'), asyncRoute
     res.redirect('/admin?import=error');
   }
 }));
+
+app.get('/contact', (req, res) => {
+  res.render('contact', {
+    title: 'Contact Us',
+    metaDescription: 'Get in touch with Cool Cruze. Call, WhatsApp, or email us for AC rental inquiries. We respond within minutes.',
+  });
+});
+
+app.post('/contact', asyncRoute(async (req, res) => {
+  const { name, phone, email, message } = req.body;
+  if (!name || !phone || !message) {
+    return res.status(400).json({ error: 'Please fill all required fields' });
+  }
+  if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
+    sgMail.send({
+      from: SENDER_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: `Contact Form - ${name}`,
+      html: `<div><h2>Contact Form Submission</h2><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Message: ${message}</p></div>`
+    }).catch(e => console.log('Email failed:', e.message));
+  }
+  res.json({ success: true });
+}));
+
+app.get('/sitemap.xml', asyncRoute(async (req, res) => {
+  const products = await db.getAllProducts();
+  const today = new Date().toISOString().split('T')[0];
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  const pages = [
+    { loc: '/', priority: '1.0' },
+    { loc: '/products', priority: '0.9' },
+    { loc: '/about', priority: '0.7' },
+    { loc: '/contact', priority: '0.6' }
+  ];
+  pages.forEach(p => {
+    xml += `  <url>\n    <loc>${BASE_URL}${p.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
+  });
+  products.forEach(p => {
+    xml += `  <url>\n    <loc>${BASE_URL}/product/${p.id}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+  });
+  xml += '</urlset>';
+  res.set('Content-Type', 'application/xml');
+  res.send(xml);
+}));
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.send('User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /test-email\nDisallow: /offline\n\nSitemap: https://coolcruze.in/sitemap.xml');
+});
+
+app.get('/privacy-policy', (req, res) => {
+  res.render('privacy-policy', { title: 'Privacy Policy' });
+});
+
+app.get('/terms-of-service', (req, res) => {
+  res.render('terms-of-service', { title: 'Terms of Service' });
+});
+
+app.use((req, res) => {
+  res.status(404).render('404', { title: 'Page Not Found' });
+});
 
 app.use((err, req, res, next) => {
   console.error('ERROR:', err.message, err.stack);

@@ -7,7 +7,7 @@
     <div class="detail-layout">
       <div class="detail-gallery">
         <% const imgs = product.detail_images && product.detail_images.length ? product.detail_images : (product.card_image ? [product.card_image] : (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))); %>
-        <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+')' : '' %>">
+        <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+')' : '' %>" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC">
           <% if (!imgs.length) { %>
             <div class="detail-img-placeholder">❄️</div>
           <% } %>
@@ -15,7 +15,7 @@
         <% if (imgs.length > 1) { %>
         <div class="detail-thumbs">
           <% imgs.forEach(function(src, idx) { %>
-          <div class="detail-thumb <%= idx === 0 ? 'active' : '' %>" style="background-image:url(<%= src %>)" onclick="switchImage(this, '<%= src %>')"></div>
+          <div class="detail-thumb <%= idx === 0 ? 'active' : '' %>" style="background-image:url(<%= src %>)" onclick="switchImage(this, '<%= src %>')" role="img" aria-label="<%= product.name %> image <%= idx+1 %>"></div>
           <% }) %>
         </div>
         <% } %>
@@ -465,4 +465,30 @@ function switchImage(el, src) {
   slider.addEventListener('input', updateCalc);
 })();
 </script>
+
+<!-- Product Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "<%= (product.name || '').replace(/"/g, '\\"') %>",
+  "brand": { "@type": "Brand", "name": "<%= (product.brand || '').replace(/"/g, '\\"') %>" },
+  "description": "<%= ((product.description || '').replace(/"/g, '\\"')).substring(0, 200) %>",
+  "image": "https://coolcruze.in<%= product.card_image || (product.images && product.images.length ? product.images[0] : '') %>",
+  "sku": "AC-<%= product.id %>",
+  "offers": {
+    "@type": "Offer",
+    "url": "https://coolcruze.in/product/<%= product.id %>",
+    "priceCurrency": "INR",
+    "price": "<%= product.monthly_price %>",
+    "availability": "<%= product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' %>",
+    "priceValidUntil": "<%= new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0] %>"
+  },
+  "additionalProperty": [
+    { "@type": "PropertyValue", "name": "Capacity", "value": "<%= (product.capacity || '').replace(/"/g, '\\"') %>" },
+    { "@type": "PropertyValue", "name": "Type", "value": "<%= (product.type || '').replace(/"/g, '\\"') %> AC" }
+  ]
+}
+</script>
+
 <%- include('partials/footer') %>

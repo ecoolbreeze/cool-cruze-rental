@@ -1,9 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cool Cruze - <%= title %> | Tower AC Rental</title>
+  <title>Cool Cruze - <%= title %> | AC Rental</title>
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Cool Cruze offers premium tower, portable, ductable &amp; cassette AC rentals at affordable prices. Zero deposit, free installation &amp; maintenance. Rent ACs from LG, Voltas, Daikin &amp; more.' %>">
+  <meta name="robots" content="<%= robotsMeta %>">
+  <meta name="keywords" content="AC rental, tower AC on rent, portable AC rental, ductable AC, cassette AC, AC on rent Mumbai, Cool Cruze, air conditioner rental">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Cool Cruze - ' + title + ' | AC Rental' %>">
+  <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : (typeof metaDescription !== 'undefined' ? metaDescription : '') %>">
+  <meta property="og:url" content="https://coolcruze.in<%= currentPath %>">
+  <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+  <meta property="og:image" content="https://coolcruze.in<%= ogImage %>">
+  <meta property="og:site_name" content="Cool Cruze">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Cool Cruze - ' + title + ' | AC Rental' %>">
+  <meta name="twitter:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : (typeof metaDescription !== 'undefined' ? metaDescription : '') %>">
+  <meta name="twitter:image" content="https://coolcruze.in<%= ogImage %>">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://coolcruze.in<%= currentPath %>">
+
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1a56db">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,7 +33,26 @@
   <meta name="apple-mobile-web-app-title" content="Cool Cruze">
   <link rel="apple-touch-icon" href="/icons/icon.svg">
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Cool Cruze",
+    "url": "https://coolcruze.in",
+    "logo": "https://coolcruze.in/icons/icon.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+<%= whatsappNumber %>",
+      "contactType": "customer service",
+      "availableLanguage": ["en", "hi"]
+    },
+    "sameAs": ["https://wa.me/<%= whatsappNumber %>"],
+    "description": "Premium tower & split AC rentals at affordable prices. Zero deposit, free installation and maintenance."
+  }
+  </script>
 </head>
 <body>
 
@@ -26,6 +67,7 @@
       <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Home</a>
       <a href="/products" class="<%= currentPath === '/products' ? 'active' : '' %>">Products</a>
       <a href="/about" class="<%= currentPath === '/about' ? 'active' : '' %>">About</a>
+      <a href="/contact" class="<%= currentPath === '/contact' ? 'active' : '' %>">Contact</a>
       <a href="/products" class="nav-cta">Rent Now</a>
     </div>
   </div>
