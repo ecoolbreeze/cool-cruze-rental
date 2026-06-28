@@ -63,7 +63,7 @@ app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.whatsappNumber = WHATSAPP_NUMBER;
   res.locals.robotsMeta = req.path.startsWith('/admin') ? 'noindex, nofollow' : 'index, follow';
-  const desc = 'Cool Cruze offers premium tower, portable, ductable & cassette AC rentals at affordable prices. Zero deposit, free installation & maintenance. Rent ACs from LG, Voltas, Daikin & more.';
+  const desc = 'Premium tower AC rental in Mumbai. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Free installation & 24/7 support for events, offices & industries.';
   res.locals.metaDescription = desc;
   res.locals.ogImage = '/uploads/hero.png';
   next();
@@ -76,8 +76,8 @@ app.get('/', asyncRoute(async (req, res) => {
   const featured = [...products].reverse().slice(0, 4);
   res.render('index', {
     title: 'Home',
-    metaDescription: 'Premium AC rentals at affordable prices. Zero deposit, free installation & maintenance. Rent tower, portable & split ACs from top brands. AC on rent in Mumbai.',
-    ogDescription: 'Rent premium ACs from Cool Cruze. Zero deposit, free installation, and maintenance included.',
+    metaDescription: 'Premium tower AC rental in Mumbai. Heavy-duty commercial ACs for events, offices & industries. Reliable HVAC support with fast installation & 24/7 service.',
+    ogDescription: 'Premium tower AC rental in Mumbai. Commercial cooling solutions for events, offices & industries.',
     featured, products
   });
 }));
