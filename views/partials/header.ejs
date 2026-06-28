@@ -8,6 +8,15 @@
   <meta name="robots" content="<%= robotsMeta %>">
   <meta name="keywords" content="AC rental, tower AC on rent, portable AC rental, ductable AC, cassette AC, AC on rent Mumbai, Cool Cruze, air conditioner rental">
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D3E2K228E6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D3E2K228E6');
+  </script>
+
   <!-- Open Graph -->
   <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Cool Cruze - ' + title + ' | AC Rental' %>">
   <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : (typeof metaDescription !== 'undefined' ? metaDescription : '') %>">
