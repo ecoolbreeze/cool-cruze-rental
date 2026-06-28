@@ -3,13 +3,13 @@ steps:
     args:
       - build
       - -t
-      - asia-south1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
+      - $_REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
       - .
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - asia-south1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
+      - $_REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
@@ -17,8 +17,8 @@ steps:
       - run
       - deploy
       - cool-cruze-rental
-      - --image=asia-south1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
-      - --region=asia-south1
+      - --image=$_REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/cool-cruze-rental
+      - --region=$_REGION
       - --platform=managed
       - --allow-unauthenticated
       - --add-cloudsql-instances=$_CLOUD_SQL_INSTANCE
@@ -34,6 +34,7 @@ steps:
       - --max-instances=5
 
 substitutions:
+  _REGION: asia-south1
   _CLOUD_SQL_INSTANCE: your-project:asia-south1:cool-cruze-db
   _DATABASE_URL: postgresql://coolcruze:password@localhost:5432/coolcruze?host=/cloudsql/your-project:asia-south1:cool-cruze-db
   _GCS_BUCKET_NAME: cool-cruze-uploads
