@@ -17,28 +17,63 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@coolcruze.in';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 const DATABASE_URL = process.env.DATABASE_URL;
+const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME || '';
 const isPG = !!DATABASE_URL;
+
+// Google Cloud Storage setup
+let storageBucket = null;
+if (GCS_BUCKET_NAME) {
+  const { Storage } = require('@google-cloud/storage');
+  const gcs = new Storage();
+  storageBucket = gcs.bucket(GCS_BUCKET_NAME);
+}
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(session({
+
+// Session store (PostgreSQL for Cloud Run multi-instance)
+const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'cool-cruze-secret',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
-}));
+};
+if (isPG) {
+  const pgSession = require('connect-pg-simple')(session);
+  sessionConfig.store = new pgSession({
+    conString: DATABASE_URL,
+    createTableIfMissing: true
+  });
+}
+app.use(session(sessionConfig));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Upload handling — memory storage, upload to GCS or local disk
+const upload = multer({ storage: multer.memoryStorage() });
+
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, 'public', 'uploads')),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'))
-});
-const upload = multer({ storage });
+
+async function saveUpload(file) {
+  if (!file) return '';
+  const filename = Date.now() + '-' + file.originalname.replace(/\s+/g, '_');
+  if (storageBucket) {
+    const blob = storageBucket.file(filename);
+    await blob.save(file.buffer, { contentType: file.mimetype, public: true });
+    return `https://storage.googleapis.com/${GCS_BUCKET_NAME}/${filename}`;
+  } else {
+    fs.writeFileSync(path.join(uploadsDir, filename), file.buffer);
+    return '/uploads/' + filename;
+  }
+}
+
+async function saveUploads(files) {
+  if (!files || !files.length) return [];
+  return Promise.all(files.map(f => saveUpload(f)));
+}
 
 if (SENDGRID_API_KEY) sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -208,10 +243,10 @@ const prodUpload = upload.fields([
 
 app.post('/admin/products', requireAuth, prodUpload, asyncRoute(async (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
-  const getFile = (field) => req.files && req.files[field] && req.files[field].length ? '/uploads/' + req.files[field][0].filename : '';
-  const getFiles = (field) => req.files && req.files[field] ? req.files[field].map(f => '/uploads/' + f.filename) : [];
-  const card_image = getFile('card_image');
-  const detail_images = getFiles('detail_images');
+  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
+  const detailFiles = req.files && req.files['detail_images'] || [];
+  const card_image = cardFile ? await saveUpload(cardFile) : '';
+  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
   const tiers = parseTiers(req.body);
   await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
@@ -221,10 +256,10 @@ app.post('/admin/products/edit/:id', requireAuth, prodUpload, asyncRoute(async (
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const existing = await db.getProduct(req.params.id);
   if (!existing) return res.redirect('/admin/products');
-  const getFile = (field) => req.files && req.files[field] && req.files[field].length ? '/uploads/' + req.files[field][0].filename : '';
-  const getFiles = (field) => req.files && req.files[field] ? req.files[field].map(f => '/uploads/' + f.filename) : [];
-  const card_image = getFile('card_image') || existing.card_image || '';
-  const detail_images = getFiles('detail_images').length ? getFiles('detail_images') : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
+  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
+  const detailFiles = req.files && req.files['detail_images'] || [];
+  const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
+  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
   const tiers = parseTiers(req.body);
   await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
