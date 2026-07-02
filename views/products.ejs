@@ -34,9 +34,9 @@
       </div>
     <% } %>
     <% products.forEach(product => { %>
-    <div class="product-card" data-name="<%= product.name.toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
+    <div class="product-card" data-name="<%= (product.name||'').toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
       <% const img = product.card_image || (product.images && product.images.length ? product.images[0] : product.image); %>
-      <div class="product-img" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC for rent" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+      <div class="product-img" role="img" aria-label="<%= product.name || 'AC' %> - <%= product.brand || '' %> <%= product.capacity || '' %> <%= product.type || '' %> for rent" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
         <% if (!img) { %>❄️<% } %>
       </div>
       <div class="product-body">
@@ -49,7 +49,7 @@
         <div class="product-price"><%= product.tiers && product.tiers.length ? 'From ' : '' %>₹<%= Number(product.monthly_price).toLocaleString() %> <span>/day</span></div>
         <div class="product-desc"><%= product.description ? product.description.substring(0, 100) + (product.description.length > 100 ? '...' : '') : 'Premium quality AC available for rent. Contact us for more details.' %></div>
         <div class="product-actions">
-          <button onclick="openRentModal(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent">Rent Now</button>
+          <button onclick="openRentModal(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent">Rent Now</button>
           <a href="/product/<%= product.id %>" class="btn-details">Details</a>
         </div>
       </div>
@@ -68,7 +68,7 @@
       "@type": "ListItem",
       "position": <%= i + 1 %>,
       "url": "https://coolcruze.in/product/<%= p.id %>",
-      "name": "<%= p.name.replace(/"/g, '\\"') %>"
+      "name": "<%= (p.name||'').replace(/"/g, '\\"') %>"
     }<%= i < products.length - 1 ? ',' : '' %>
     <% }) %>
   ],

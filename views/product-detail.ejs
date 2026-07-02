@@ -120,7 +120,7 @@
         </div>
 
         <div class="detail-actions">
-          <button onclick="openRentModal(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', '<%= product.brand.replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent detail-rent-btn">Rent Now</button>
+          <button onclick="openRentModal(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent detail-rent-btn">Rent Now</button>
           <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20Cool%20Cruze!%20I'm%20interested%20in%20<%= encodeURIComponent(product.name) %>" target="_blank" class="btn-wa">Chat on WhatsApp</a>
         </div>
       </div>

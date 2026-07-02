@@ -19,16 +19,41 @@
 </section>
 
 
-<section class="section">
-  <div class="section-title">
-    <h2>Our Standing AC Rental & Cooling Solutions</h2>
-    <div class="accent-line"></div>
-    <p>Heavy-duty tower ACs, portable units & commercial cooling for every need</p>
+<div class="carousel-section">
+  <div class="carousel-container">
+    <h2 class="carousel-heading">Our Products</h2>
+    <button class="carousel-arrow carousel-prev" onclick="prevSlide()" aria-label="Previous">‹</button>
+    <div class="carousel-viewport">
+      <div class="carousel-track" id="carouselTrack">
+        <% products.forEach(function(p) { %>
+        <div class="carousel-item">
+          <div class="carousel-card">
+            <% const img = p.card_image || (p.images && p.images.length ? p.images[0] : ''); %>
+            <div class="carousel-img" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+              <% if (!img) { %>❄<% } %>
+            </div>
+            <div class="carousel-body">
+              <div class="carousel-brand"><%= p.brand || 'Premium AC' %></div>
+              <div class="carousel-name"><%= p.name %></div>
+              <div class="carousel-tags">
+                <span><%= p.type %></span>
+                <span><%= p.capacity %></span>
+              </div>
+              <div class="carousel-price">₹<%= Number(p.monthly_price).toLocaleString() %> <span>/day</span></div>
+              <div class="carousel-actions">
+                <a href="/product/<%= p.id %>" class="carousel-rent-btn">Rent Now</a>
+                <a href="/product/<%= p.id %>" class="carousel-details-btn">Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <button class="carousel-arrow carousel-next" onclick="nextSlide()" aria-label="Next">›</button>
+    <div class="carousel-dots" id="carouselDots"></div>
   </div>
-  <div style="text-align:center;">
-    <a href="/products" class="btn" style="background:var(--primary);color:white;padding:14px 40px;border-radius:50px;font-weight:700;font-size:16px;text-decoration:none;">Browse All ACs for Rent</a>
-  </div>
-</section>
+</div>
 
 <section class="section">
   <div class="section-title">
@@ -486,7 +511,37 @@
   }
 }
 
-/* Featured Carousel - manual scroll */
+/* Featured Carousel */
+.carousel-section{background:linear-gradient(135deg,#f8fafc,#f1f5f9);padding:48px 24px;text-align:center}
+.carousel-heading{font-size:clamp(24px,3vw,34px);font-weight:800;margin-bottom:32px;color:var(--text)}
+.carousel-container{max-width:1200px;margin:0 auto;position:relative;padding:0 50px}
+.carousel-viewport{overflow:hidden;border-radius:var(--radius)}
+.carousel-track{display:flex;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)}
+.carousel-item{flex:0 0 33.333%;padding:8px;box-sizing:border-box}
+.carousel-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.3s,box-shadow 0.3s;text-align:left}
+.carousel-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.carousel-img{width:100%;height:200px;background:linear-gradient(135deg,#e2e8f0,#f1f5f9);display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--text-light)}
+.carousel-body{padding:18px}
+.carousel-brand{font-size:12px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.carousel-name{font-size:17px;font-weight:700;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carousel-tags{display:flex;gap:8px;margin-bottom:8px}
+.carousel-tags span{background:#f1f5f9;padding:3px 10px;border-radius:20px;font-size:12px;color:var(--text-light);font-weight:500}
+.carousel-price{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:4px}
+.carousel-price span{font-size:13px;font-weight:400;color:var(--text-light)}
+.carousel-actions{display:flex;gap:8px;margin-top:10px}
+.carousel-rent-btn{flex:1;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white!important;padding:10px;border-radius:50px;font-weight:700;font-size:14px;border:none;cursor:pointer;text-align:center;transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:block}
+.carousel-rent-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(26,86,219,0.4)}
+.carousel-details-btn{background:#f1f5f9;color:var(--text)!important;padding:10px 16px;border-radius:50px;font-weight:600;font-size:13px;border:none;cursor:pointer;transition:background 0.2s;text-decoration:none;display:inline-flex;align-items:center}
+.carousel-details-btn:hover{background:#e2e8f0}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:var(--white);border:2px solid #e2e8f0;color:var(--text);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:all 0.2s;line-height:1;padding:0 0 3px}
+.carousel-arrow:hover{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 4px 12px rgba(26,86,219,0.3)}
+.carousel-prev{left:0}
+.carousel-next{right:0}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:20px}
+.carousel-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;border:none;cursor:pointer;transition:all 0.3s;padding:0}
+.carousel-dot.active{background:var(--primary);width:24px;border-radius:5px}
+@media(max-width:900px){.carousel-item{flex:0 0 50%!important}.carousel-container{padding:0 40px}}
+@media(max-width:600px){.carousel-item{flex:0 0 100%!important}.carousel-container{padding:0 36px}.carousel-arrow{width:34px;height:34px;font-size:20px}}
 </style>
 
 <script>
@@ -496,6 +551,58 @@ function toggleFaq(btn) {
   document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
   if (!isOpen) item.classList.add('open');
 }
+
+// Featured carousel
+(function(){
+  var track = document.getElementById('carouselTrack');
+  var dots = document.getElementById('carouselDots');
+  if(!track) return;
+  var items = track.querySelectorAll('.carousel-item');
+  var total = items.length;
+  var idx = 0;
+  var perPage = window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
+  var maxIdx = Math.max(0, total - perPage);
+
+  // Create dots
+  for(var i=0;i<=maxIdx;i++){
+    var dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i===0?' active':'');
+    dot.setAttribute('aria-label','Slide '+(i+1));
+    dot.onclick = (function(n){return function(){goTo(n);};})(i);
+    dots.appendChild(dot);
+  }
+
+  function goTo(n){
+    idx = Math.max(0, Math.min(n, maxIdx));
+    track.style.transform = 'translateX(-' + (idx * (100/perPage)) + '%)';
+    var allDots = dots.querySelectorAll('.carousel-dot');
+    allDots.forEach(function(d,i){d.classList.toggle('active',i===idx);});
+  }
+
+  window.prevSlide = function(){ goTo(idx-1); };
+  window.nextSlide = function(){ goTo(idx+1); };
+
+  // Auto-rotate
+  setInterval(function(){
+    goTo(idx+1 > maxIdx ? 0 : idx+1);
+  }, 4000);
+
+  // Recalculate on resize
+  window.addEventListener('resize', function(){
+    perPage = window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
+    maxIdx = Math.max(0, total - perPage);
+    // Rebuild dots
+    dots.innerHTML = '';
+    for(var i=0;i<=maxIdx;i++){
+      var dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i===idx?' active':'');
+      dot.setAttribute('aria-label','Slide '+(i+1));
+      dot.onclick = (function(n){return function(){goTo(n);};})(i);
+      dots.appendChild(dot);
+    }
+    goTo(Math.min(idx, maxIdx));
+  });
+})();
 
 // Hero slideshow
 (function() {

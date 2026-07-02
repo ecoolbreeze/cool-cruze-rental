@@ -285,8 +285,218 @@ app.post('/admin/leads/delete/:id', requireAuth, asyncRoute(async (req, res) => 
   res.redirect('/admin/leads');
 }));
 
+// === JSON API endpoints for React frontend ===
+
+function normalizeApiProduct(p) {
+  return {
+    ...p,
+    price_per_day: parseFloat(p.monthly_price) || parseFloat(p.price_per_day) || 0,
+    price_per_week: p.price_per_week || Math.round((parseFloat(p.monthly_price) || 0) * 0.9),
+    short_desc: p.short_desc || p.description?.substring(0, 100) || ''
+  };
+}
+
+app.get('/api/products', asyncRoute(async (req, res) => {
+  let products = await db.getAllProducts();
+  products = products.map(normalizeApiProduct);
+  res.json(products);
+}));
+
+app.get('/api/products/:id', asyncRoute(async (req, res) => {
+  const p = await db.getProduct(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Product not found' });
+  res.json(normalizeApiProduct(p));
+}));
+
+app.post('/api/rent/:id', asyncRoute(async (req, res) => {
+  const product = await db.getProduct(req.params.id);
+  if (!product) return res.status(404).json({ error: 'Product not found' });
+  const { name, phone, email, message, months, pricePerDay, totalPrice } = req.body;
+  if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+  await db.addLead({
+    product_id: product.id,
+    product_name: product.name,
+    customer_name: name,
+    phone,
+    address: email || '',
+    message: `Duration: ${months} days | ₹${totalPrice} | ${message || ''}`
+  });
+  if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
+    sgMail.send({
+      from: SENDER_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: `New Rental Lead - ${product.name}`,
+      html: `<div><h2>New Rental Inquiry</h2><p>Product: ${product.name}</p><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Duration: ${months} days</p><p>Total: ₹${totalPrice}</p><p>Message: ${message || 'N/A'}</p></div>`
+    }).catch(e => console.log('Email failed:', e.message));
+  }
+  res.json({ success: true, whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${name}.`)}` });
+}));
+
+app.get('/api/admin/check', (req, res) => {
+  if (req.session && req.session.isAdmin) return res.json({ authenticated: true });
+  res.status(401).json({ error: 'Not authenticated' });
+});
+
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    req.session.isAdmin = true;
+    return res.json({ success: true });
+  }
+  res.status(401).json({ error: 'Invalid credentials' });
+});
+
+app.post('/api/admin/logout', (req, res) => {
+  req.session.destroy(() => res.json({ success: true }));
+});
+
+function apiAuth(req, res, next) {
+  if (req.session && req.session.isAdmin) return next();
+  res.status(401).json({ error: 'Not authenticated' });
+}
+
+app.get('/api/admin/dashboard', apiAuth, asyncRoute(async (req, res) => {
+  const [productCount, leadCount, todayLeadCount, recentLeads] = await Promise.all([
+    db.getProductCount(),
+    db.getLeadCount(),
+    db.getTodayLeadCount(),
+    db.getAllLeads()
+  ]);
+  const leads = Array.isArray(recentLeads) ? recentLeads : [];
+  const sorted = [...leads].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  res.json({
+    totalProducts: productCount.count,
+    totalLeads: leadCount.count,
+    newLeads: todayLeadCount.count,
+    contactedLeads: leads.filter(l => l.status?.toLowerCase() === 'contacted').length,
+    recentLeads: sorted.slice(0, 10)
+  });
+}));
+
+app.get('/api/admin/products', apiAuth, asyncRoute(async (req, res) => {
+  const products = await db.getAllProducts();
+  res.json(products.map(normalizeApiProduct));
+}));
+
+app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res) => {
+  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
+  const detailFiles = req.files && req.files['detail_images'] || [];
+  const card_image = cardFile ? await saveUpload(cardFile) : '';
+  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
+  const price_per_day = parseFloat(req.body.price_per_day) || 0;
+  const product = await db.addProduct({
+    name: req.body.name || 'Unnamed',
+    brand: req.body.brand || '',
+    capacity: req.body.capacity || '1.5 Ton',
+    type: req.body.type || 'Tower AC',
+    monthly_price: price_per_day,
+    card_image,
+    detail_images,
+    description: req.body.description || '',
+    short_desc: req.body.short_desc || '',
+    features: req.body.features || '',
+    stock: parseInt(req.body.stock) || 1,
+    tiers: [],
+    use_flat_pricing: false,
+    flat_days: 0,
+    flat_price: 0,
+    extra_day_rate: 0
+  });
+  res.status(201).json({ success: true, product: normalizeApiProduct(product) });
+}));
+
+app.put('/api/admin/products/:id', apiAuth, prodUpload, asyncRoute(async (req, res) => {
+  const existing = await db.getProduct(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Product not found' });
+  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
+  const detailFiles = req.files && req.files['detail_images'] || [];
+  const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
+  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images || []);
+  const price_per_day = parseFloat(req.body.price_per_day) || parseFloat(existing.monthly_price) || 0;
+  const updated = await db.updateProduct(req.params.id, {
+    name: req.body.name || existing.name,
+    brand: req.body.brand || existing.brand || '',
+    capacity: req.body.capacity || existing.capacity || '1.5 Ton',
+    type: req.body.type || existing.type || 'Tower AC',
+    monthly_price: price_per_day,
+    card_image,
+    detail_images,
+    description: req.body.description || existing.description || '',
+    short_desc: req.body.short_desc || existing.short_desc || '',
+    features: req.body.features || existing.features || '',
+    stock: parseInt(req.body.stock) || existing.stock || 1,
+    tiers: existing.tiers || [],
+    use_flat_pricing: existing.use_flat_pricing || false,
+    flat_days: existing.flat_days || 0,
+    flat_price: existing.flat_price || 0,
+    extra_day_rate: existing.extra_day_rate || 0
+  });
+  res.json({ success: true, product: normalizeApiProduct(updated) });
+}));
+
+app.delete('/api/admin/products/:id', apiAuth, asyncRoute(async (req, res) => {
+  await db.deleteProduct(req.params.id);
+  res.json({ success: true });
+}));
+
+app.get('/api/admin/leads', apiAuth, asyncRoute(async (req, res) => {
+  const leads = await db.getAllLeads();
+  res.json(leads);
+}));
+
+app.put('/api/admin/leads/:id/status', apiAuth, asyncRoute(async (req, res) => {
+  await db.updateLeadStatus(req.params.id, req.body.status);
+  res.json({ success: true });
+}));
+
+app.delete('/api/admin/leads/:id', apiAuth, asyncRoute(async (req, res) => {
+  await db.deleteLead(req.params.id);
+  res.json({ success: true });
+}));
+
+app.get('/api/admin/export', apiAuth, asyncRoute(async (req, res) => {
+  const products = await db.getAllProducts();
+  const leads = await db.getAllLeads();
+  res.json({ products, leads });
+}));
+
+const apiMulterImport = multer({ dest: path.join(__dirname, 'data', 'import') });
+app.post('/api/admin/import', apiAuth, apiMulterImport.single('backup'), asyncRoute(async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const src = req.file.path;
+  try {
+    const data = JSON.parse(fs.readFileSync(src, 'utf-8'));
+    if (data.products) {
+      if (isPG) {
+        for (const p of data.products) {
+          const existing = await db.getProduct(p.id);
+          if (existing) await db.updateProduct(p.id, p);
+          else await db.addProduct(p);
+        }
+      } else {
+        fs.writeFileSync(db.getDataFile(), JSON.stringify(data, null, 2));
+      }
+    }
+    try { fs.unlinkSync(src); } catch(e) {}
+    res.json({ success: true, message: 'Import successful' });
+  } catch (e) {
+    try { fs.unlinkSync(src); } catch(e) {}
+    res.status(400).json({ error: 'Invalid backup file: ' + e.message });
+  }
+}));
+
+// Serve React build in production
+const clientDist = path.join(__dirname, 'client', 'dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin/') || req.path.startsWith('/uploads/')) return next();
+    if (req.path === '/' || req.path === '/products' || req.path === '/about' || req.path === '/contact' || req.path.startsWith('/product/') || req.path.startsWith('/privacy') || req.path.startsWith('/terms')) return next();
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
+
 const emailOk = SENDGRID_API_KEY && NOTIFY_EMAIL;
-console.log('Database: ' + (isPG ? 'PostgreSQL' : 'JSON file') + ' | SendGrid: ' + (emailOk ? 'READY' : 'NOT configured') + ' | From: ' + SENDER_EMAIL + ' | To: ' + (NOTIFY_EMAIL || '(not set)'));
 
 app.get('/offline', (req, res) => {
   res.render('offline', { title: 'Offline' });
