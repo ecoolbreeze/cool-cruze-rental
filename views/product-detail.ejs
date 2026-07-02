@@ -1,0 +1,494 @@
+<%- include('partials/header') %>
+
+<div class="detail-page">
+  <div class="detail-container">
+    <a href="/products" class="back-link">← Back to Products</a>
+
+    <div class="detail-layout">
+      <div class="detail-gallery">
+        <% const imgs = product.detail_images && product.detail_images.length ? product.detail_images : (product.card_image ? [product.card_image] : (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))); %>
+        <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+')' : '' %>" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC">
+          <% if (!imgs.length) { %>
+            <div class="detail-img-placeholder">❄️</div>
+          <% } %>
+        </div>
+        <% if (imgs.length > 1) { %>
+        <div class="detail-thumbs">
+          <% imgs.forEach(function(src, idx) { %>
+          <div class="detail-thumb <%= idx === 0 ? 'active' : '' %>" style="background-image:url(<%= src %>)" onclick="switchImage(this, '<%= src %>')" role="img" aria-label="<%= product.name %> image <%= idx+1 %>"></div>
+          <% }) %>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="detail-info">
+        <div class="detail-brand"><%= product.brand %></div>
+        <h1 class="detail-title"><%= product.name %></h1>
+
+        <div class="detail-specs">
+          <div class="detail-spec-item">
+            <span class="detail-spec-icon">📏</span>
+            <div>
+              <div class="detail-spec-label">Capacity</div>
+              <div class="detail-spec-value"><%= product.capacity %></div>
+            </div>
+          </div>
+          <div class="detail-spec-item">
+            <span class="detail-spec-icon">🔧</span>
+            <div>
+              <div class="detail-spec-label">Type</div>
+              <div class="detail-spec-value"><%= product.type %> AC</div>
+            </div>
+          </div>
+          <div class="detail-spec-item">
+            <span class="detail-spec-icon">📦</span>
+            <div>
+              <div class="detail-spec-label">Availability</div>
+              <div class="detail-spec-value"><%= product.stock > 0 ? 'In Stock' : 'Out of Stock' %></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-price">₹<%= Number(product.monthly_price).toLocaleString() %><span>/day</span></div>
+        <div class="detail-price-sub">No hidden charges • Free installation & maintenance</div>
+
+        <% const pTiers = product.tiers && product.tiers.length ? product.tiers : []; if (pTiers.length || product.use_flat_pricing) { %>
+        <div class="rent-calculator">
+          <div class="calc-header">
+            <span class="calc-header-icon">📊</span>
+            <div>
+              <div class="calc-title">Rent Calculator</div>
+              <div class="calc-subtitle">Slide to see pricing for your duration</div>
+            </div>
+          </div>
+          <div class="calc-slider-wrap">
+            <div class="calc-slider-header">
+              <span id="calcDays">1</span> <span id="calcDaysLabel">day</span>
+            </div>
+            <input type="range" id="rentSlider" min="1" max="15" value="1" class="calc-slider">
+            <div class="calc-slider-labels">
+              <span id="calcMinLabel">1 day</span>
+              <span id="calcMaxLabel">15 days</span>
+            </div>
+          </div>
+          <div class="calc-results">
+            <div class="calc-result-row calc-total-row">
+              <span class="calc-result-label">Total Rent</span>
+              <span class="calc-result-value" id="calcTotal">₹0</span>
+            </div>
+          </div>
+          <button onclick="document.querySelector('.detail-rent-btn').click()" class="btn-rent" style="width:100%;margin-top:4px;">Rent Now at <span id="calcCtaPrice">₹0</span></button>
+        </div>
+        <% } %>
+
+        <div class="detail-description">
+          <h3>Description</h3>
+          <p><%= product.description || 'Premium quality air conditioner available for rent. Contact us for more details about this product.' %></p>
+        </div>
+
+        <% if (product.features) { %>
+        <div class="detail-features">
+          <h3>Key Features</h3>
+          <div class="detail-features-grid">
+            <% product.features.split(',').forEach(f => { %>
+              <div class="detail-feature-item">✓ <%= f.trim() %></div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="detail-benefits">
+          <h3>What's Included</h3>
+          <div class="benefits-list">
+            <div class="benefit-row">
+              <span>🛡️</span>
+              <span>Zero Deposit & Free Delivery</span>
+            </div>
+            <div class="benefit-row">
+              <span>🔧</span>
+              <span>Free Maintenance & Servicing</span>
+            </div>
+            <div class="benefit-row">
+              <span>🔄</span>
+              <span>Flexible Rental Plans</span>
+            </div>
+            <div class="benefit-row">
+              <span>📞</span>
+              <span>24/7 Customer Support</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <button onclick="openRentModal(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent detail-rent-btn">Rent Now</button>
+          <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20Cool%20Cruze!%20I'm%20interested%20in%20<%= encodeURIComponent(product.name) %>" target="_blank" class="btn-wa">Chat on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.detail-page {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.detail-container {
+  width: 100%;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 24px;
+  transition: gap 0.2s;
+}
+
+.back-link:hover {
+  gap: 10px;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.detail-gallery {
+  position: sticky;
+  top: 90px;
+}
+
+.detail-main-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-img-placeholder {
+  font-size: 96px;
+  opacity: 0.4;
+}
+
+.detail-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.detail-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.detail-thumb:hover {
+  transform: translateY(-2px);
+}
+
+.detail-thumb.active {
+  border-color: var(--primary);
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.detail-title {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.detail-specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.detail-spec-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-spec-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.detail-spec-label {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.detail-spec-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.detail-price {
+  font-size: clamp(32px, 4vw, 42px);
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.detail-price span {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.detail-price-sub {
+  font-size: 14px;
+  color: #059669;
+  font-weight: 500;
+  margin-top: -12px;
+}
+
+.detail-description h3,
+.detail-features h3,
+.detail-benefits h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.detail-description p {
+  color: var(--text-light);
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.detail-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.detail-feature-item {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.benefit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.benefit-row span:first-child {
+  font-size: 18px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.detail-rent-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16px 32px;
+  font-size: 17px;
+}
+
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 28px;
+  background: #25d366;
+  color: white;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+
+.btn-wa:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+}
+
+@media (max-width: 900px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .detail-gallery {
+    position: static;
+  }
+
+  .detail-main-img {
+    aspect-ratio: 16/9;
+  }
+
+  .detail-specs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .detail-page {
+    padding: 20px 16px;
+  }
+
+  .detail-specs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .detail-spec-item:last-child {
+    grid-column: span 2;
+  }
+
+  .detail-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+
+  .btn-wa {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .detail-specs {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-spec-item:last-child {
+    grid-column: span 1;
+  }
+}
+</style>
+
+<script>
+function switchImage(el, src) {
+  document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('detailMainImg').style.backgroundImage = 'url(' + src + ')';
+}
+
+(function() {
+  const tiers = <%- JSON.stringify(product.tiers || []) %>;
+  const useFlat = <%- product.use_flat_pricing ? 'true' : 'false' %>;
+  const flatDays = <%- product.flat_days || 0 %>;
+  const flatPrice = <%- product.flat_price || 0 %>;
+  const extraRate = <%- product.extra_day_rate || 0 %>;
+  const slider = document.getElementById('rentSlider');
+  if (!slider || (!tiers.length && !useFlat)) return;
+  tiers.sort((a, b) => a.min - b.min);
+
+  function getTierForDay(day) {
+    return tiers.find(t => day >= t.min && day <= t.max) || null;
+  }
+
+  function updateCalc() {
+    const days = parseInt(slider.value);
+    let total = 0;
+    if (useFlat && flatDays > 0) {
+      total = days <= flatDays ? flatPrice : flatPrice + (days - flatDays) * extraRate;
+    } else if (tiers.length) {
+      for (let d = 1; d <= days; d++) {
+        const t = getTierForDay(d);
+        if (t) total += t.price;
+      }
+    }
+    document.getElementById('calcDays').textContent = days;
+    document.getElementById('calcDaysLabel').textContent = days === 1 ? 'day' : 'days';
+    document.getElementById('calcTotal').textContent = '₹' + Number(total).toLocaleString();
+    document.getElementById('calcCtaPrice').textContent = '₹' + Number(total).toLocaleString();
+  }
+
+  updateCalc();
+  slider.addEventListener('input', updateCalc);
+})();
+</script>
+
+<!-- Product Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "<%= (product.name || '').replace(/"/g, '\\"') %>",
+  "brand": { "@type": "Brand", "name": "<%= (product.brand || '').replace(/"/g, '\\"') %>" },
+  "description": "<%= ((product.description || '').replace(/"/g, '\\"')).substring(0, 200) %>",
+  "image": "https://coolcruze.in<%= product.card_image || (product.images && product.images.length ? product.images[0] : '') %>",
+  "sku": "AC-<%= product.id %>",
+  "offers": {
+    "@type": "Offer",
+    "url": "https://coolcruze.in/product/<%= product.id %>",
+    "priceCurrency": "INR",
+    "price": "<%= product.monthly_price %>",
+    "availability": "<%= product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' %>",
+    "priceValidUntil": "<%= new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0] %>"
+  },
+  "additionalProperty": [
+    { "@type": "PropertyValue", "name": "Capacity", "value": "<%= (product.capacity || '').replace(/"/g, '\\"') %>" },
+    { "@type": "PropertyValue", "name": "Type", "value": "<%= (product.type || '').replace(/"/g, '\\"') %> AC" }
+  ]
+}
+</script>
+
+<%- include('partials/footer') %>

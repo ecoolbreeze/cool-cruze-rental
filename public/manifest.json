@@ -1,0 +1,26 @@
+{
+  "name": "Cool Cruze - AC Rentals",
+  "short_name": "Cool Cruze",
+  "description": "Premium Tower AC Rentals  Affordable, Reliable, and Delivered to your Doorstep.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1a56db",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/uploads/hero.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cool Cruze - <%= title %> | AC Rental</title>
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Premium tower AC rental in Mumbai. Cool Cruze offers heavy-duty commercial tower, portable &amp; ductable ACs on rent. Free installation &amp; 24/7 support for events, offices &amp; industries.' %>">
+  <meta name="robots" content="<%= robotsMeta %>">
+  <meta name="keywords" content="AC rental, tower AC on rent, portable AC rental, ductable AC, cassette AC, AC on rent Mumbai, Cool Cruze, air conditioner rental">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D3E2K228E6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D3E2K228E6');
+  </script>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Cool Cruze - ' + title + ' | AC Rental' %>">
+  <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : (typeof metaDescription !== 'undefined' ? metaDescription : '') %>">
+  <meta property="og:url" content="https://coolcruze.in<%= currentPath %>">
+  <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+  <meta property="og:image" content="https://coolcruze.in<%= ogImage %>">
+  <meta property="og:site_name" content="Cool Cruze">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Cool Cruze - ' + title + ' | AC Rental' %>">
+  <meta name="twitter:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : (typeof metaDescription !== 'undefined' ? metaDescription : '') %>">
+  <meta name="twitter:image" content="https://coolcruze.in<%= ogImage %>">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://coolcruze.in<%= currentPath %>">
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a56db">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cool Cruze">
+  <link rel="apple-touch-icon" href="/icons/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Cool Cruze",
+    "url": "https://coolcruze.in",
+    "logo": "https://coolcruze.in/icons/icon.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+<%= whatsappNumber %>",
+      "contactType": "customer service",
+      "availableLanguage": ["en", "hi"]
+    },
+    "sameAs": ["https://wa.me/<%= whatsappNumber %>"],
+    "description": "Premium tower & split AC rentals at affordable prices. Zero deposit, free installation and maintenance."
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">❄️</span>
+      Cool Cruze
+    </a>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Home</a>
+      <a href="/products" class="<%= currentPath === '/products' ? 'active' : '' %>">Products</a>
+      <a href="/about" class="<%= currentPath === '/about' ? 'active' : '' %>">About</a>
+      <a href="/contact" class="<%= currentPath === '/contact' ? 'active' : '' %>">Contact</a>
+      <a href="/products" class="nav-cta">Rent Now</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Rent Now Modal -->
+<div id="rentModal" class="modal-overlay" onclick="if(event.target===this)closeRentModal()">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeRentModal()">&times;</button>
+    <h2 class="modal-title">Rent Now</h2>
+    <p class="modal-subtitle">Fill in your details and we'll contact you within minutes</p>
+    <div id="modalError" class="form-error"></div>
+    <form id="rentModalForm">
+      <input type="hidden" id="rentProductId" name="product_id">
+      <div class="form-group">
+        <label>Product</label>
+        <input type="text" id="rentProductName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="modalName">Full Name *</label>
+        <input type="text" id="modalName" name="customer_name" required placeholder="Enter your full name">
+      </div>
+      <div class="form-group">
+        <label for="modalPhone">Phone Number *</label>
+        <input type="tel" id="modalPhone" name="phone" required placeholder="Enter your phone number">
+      </div>
+      <div class="form-group">
+        <label for="modalAddress">Delivery Address *</label>
+        <textarea id="modalAddress" name="address" required placeholder="Enter your complete address with pincode"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="modalMessage">Message (Optional)</label>
+        <textarea id="modalMessage" name="message" placeholder="Any specific requirements or questions?"></textarea>
+      </div>
+      <button type="submit" class="btn-submit" id="modalSubmitBtn">Submit & Chat on WhatsApp</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  animation: modalIn 0.25s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--text-light);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.modal-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  color: var(--text-light);
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.modal-success {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.modal-success .check {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.modal-success h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.modal-success p {
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+/* Install PWA Banner */
+.pwa-install {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  padding: 16px 20px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+  z-index: 10000;
+  align-items: center;
+  gap: 12px;
+  animation: slideUp 0.3s ease;
+}
+
+.pwa-install.show { display: flex; }
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.pwa-install-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.pwa-install-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pwa-install-text small {
+  display: block;
+  font-weight: 400;
+  color: var(--text-light);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.pwa-install-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pwa-install-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+@media (max-width: 500px) {
+  .modal-content {
+    padding: 28px 20px;
+  }
+}
+</style>
+
+<!-- PWA Install Banner -->
+<div id="pwaInstall" class="pwa-install">
+  <img class="pwa-install-icon" src="/icons/icon.svg" alt="Cool Cruze">
+  <div class="pwa-install-text">
+    Install Cool Cruze
+    <small>Add to home screen for the best experience</small>
+  </div>
+  <button class="pwa-install-btn" id="pwaInstallBtn">Install</button>
+  <button class="pwa-install-close" id="pwaInstallClose">&times;</button>
+</div>
+
+<script>
+// PWA Install Prompt
+let deferredPrompt;
+const pwaInstall = document.getElementById('pwaInstall');
+const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+const pwaInstallClose = document.getElementById('pwaInstallClose');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  pwaInstall.classList.add('show');
+});
+
+pwaInstallBtn.addEventListener('click', async () => {
+  pwaInstall.classList.remove('show');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+});
+
+pwaInstallClose.addEventListener('click', () => {
+  pwaInstall.classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  pwaInstall.classList.remove('show');
+  deferredPrompt = null;
+});
+
+function openRentModal(id, name, brand, capacity, price) {
+  document.getElementById('rentProductId').value = id;
+  document.getElementById('rentProductName').value = name + ' (' + brand + ', ' + capacity + ', \u20B9' + Number(price).toLocaleString() + '/mo)';
+  document.getElementById('modalName').value = '';
+  document.getElementById('modalPhone').value = '';
+  document.getElementById('modalAddress').value = '';
+  document.getElementById('modalMessage').value = '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('rentModal').classList.add('active');
+}
+
+function closeRentModal() {
+  document.getElementById('rentModal').classList.remove('active');
+}
+
+document.getElementById('rentModalForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('modalSubmitBtn');
+  const errorEl = document.getElementById('modalError');
+  const productId = document.getElementById('rentProductId').value;
+
+  const data = {
+    customer_name: document.getElementById('modalName').value.trim(),
+    phone: document.getElementById('modalPhone').value.trim(),
+    address: document.getElementById('modalAddress').value.trim(),
+    message: document.getElementById('modalMessage').value.trim()
+  };
+
+  if (!data.customer_name || !data.phone || !data.address) {
+    errorEl.textContent = 'Please fill all required fields';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const params = new URLSearchParams(data);
+    const res = await fetch('/rent/' + productId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      document.getElementById('rentModalForm').innerHTML =
+        '<div class="modal-success">' +
+        '<div class="check">✅</div>' +
+        '<h3>Request Submitted!</h3>' +
+        '<p>Redirecting to WhatsApp...</p>' +
+        '</div>';
+      window.open(result.whatsappUrl, '_blank');
+      setTimeout(closeRentModal, 2500);
+    } else {
+      errorEl.textContent = result.error || 'Something went wrong';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit & Chat on WhatsApp';
+    }
+  } catch (err) {
+    errorEl.textContent = 'Network error. Please try again.';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit & Chat on WhatsApp';
+  }
+});
+</script>

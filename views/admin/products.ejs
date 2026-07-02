@@ -1,0 +1,376 @@
+<%- include('../partials/header') %>
+<style>
+body { display: block; }
+.navbar { display: none; }
+.footer { display: none; }
+.whatsapp-float { display: none; }
+</style>
+
+<div class="admin-layout">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="admin-sidebar" id="adminSidebar">
+    <div class="logo">❄️ Cool Cruze</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/products" class="active">📦 Products</a>
+    <a href="/admin/leads">📋 Leads</a>
+    <a href="/admin/logout">🚪 Logout</a>
+    <a href="/">← Website</a>
+  </div>
+
+  <div class="admin-main">
+    <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>Manage Products</h1>
+
+    <button onclick="toggleForm()" class="btn btn-primary" style="margin-bottom:24px;background:var(--primary);color:white;padding:12px 24px;border:none;border-radius:50px;font-weight:700;cursor:pointer;">+ Add New Product</button>
+
+    <div id="addForm" class="admin-form" style="display:none;">
+      <h2 style="font-size:20px;margin-bottom:20px;">Add New Product</h2>
+      <form method="POST" action="/admin/products" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" name="name" required>
+          </div>
+          <div class="form-group">
+            <label>Brand *</label>
+            <input type="text" name="brand" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Capacity</label>
+            <select name="capacity">
+              <option value="1.5 Ton" selected>1.5 Ton</option>
+              <option value="3.5 Ton">3.5 Ton</option>
+              <option value="5.5 Ton">5.5 Ton</option>
+              <option value="8.5 Ton">8.5 Ton</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select name="type">
+              <option value="Tower">Tower AC</option>
+              <option value="Portable">Portable AC</option>
+              <option value="Ductable">Ductable AC</option>
+              <option value="Cassette">Cassette AC</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Base Daily Price (₹) *</label>
+            <input type="number" name="monthly_price" step="0.01" required>
+          </div>
+        </div>
+
+        <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
+            <input type="checkbox" name="use_flat_pricing" value="1" onchange="document.getElementById('flatPricingFields').style.display=this.checked?'block':'none'">
+            Use Flat Rate (first N days at fixed total)
+          </label>
+          <div id="flatPricingFields" class="fp-container" style="display:none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label style="font-size:13px;">First N Days</label>
+                <input type="number" name="flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+              </div>
+              <div class="form-group">
+                <label style="font-size:13px;">Flat Total (₹) for first N days</label>
+                <input type="number" name="flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;">Extra per Extra Day (₹)</label>
+              <input type="number" name="extra_day_rate" placeholder="e.g. 1000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+            <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">1-<span class="fpDays">2</span> days: ₹<span class="fpRate">8000</span> total. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 style="font-size:16px;margin:16px 0 4px;font-weight:700;">Rental Pricing Tiers</h3>
+          <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Per-day pricing for different day ranges. The slider on the product page will use these tiers.</p>
+          <div id="tierRows">
+            <div class="tier-row">
+              <input type="number" name="tier_min[]" placeholder="Min days" value="1">
+              <span style="color:var(--text-light);">to</span>
+              <input type="number" name="tier_max[]" placeholder="Max days" value="7">
+              <input type="number" name="tier_price[]" placeholder="₹/day" step="1" class="tier-price">
+              <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;font-size:20px;color:#ef4444;cursor:pointer;padding:4px;">×</button>
+            </div>
+          </div>
+          <button type="button" onclick="addTierRow()" style="background:var(--primary);color:white;border:none;padding:8px 20px;border-radius:50px;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;">+ Add Tier</button>
+        </div>
+
+        <div class="form-group">
+          <label>Card Image (product grid, 280×220)</label>
+          <input type="file" name="card_image" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Detail Gallery Images (product page, 4:3 ratio)</label>
+          <input type="file" name="detail_images" accept="image/*" multiple>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" rows="3" placeholder="Brief description of the product"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Features (comma separated)</label>
+          <input type="text" name="features" placeholder="e.g. 5-star energy rating, Sleep mode, Turbo cooling">
+        </div>
+        <button type="submit" class="btn-submit">Add Product</button>
+      </form>
+    </div>
+
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Brand</th>
+          <th>Capacity</th>
+          <th>Type</th>
+          <th>Price/mo</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length === 0) { %>
+        <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-light);">No products added yet. Click "Add New Product" to get started.</td></tr>
+        <% } else { %>
+          <% products.forEach(product => { %>
+          <tr>
+            <td>
+              <% const cardImg = product.card_image || (product.images && product.images.length ? product.images[0] : product.image || ''); %>
+              <% if (cardImg) { %>
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <img src="<%= cardImg %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+                  <% const detailCount = product.detail_images ? product.detail_images.length : (product.images ? product.images.length : (product.image ? 1 : 0)); %>
+                  <% if (detailCount > 1) { %><span style="font-size:11px;color:var(--text-light);font-weight:600;">+<%= detailCount-1 %></span><% } %>
+                </div>
+              <% } else { %>
+                <span style="font-size:24px;">❄️</span>
+              <% } %>
+            </td>
+            <td><strong><%= product.name %></strong></td>
+            <td><%= product.brand %></td>
+            <td><%= product.capacity %></td>
+            <td><%= product.type %></td>
+            <td>₹<%= Number(product.monthly_price).toLocaleString() %></td>
+            <td><%= product.stock %></td>
+            <td>
+              <div class="admin-actions">
+                 <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>, '<%= (product.card_image || '').replace(/'/g, "\\'") %>', <%= JSON.stringify(product.detail_images && product.detail_images.length ? product.detail_images : []) %>)">Edit</button>
+                <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
+                  <button class="btn-sm btn-delete">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeEdit()">
+  <div class="edit-modal-inner" style="background:white;border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
+    <h2 style="font-size:20px;margin-bottom:20px;">Edit Product</h2>
+    <form method="POST" id="editForm" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" name="name" id="edit_name" required>
+        </div>
+        <div class="form-group">
+          <label>Brand *</label>
+          <input type="text" name="brand" id="edit_brand" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Capacity</label>
+            <select name="capacity" id="edit_capacity">
+              <option value="1.5 Ton">1.5 Ton</option>
+              <option value="3.5 Ton">3.5 Ton</option>
+              <option value="5.5 Ton">5.5 Ton</option>
+              <option value="8.5 Ton">8.5 Ton</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+            <select name="type" id="edit_type">
+              <option value="Tower">Tower AC</option>
+              <option value="Portable">Portable AC</option>
+              <option value="Ductable">Ductable AC</option>
+              <option value="Cassette">Cassette AC</option>
+            </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Base Daily Price (₹) *</label>
+          <input type="number" name="monthly_price" id="edit_price" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input type="number" name="stock" id="edit_stock" value="1">
+        </div>
+      </div>
+
+      <div class="form-section" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin:12px 0;">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin-bottom:8px;">
+          <input type="checkbox" name="use_flat_pricing" value="1" id="edit_use_flat_pricing" onchange="document.getElementById('editFlatPricingFields').style.display=this.checked?'block':'none'">
+          Use Flat Rate (first N days at fixed total)
+        </label>
+        <div id="editFlatPricingFields" class="fp-container" style="display:none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label style="font-size:13px;">First N Days</label>
+              <input type="number" name="flat_days" id="edit_flat_days" placeholder="e.g. 2" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;">Flat Total (₹) for first N days</label>
+              <input type="number" name="flat_price" id="edit_flat_price" placeholder="e.g. 8000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:13px;">Extra per Extra Day (₹)</label>
+            <input type="number" name="extra_day_rate" id="edit_extra_day_rate" placeholder="e.g. 1000" step="1" style="width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+          </div>
+          <p style="font-size:12px;color:var(--text-light);margin:4px 0 0;">1-<span class="fpDays">2</span> days: ₹<span class="fpRate">8000</span> total. Day <span class="fpDays2">3</span>: ₹<span class="fpDay3">9000</span>, Day <span class="fpDays3">4</span>: ₹<span class="fpDay4">10000</span>...</p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 style="font-size:16px;margin:16px 0 4px;font-weight:700;">Rental Pricing Tiers</h3>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Per-day pricing for different day ranges.</p>
+        <div id="editTierRows"></div>
+        <button type="button" onclick="addEditTierRow()" style="background:var(--primary);color:white;border:none;padding:8px 20px;border-radius:50px;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;">+ Add Tier</button>
+      </div>
+
+      <div class="form-group">
+        <label>Card Image (product grid, leave empty to keep current)</label>
+        <input type="file" name="card_image" accept="image/*">
+        <div id="edit_card_preview" style="margin-top:4px;"></div>
+      </div>
+      <div class="form-group">
+        <label>Detail Gallery Images (product page, leave empty to keep current)</label>
+        <input type="file" name="detail_images" accept="image/*" multiple>
+        <div id="edit_detail_previews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"></div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" id="edit_desc" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Features</label>
+        <input type="text" name="features" id="edit_features">
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn-submit">Update Product</button>
+        <button type="button" onclick="closeEdit()" style="padding:14px 32px;border-radius:50px;font-weight:700;border:2px solid #e2e8f0;background:white;cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function updateFpPreview(container) {
+  const days = parseInt(container.querySelector('input[name="flat_days"]').value) || 2;
+  const rate = parseInt(container.querySelector('input[name="flat_price"]').value) || 8000;
+  const extra = parseInt(container.querySelector('input[name="extra_day_rate"]').value) || 1000;
+  container.querySelector('.fpDays').textContent = days;
+  container.querySelector('.fpRate').textContent = rate;
+  const d2 = days + 1;
+  const d2rate = rate + extra;
+  const d3 = days + 2;
+  const d3rate = rate + extra * 2;
+  container.querySelector('.fpDays2').textContent = d2;
+  container.querySelector('.fpDay3').textContent = d2rate;
+  container.querySelector('.fpDays3').textContent = d3;
+  container.querySelector('.fpDay4').textContent = d3rate;
+}
+
+document.addEventListener('input', function(e) {
+  const container = e.target.closest('.fp-container');
+  if (container) updateFpPreview(container);
+});
+
+function toggleForm() {
+  const f = document.getElementById('addForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addTierRow(containerId, minVal, maxVal, priceVal) {
+  const container = document.getElementById(containerId || 'tierRows');
+  const div = document.createElement('div');
+  div.className = 'tier-row';
+  div.innerHTML =
+    '<input type="number" name="tier_min[]" placeholder="Min days" value="' + (minVal || '') + '" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">' +
+    '<span style="color:var(--text-light);">to</span>' +
+    '<input type="number" name="tier_max[]" placeholder="Max days" value="' + (maxVal || '') + '" style="width:100px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">' +
+    '<input type="number" name="tier_price[]" placeholder="₹/day" step="1" value="' + (priceVal || '') + '" style="width:120px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">' +
+    '<button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;font-size:20px;color:#ef4444;cursor:pointer;padding:4px;">×</button>';
+  container.appendChild(div);
+}
+
+function addEditTierRow(minVal, maxVal, priceVal) {
+  addTierRow('editTierRows', minVal, maxVal, priceVal);
+}
+
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate, cardImg, detailImgs) {
+  document.getElementById('editForm').action = '/admin/products/edit/' + id;
+  document.getElementById('edit_name').value = name;
+  document.getElementById('edit_brand').value = brand;
+  document.getElementById('edit_capacity').value = capacity;
+  document.getElementById('edit_type').value = type;
+  document.getElementById('edit_price').value = price;
+  document.getElementById('edit_stock').value = stock;
+  document.getElementById('edit_desc').value = desc;
+  document.getElementById('edit_features').value = features;
+
+  function showPreview(elId, src) {
+    const el = document.getElementById(elId);
+    if (src) { el.innerHTML = '<img src="' + src + '" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">'; }
+    else { el.innerHTML = ''; }
+  }
+  showPreview('edit_card_preview', cardImg);
+  const dp = document.getElementById('edit_detail_previews');
+  dp.innerHTML = '';
+  if (detailImgs && detailImgs.length) {
+    detailImgs.forEach(function(src) {
+      if (!src) return;
+      var img = document.createElement('img');
+      img.src = src;
+      img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;';
+      dp.appendChild(img);
+    });
+  }
+
+  const cb = document.getElementById('edit_use_flat_pricing');
+  cb.checked = !!useFlat;
+  document.getElementById('editFlatPricingFields').style.display = useFlat ? 'block' : 'none';
+  document.getElementById('edit_flat_days').value = flatDays || '';
+  document.getElementById('edit_flat_price').value = flatPrice || '';
+  document.getElementById('edit_extra_day_rate').value = extraRate || '';
+  updateFpPreview(document.getElementById('editFlatPricingFields'));
+  const tc = document.getElementById('editTierRows');
+  tc.innerHTML = '';
+  if (tiers && tiers.length) {
+    tiers.forEach(t => addEditTierRow(t.min, t.max, t.price));
+  }
+  document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEdit() {
+  document.getElementById('editModal').style.display = 'none';
+}
+
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+</script>

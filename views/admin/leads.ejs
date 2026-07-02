@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+<style>
+body { display: block; }
+.navbar { display: none; }
+.footer { display: none; }
+.whatsapp-float { display: none; }
+</style>
+
+<div class="admin-layout">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="admin-sidebar" id="adminSidebar">
+    <div class="logo">❄️ Cool Cruze</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/products">📦 Products</a>
+    <a href="/admin/leads" class="active">📋 Leads</a>
+    <a href="/admin/logout">🚪 Logout</a>
+    <a href="/">← Website</a>
+  </div>
+
+  <div class="admin-main">
+    <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>Leads Management</h1>
+
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Product</th>
+          <th>Address</th>
+          <th>Message</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (leads.length === 0) { %>
+        <tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-light);">No leads received yet</td></tr>
+        <% } else { %>
+          <% leads.forEach((lead, i) => { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><strong><%= lead.customer_name %></strong></td>
+            <td>
+              <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20<%= encodeURIComponent(lead.customer_name) %>%2C%20regarding%20<%= encodeURIComponent(lead.product_name) %>" target="_blank" style="color:#1a56db;font-weight:600;">
+                <%= lead.phone %>
+              </a>
+            </td>
+            <td><%= lead.product_name %></td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<%= lead.address %>"><%= lead.address %></td>
+            <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= lead.message || '-' %></td>
+            <td><%= new Date(lead.created_at).toLocaleDateString() %><br><small style="color:var(--text-light)"><%= new Date(lead.created_at).toLocaleTimeString() %></small></td>
+            <td>
+              <span class="badge badge-<%= (lead.status || 'New').toLowerCase() %>"><%= lead.status || 'New' %></span>
+            </td>
+            <td>
+              <div class="admin-actions">
+                <form method="POST" action="/admin/leads/status/<%= lead.id %>" style="display:inline;">
+                  <select name="status" onchange="this.form.submit()" style="padding:4px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;background:white;">
+                    <option value="New" <%= (lead.status || 'New') === 'New' ? 'selected' : '' %>>New</option>
+                    <option value="Contacted" <%= (lead.status || 'New') === 'Contacted' ? 'selected' : '' %>>Contacted</option>
+                    <option value="Closed" <%= (lead.status || 'New') === 'Closed' ? 'selected' : '' %>>Closed</option>
+                  </select>
+                </form>
+                <form method="POST" action="/admin/leads/delete/<%= lead.id %>" style="display:inline;" onsubmit="return confirm('Delete this lead?')">
+                  <button class="btn-sm btn-delete">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+<script>
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+</script>
