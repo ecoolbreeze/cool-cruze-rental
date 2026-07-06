@@ -589,21 +589,12 @@ function toggleFaq(btn) {
 // Hero slideshow
 (function() {
   const slides = document.querySelectorAll('.hero-slide');
-  const overlay = document.querySelector('.hero-overlay');
-  const content = document.querySelector('.hero-content');
   if (slides.length < 2) return;
   let current = 0;
   setInterval(() => {
     slides[current].classList.remove('active');
     current = (current + 1) % slides.length;
     slides[current].classList.add('active');
-    if (slides[current].classList.contains('full-bleed')) {
-      overlay.style.display = 'none';
-      content.style.display = 'none';
-    } else {
-      overlay.style.display = '';
-      content.style.display = '';
-    }
   }, 3000);
 })();
 
