@@ -54,23 +54,23 @@ ul { list-style: none; }
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 24px;
+  gap: 8px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--primary);
   letter-spacing: -0.5px;
 }
 
 .logo-icon {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .nav-links {
