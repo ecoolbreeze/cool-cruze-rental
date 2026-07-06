@@ -1198,8 +1198,8 @@ ul { list-style: none; }
   .hero-content { padding: 16px 12px; }
   .hero h1 { font-size: 22px; margin-bottom: 8px; }
   .hero p { font-size: 13px; margin-bottom: 16px; }
-  .hero-buttons { flex-direction: column; align-items: center; }
-  .btn { width: 100%; max-width: 280px; justify-content: center; padding: 12px 20px; font-size: 14px; }
+  .hero-buttons { flex-direction: row; align-items: center; justify-content: center; gap: 8px; }
+  .btn { padding: 12px 20px; font-size: 14px; }
 
   /* Sections */
   .section { padding: 28px 12px; }
