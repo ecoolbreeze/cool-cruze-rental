@@ -1194,6 +1194,15 @@ ul { list-style: none; }
 }
 
 @media (max-width: 480px) {
+  /* Navbar */
+  .navbar { padding: 0 12px; }
+  .navbar-inner { height: 50px; }
+  .logo { font-size: 16px; gap: 6px; }
+  .logo-icon { width: 28px; height: 28px; font-size: 13px; border-radius: 8px; }
+  .mobile-toggle { font-size: 20px; padding-left: 4px; }
+  .nav-links { top: 50px; padding: 12px; gap: 12px; }
+  .nav-links a { font-size: 13px; }
+  .nav-cta { padding: 8px 18px; font-size: 13px; }
   /* Hero */
   .hero-content { padding: 16px 12px; }
   .hero h1 { font-size: 22px; margin-bottom: 8px; }
