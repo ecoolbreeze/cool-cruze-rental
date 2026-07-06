@@ -486,13 +486,13 @@ app.post('/api/admin/import', apiAuth, apiMulterImport.single('backup'), asyncRo
 }));
 
 // Serve React build in production
-const clientDist = path.join(__dirname, 'client', 'dist');
-if (fs.existsSync(clientDist)) {
-  app.use(express.static(clientDist));
+const clientIndex = path.join(__dirname, 'client', 'dist', 'index.html');
+if (fs.existsSync(clientIndex)) {
+  app.use(express.static(path.join(__dirname, 'client', 'dist')));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/admin/') || req.path.startsWith('/uploads/')) return next();
     if (req.path === '/' || req.path === '/products' || req.path === '/about' || req.path === '/contact' || req.path.startsWith('/product/') || req.path.startsWith('/privacy') || req.path.startsWith('/terms')) return next();
-    res.sendFile(path.join(clientDist, 'index.html'));
+    res.sendFile(clientIndex);
   });
 }
 

@@ -2,7 +2,7 @@ services:
   - type: web
     name: cool-cruze-rental
     runtime: node
-    buildCommand: npm install
+    buildCommand: cd client && npm install && npm run build && cd .. && npm install
     startCommand: node server.js
     envVars:
       - key: NODE_VERSION
