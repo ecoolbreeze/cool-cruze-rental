@@ -238,17 +238,20 @@ function parseTiers(body) {
 
 const prodUpload = upload.fields([
   { name: 'card_image', maxCount: 1 },
-  { name: 'detail_images', maxCount: 5 }
+  { name: 'detail_images', maxCount: 5 },
+  { name: 'carousel_image', maxCount: 1 }
 ]);
 
 app.post('/admin/products', requireAuth, prodUpload, asyncRoute(async (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
   const detailFiles = req.files && req.files['detail_images'] || [];
+  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
   const card_image = cardFile ? await saveUpload(cardFile) : '';
   const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
+  const carousel_image = carouselFile ? await saveUpload(carouselFile) : '';
   const tiers = parseTiers(req.body);
-  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 
@@ -258,10 +261,12 @@ app.post('/admin/products/edit/:id', requireAuth, prodUpload, asyncRoute(async (
   if (!existing) return res.redirect('/admin/products');
   const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
   const detailFiles = req.files && req.files['detail_images'] || [];
+  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
   const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
   const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
+  const carousel_image = carouselFile ? await saveUpload(carouselFile) : existing.carousel_image || '';
   const tiers = parseTiers(req.body);
-  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 
@@ -381,8 +386,10 @@ app.get('/api/admin/products', apiAuth, asyncRoute(async (req, res) => {
 app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res) => {
   const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
   const detailFiles = req.files && req.files['detail_images'] || [];
+  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
   const card_image = cardFile ? await saveUpload(cardFile) : '';
   const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
+  const carousel_image = carouselFile ? await saveUpload(carouselFile) : '';
   const price_per_day = parseFloat(req.body.price_per_day) || 0;
   const product = await db.addProduct({
     name: req.body.name || 'Unnamed',
@@ -392,6 +399,7 @@ app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res)
     monthly_price: price_per_day,
     card_image,
     detail_images,
+    carousel_image,
     description: req.body.description || '',
     short_desc: req.body.short_desc || '',
     features: req.body.features || '',
@@ -410,8 +418,10 @@ app.put('/api/admin/products/:id', apiAuth, prodUpload, asyncRoute(async (req, r
   if (!existing) return res.status(404).json({ error: 'Product not found' });
   const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
   const detailFiles = req.files && req.files['detail_images'] || [];
+  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
   const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
   const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images || []);
+  const carousel_image = carouselFile ? await saveUpload(carouselFile) : existing.carousel_image || '';
   const price_per_day = parseFloat(req.body.price_per_day) || parseFloat(existing.monthly_price) || 0;
   const updated = await db.updateProduct(req.params.id, {
     name: req.body.name || existing.name,
@@ -421,6 +431,7 @@ app.put('/api/admin/products/:id', apiAuth, prodUpload, asyncRoute(async (req, r
     monthly_price: price_per_day,
     card_image,
     detail_images,
+    carousel_image,
     description: req.body.description || existing.description || '',
     short_desc: req.body.short_desc || existing.short_desc || '',
     features: req.body.features || existing.features || '',
