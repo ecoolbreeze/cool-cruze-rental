@@ -19,7 +19,7 @@
         <div class="carousel-item">
           <div class="carousel-card">
             <% const img = p.carousel_image || p.card_image || (p.images && p.images.length ? p.images[0] : ''); %>
-            <div class="carousel-img" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+            <div class="carousel-img" style="<%= img ? 'background-image:url('+img+');background-size:contain;background-repeat:no-repeat;background-position:center' : '' %>">
               <% if (!img) { %>❄<% } %>
             </div>
             <div class="carousel-body">
