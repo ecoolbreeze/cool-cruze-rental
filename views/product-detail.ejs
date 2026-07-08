@@ -119,6 +119,10 @@
           </div>
         </div>
 
+        <div class="detail-note">
+          <strong>Note:</strong> Copper pipe consumed above 15 feet will be charged extra as per the market rates.
+        </div>
+
         <div class="detail-actions">
           <button onclick="openRentModal(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent detail-rent-btn">Rent Now</button>
           <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20Cool%20Cruze!%20I'm%20interested%20in%20<%= encodeURIComponent(product.name) %>" target="_blank" class="btn-wa">Chat on WhatsApp</a>
@@ -331,6 +335,18 @@
 .benefit-row span:first-child {
   font-size: 18px;
 }
+
+.detail-note {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #9a3412;
+  line-height: 1.5;
+  margin-top: 16px;
+}
+.detail-note strong { font-weight: 700; }
 
 .detail-actions {
   display: flex;
