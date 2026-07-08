@@ -576,8 +576,8 @@ function goTo(n){
   allDots.forEach(function(d,i){d.classList.toggle('active',i===carouselIdx);});
 }
 
-function prevSlide(){ goTo(carouselIdx - 1); }
-function nextSlide(){ goTo(carouselIdx + 1); }
+function prevSlide(){ goTo(carouselIdx - 1 < 0 ? maxIdx : carouselIdx - 1); }
+function nextSlide(){ goTo(carouselIdx + 1 > maxIdx ? 0 : carouselIdx + 1); }
 
 window.addEventListener('resize', function(){
   var items = track.querySelectorAll('.carousel-item');
