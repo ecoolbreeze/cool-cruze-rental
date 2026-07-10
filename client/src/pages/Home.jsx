@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import Carousel from 'react-bootstrap/Carousel';
 import { api } from '../api';
 
 const HERO_IMAGES = ['/uploads/hero.png', '/uploads/hero-1.png', '/uploads/hero-2.png', '/uploads/hero-3.png'];
@@ -36,7 +37,6 @@ const FAQS = [
 export default function Home({ onRent }) {
   const [slideIndex, setSlideIndex] = useState(0);
   const [products, setProducts] = useState([]);
-  const [carouselIdx, setCarouselIdx] = useState(0);
   const [faqOpen, setFaqOpen] = useState(null);
   const carouselRef = useRef(null);
 
@@ -50,14 +50,6 @@ export default function Home({ onRent }) {
     }, 4000);
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if (products.length === 0) return;
-    const timer = setInterval(() => {
-      setCarouselIdx(i => (i + 1) % products.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [products.length]);
 
   const isFullBleed = slideIndex === HERO_FULL_BLEED_INDEX;
 
@@ -88,39 +80,36 @@ export default function Home({ onRent }) {
       {/* CAROUSEL */}
       <div className="carousel-section" ref={carouselRef}>
         <div className="carousel-container">
-          <button className="carousel-arrow carousel-prev" onClick={() => setCarouselIdx(i => (i === 0 ? products.length - 1 : i - 1))} aria-label="Previous">‹</button>
-          <div className="carousel-viewport">
-            <div className="carousel-track" style={{ transform: `translateX(-${carouselIdx * (100 / 3)}%)` }}>
-              {products.map(p => (
-                <div key={p.id} className="carousel-item" style={{ flex: '0 0 33.333%' }}>
-                  <div className="carousel-card">
-                    <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none' }}>
-                      {!p.card_image && '❄'}
-                    </div>
-                    <div className="carousel-body">
-                      <div className="carousel-brand">{p.brand || 'Premium AC'}</div>
-                      <div className="carousel-name">{p.name}</div>
-                      <div className="carousel-tags">
-                        <span>{p.type}</span>
-                        <span>{p.capacity}</span>
+          <Carousel interval={null} indicators={true} prevLabel="‹" nextLabel="›" prevIcon={<span style={{fontSize:26,lineHeight:1}}>‹</span>} nextIcon={<span style={{fontSize:26,lineHeight:1}}>›</span>}>
+            {Array.from({ length: Math.ceil(products.length / 3) }).map((_, slideIdx) => (
+              <Carousel.Item key={slideIdx}>
+                <div className="carousel-track" style={{ display: 'flex' }}>
+                  {products.slice(slideIdx * 3, slideIdx * 3 + 3).map(p => (
+                    <div key={p.id} className="carousel-item" style={{ flex: '0 0 33.333%', padding: '8px', boxSizing: 'border-box' }}>
+                      <div className="carousel-card">
+                        <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                          {!p.card_image && '❄'}
+                        </div>
+                        <div className="carousel-body">
+                          <div className="carousel-brand">{p.brand || 'Premium AC'}</div>
+                          <div className="carousel-name">{p.name}</div>
+                          <div className="carousel-tags">
+                            <span>{p.type}</span>
+                            <span>{p.capacity}</span>
+                          </div>
+                          <div className="carousel-price">₹{p.price_per_day} <span>/day</span></div>
+                          <div className="carousel-actions">
+                            <button className="carousel-rent-btn" onClick={() => onRent(p)}>Rent Now</button>
+                            <Link to={`/product/${p.id}`} className="carousel-details-btn">Details</Link>
+                          </div>
+                        </div>
                       </div>
-                      <div className="carousel-price">₹{p.price_per_day} <span>/day</span></div>
-                      <div className="carousel-actions">
-                        <button className="carousel-rent-btn" onClick={() => onRent(p)}>Rent Now</button>
-                        <Link to={`/product/${p.id}`} className="carousel-details-btn">Details</Link>
-                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <button className="carousel-arrow carousel-next" onClick={() => setCarouselIdx(i => (i === products.length - 1 ? 0 : i + 1))} aria-label="Next">›</button>
-          <div className="carousel-dots">
-            {products.map((_, i) => (
-              <button key={i} className={`carousel-dot${i === carouselIdx ? ' active' : ''}`} onClick={() => setCarouselIdx(i)} aria-label={`Slide ${i + 1}`} />
+              </Carousel.Item>
             ))}
-          </div>
+          </Carousel>
         </div>
       </div>
 

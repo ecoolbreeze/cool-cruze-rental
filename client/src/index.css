@@ -75,6 +75,15 @@ img{max-width:100%;height:auto}
 @media(max-width:900px){.carousel-item{flex:0 0 50%!important}.carousel-container{padding:0 40px}}
 @media(max-width:600px){.carousel-item{flex:0 0 100%!important}.carousel-container{padding:0 36px}.carousel-arrow{width:34px;height:34px;font-size:20px}}
 
+/* Bootstrap Carousel overrides */
+.carousel .carousel-control-prev,.carousel .carousel-control-next{width:42px;height:42px;top:50%;transform:translateY(-50%);bottom:auto;opacity:1;background:var(--white);border:2px solid #e2e8f0;border-radius:50%;color:var(--text)}
+.carousel .carousel-control-prev{left:0}.carousel .carousel-control-next{right:0}
+.carousel .carousel-control-prev:hover,.carousel .carousel-control-next:hover{background:var(--primary);border-color:var(--primary);color:white}
+.carousel .carousel-indicators{bottom:-40px;gap:8px}
+.carousel .carousel-indicators button{width:10px;height:10px;border-radius:50%;background:#cbd5e1;border:none;opacity:1;margin:0}
+.carousel .carousel-indicators button.active{background:var(--primary);width:24px;border-radius:5px}
+.carousel .carousel-inner{overflow:visible}
+
 /* ===== BENEFITS ===== */
 .benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
 .benefit-card{background:var(--white);padding:32px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;transition:transform 0.3s,box-shadow 0.3s}
