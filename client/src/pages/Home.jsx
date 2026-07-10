@@ -81,31 +81,25 @@ export default function Home({ onRent }) {
       <div className="carousel-section" ref={carouselRef}>
         <div className="carousel-container">
           <Carousel interval={null} indicators={true} prevLabel="‹" nextLabel="›" prevIcon={<span style={{fontSize:26,lineHeight:1}}>‹</span>} nextIcon={<span style={{fontSize:26,lineHeight:1}}>›</span>}>
-            {Array.from({ length: Math.ceil(products.length / 3) }).map((_, slideIdx) => (
-              <Carousel.Item key={slideIdx}>
-                <div className="carousel-track" style={{ display: 'flex' }}>
-                  {products.slice(slideIdx * 3, slideIdx * 3 + 3).map(p => (
-                    <div key={p.id} className="carousel-item" style={{ flex: '0 0 33.333%', padding: '8px', boxSizing: 'border-box' }}>
-                      <div className="carousel-card">
-                        <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                          {!p.card_image && '❄'}
-                        </div>
-                        <div className="carousel-body">
-                          <div className="carousel-brand">{p.brand || 'Premium AC'}</div>
-                          <div className="carousel-name">{p.name}</div>
-                          <div className="carousel-tags">
-                            <span>{p.type}</span>
-                            <span>{p.capacity}</span>
-                          </div>
-                          <div className="carousel-price">₹{p.price_per_day} <span>/day</span></div>
-                          <div className="carousel-actions">
-                            <button className="carousel-rent-btn" onClick={() => onRent(p)}>Rent Now</button>
-                            <Link to={`/product/${p.id}`} className="carousel-details-btn">Details</Link>
-                          </div>
-                        </div>
-                      </div>
+            {products.map(p => (
+              <Carousel.Item key={p.id}>
+                <div className="carousel-card">
+                  <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    {!p.card_image && '❄'}
+                  </div>
+                  <div className="carousel-body">
+                    <div className="carousel-brand">{p.brand || 'Premium AC'}</div>
+                    <div className="carousel-name">{p.name}</div>
+                    <div className="carousel-tags">
+                      <span>{p.type}</span>
+                      <span>{p.capacity}</span>
                     </div>
-                  ))}
+                    <div className="carousel-price">₹{p.price_per_day} <span>/day</span></div>
+                    <div className="carousel-actions">
+                      <button className="carousel-rent-btn" onClick={() => onRent(p)}>Rent Now</button>
+                      <Link to={`/product/${p.id}`} className="carousel-details-btn">Details</Link>
+                    </div>
+                  </div>
                 </div>
               </Carousel.Item>
             ))}
