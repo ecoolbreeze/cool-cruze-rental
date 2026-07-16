@@ -103,16 +103,8 @@ body { display: block; }
         </div>
 
         <div class="form-group">
-          <label>Card Image (product grid, 280×220)</label>
-          <input type="file" name="card_image" accept="image/*">
-        </div>
-        <div class="form-group">
-          <label>Carousel Image (homepage carousel, 400×300)</label>
-          <input type="file" name="carousel_image" accept="image/*">
-        </div>
-        <div class="form-group">
-          <label>Detail Gallery Images (product page, 4:3 ratio)</label>
-          <input type="file" name="detail_images" accept="image/*" multiple>
+          <label>Product Image (used for the product card, carousel, and detail view)</label>
+          <input type="file" name="image" accept="image/*">
         </div>
         <div class="form-group">
           <label>Description</label>
@@ -149,7 +141,7 @@ body { display: block; }
               <% const cardImg = product.card_image || (product.images && product.images.length ? product.images[0] : product.image || ''); %>
               <% if (cardImg) { %>
                 <div style="display:flex;align-items:center;gap:4px;">
-                  <img src="<%= cardImg %>" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+                  <img src="<%= cardImg %>" style="width:48px;height:48px;object-fit:contain;padding:4px;background:#f8fafc;border-radius:8px;">
                   <% const detailCount = product.detail_images ? product.detail_images.length : (product.images ? product.images.length : (product.image ? 1 : 0)); %>
                   <% if (detailCount > 1) { %><span style="font-size:11px;color:var(--text-light);font-weight:600;">+<%= detailCount-1 %></span><% } %>
                 </div>
@@ -256,19 +248,9 @@ body { display: block; }
       </div>
 
       <div class="form-group">
-        <label>Card Image (product grid, leave empty to keep current)</label>
-        <input type="file" name="card_image" accept="image/*">
-        <div id="edit_card_preview" style="margin-top:4px;"></div>
-      </div>
-      <div class="form-group">
-        <label>Carousel Image (homepage carousel, 400×300, leave empty to keep current)</label>
-        <input type="file" name="carousel_image" accept="image/*">
-        <div id="edit_carousel_preview" style="margin-top:4px;"></div>
-      </div>
-      <div class="form-group">
-        <label>Detail Gallery Images (product page, leave empty to keep current)</label>
-        <input type="file" name="detail_images" accept="image/*" multiple>
-        <div id="edit_detail_previews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"></div>
+        <label>Product Image (leave empty to keep current image)</label>
+        <input type="file" name="image" accept="image/*">
+        <div id="edit_image_preview" style="margin-top:4px;"></div>
       </div>
       <div class="form-group">
         <label>Description</label>
@@ -343,22 +325,10 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
 
   function showPreview(elId, src) {
     const el = document.getElementById(elId);
-    if (src) { el.innerHTML = '<img src="' + src + '" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">'; }
+    if (src) { el.innerHTML = '<img src="' + src + '" style="width:64px;height:64px;object-fit:contain;padding:4px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">'; }
     else { el.innerHTML = ''; }
   }
-  showPreview('edit_card_preview', cardImg);
-  showPreview('edit_carousel_preview', carouselImg);
-  const dp = document.getElementById('edit_detail_previews');
-  dp.innerHTML = '';
-  if (detailImgs && detailImgs.length) {
-    detailImgs.forEach(function(src) {
-      if (!src) return;
-      var img = document.createElement('img');
-      img.src = src;
-      img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;';
-      dp.appendChild(img);
-    });
-  }
+  showPreview('edit_image_preview', cardImg || carouselImg || (detailImgs && detailImgs[0]) || '');
 
   const cb = document.getElementById('edit_use_flat_pricing');
   cb.checked = !!useFlat;

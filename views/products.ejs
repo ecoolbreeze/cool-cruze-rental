@@ -36,7 +36,7 @@
     <% products.forEach(product => { %>
     <div class="product-card" data-name="<%= (product.name||'').toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
       <% const img = product.card_image || (product.images && product.images.length ? product.images[0] : product.image); %>
-      <div class="product-img" role="img" aria-label="<%= product.name || 'AC' %> - <%= product.brand || '' %> <%= product.capacity || '' %> <%= product.type || '' %> for rent" style="<%= img ? 'background-image:url('+img+');background-size:cover;background-position:center' : '' %>">
+      <div class="product-img" role="img" aria-label="<%= product.name || 'AC' %> - <%= product.brand || '' %> <%= product.capacity || '' %> <%= product.type || '' %> for rent" style="<%= img ? 'background-image:url('+img+');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#f8fafc' : '' %>">
         <% if (!img) { %>❄️<% } %>
       </div>
       <div class="product-body">

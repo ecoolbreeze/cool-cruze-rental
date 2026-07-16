@@ -7,7 +7,7 @@
     <div class="detail-layout">
       <div class="detail-gallery">
         <% const imgs = product.detail_images && product.detail_images.length ? product.detail_images : (product.card_image ? [product.card_image] : (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))); %>
-        <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+')' : '' %>" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC">
+        <div class="detail-main-img" id="detailMainImg" style="<%= imgs.length ? 'background-image:url('+imgs[0]+');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#f8fafc' : '' %>" role="img" aria-label="<%= product.name %> - <%= product.brand %> <%= product.capacity %> <%= product.type %> AC">
           <% if (!imgs.length) { %>
             <div class="detail-img-placeholder">❄️</div>
           <% } %>
@@ -15,7 +15,7 @@
         <% if (imgs.length > 1) { %>
         <div class="detail-thumbs">
           <% imgs.forEach(function(src, idx) { %>
-          <div class="detail-thumb <%= idx === 0 ? 'active' : '' %>" style="background-image:url(<%= src %>)" onclick="switchImage(this, '<%= src %>')" role="img" aria-label="<%= product.name %> image <%= idx+1 %>"></div>
+          <div class="detail-thumb <%= idx === 0 ? 'active' : '' %>" style="background-image:url(<%= src %>);background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#f8fafc" onclick="switchImage(this, '<%= src %>')" role="img" aria-label="<%= product.name %> image <%= idx+1 %>"></div>
           <% }) %>
         </div>
         <% } %>
@@ -176,8 +176,11 @@
   aspect-ratio: 4/3;
   background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
   border-radius: 20px;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
+  padding: 16px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,8 +201,10 @@
   width: 72px;
   height: 72px;
   border-radius: 10px;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
+  background-color: #f8fafc;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.2s, transform 0.2s;

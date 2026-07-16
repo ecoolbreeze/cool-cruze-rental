@@ -84,7 +84,7 @@ export default function Home({ onRent }) {
             {products.map(p => (
               <Carousel.Item key={p.id}>
                 <div className="carousel-card">
-                  <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                  <div className="carousel-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
                     {!p.card_image && '❄'}
                   </div>
                   <div className="carousel-body">
@@ -136,7 +136,7 @@ export default function Home({ onRent }) {
           <div className="products-grid">
             {products.slice(0, 4).map(p => (
               <div key={p.id} className="product-card">
-                <div className="product-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none' }}>
+                <div className="product-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
                   {!p.card_image && '❄'}
                 </div>
                 <div className="product-body">

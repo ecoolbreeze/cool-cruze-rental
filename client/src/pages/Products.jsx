@@ -63,7 +63,7 @@ export default function Products({ onRent }) {
         <div className="products-grid">
           {filtered.map(p => (
             <div key={p.id} className="product-card">
-              <div className="product-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none' }} role="img" aria-label={p.name}>
+              <div className="product-img" style={{ backgroundImage: p.card_image ? `url(${p.card_image})` : 'none', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }} role="img" aria-label={p.name}>
                 {!p.card_image && '❄'}
               </div>
               <div className="product-body">

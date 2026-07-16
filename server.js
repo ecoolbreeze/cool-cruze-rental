@@ -236,20 +236,30 @@ function parseTiers(body) {
   return tiers;
 }
 
-const prodUpload = upload.fields([
-  { name: 'card_image', maxCount: 1 },
-  { name: 'detail_images', maxCount: 5 },
-  { name: 'carousel_image', maxCount: 1 }
-]);
+const prodUpload = upload.any();
+
+function getUploadedFiles(req) {
+  return Array.isArray(req.files) ? req.files : [];
+}
+
+function getPrimaryUpload(req) {
+  const files = getUploadedFiles(req);
+  const imageFile = files.find(file => file.fieldname === 'image');
+  if (imageFile) return imageFile;
+  return files.find(file => file.fieldname === 'card_image' || file.fieldname === 'carousel_image') || null;
+}
+
+function getDetailUploads(req) {
+  return getUploadedFiles(req).filter(file => file.fieldname === 'detail_images');
+}
 
 app.post('/admin/products', requireAuth, prodUpload, asyncRoute(async (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
-  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
-  const detailFiles = req.files && req.files['detail_images'] || [];
-  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
-  const card_image = cardFile ? await saveUpload(cardFile) : '';
-  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
-  const carousel_image = carouselFile ? await saveUpload(carouselFile) : '';
+  const uploadFile = getPrimaryUpload(req);
+  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
+  const card_image = imageUrl;
+  const detail_images = imageUrl ? [imageUrl] : [];
+  const carousel_image = imageUrl;
   const tiers = parseTiers(req.body);
   await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
@@ -259,12 +269,11 @@ app.post('/admin/products/edit/:id', requireAuth, prodUpload, asyncRoute(async (
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const existing = await db.getProduct(req.params.id);
   if (!existing) return res.redirect('/admin/products');
-  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
-  const detailFiles = req.files && req.files['detail_images'] || [];
-  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
-  const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
-  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
-  const carousel_image = carouselFile ? await saveUpload(carouselFile) : existing.carousel_image || '';
+  const uploadFile = getPrimaryUpload(req);
+  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
+  const card_image = imageUrl || existing.card_image || existing.carousel_image || (existing.detail_images && existing.detail_images[0]) || '';
+  const detail_images = imageUrl ? [imageUrl] : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
+  const carousel_image = imageUrl || existing.carousel_image || existing.card_image || (existing.detail_images && existing.detail_images[0]) || '';
   const tiers = parseTiers(req.body);
   await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
@@ -384,12 +393,11 @@ app.get('/api/admin/products', apiAuth, asyncRoute(async (req, res) => {
 }));
 
 app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res) => {
-  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
-  const detailFiles = req.files && req.files['detail_images'] || [];
-  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
-  const card_image = cardFile ? await saveUpload(cardFile) : '';
-  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : [];
-  const carousel_image = carouselFile ? await saveUpload(carouselFile) : '';
+  const uploadFile = getPrimaryUpload(req);
+  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
+  const card_image = imageUrl;
+  const detail_images = imageUrl ? [imageUrl] : [];
+  const carousel_image = imageUrl;
   const price_per_day = parseFloat(req.body.price_per_day) || 0;
   const product = await db.addProduct({
     name: req.body.name || 'Unnamed',
@@ -416,12 +424,11 @@ app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res)
 app.put('/api/admin/products/:id', apiAuth, prodUpload, asyncRoute(async (req, res) => {
   const existing = await db.getProduct(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Product not found' });
-  const cardFile = req.files && req.files['card_image'] && req.files['card_image'][0];
-  const detailFiles = req.files && req.files['detail_images'] || [];
-  const carouselFile = req.files && req.files['carousel_image'] && req.files['carousel_image'][0];
-  const card_image = cardFile ? await saveUpload(cardFile) : existing.card_image || '';
-  const detail_images = detailFiles.length ? await saveUploads(detailFiles) : (existing.detail_images || []);
-  const carousel_image = carouselFile ? await saveUpload(carouselFile) : existing.carousel_image || '';
+  const uploadFile = getPrimaryUpload(req);
+  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
+  const card_image = imageUrl || existing.card_image || existing.carousel_image || (existing.detail_images && existing.detail_images[0]) || '';
+  const detail_images = imageUrl ? [imageUrl] : (existing.detail_images || []);
+  const carousel_image = imageUrl || existing.carousel_image || existing.card_image || (existing.detail_images && existing.detail_images[0]) || '';
   const price_per_day = parseFloat(req.body.price_per_day) || parseFloat(existing.monthly_price) || 0;
   const updated = await db.updateProduct(req.params.id, {
     name: req.body.name || existing.name,
