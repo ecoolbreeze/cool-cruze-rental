@@ -93,6 +93,26 @@ export default function ProductDetail({ onRent }) {
             </div>
           )}
 
+          {product.specifications && (
+            <div className="detail-specs">
+              <h3>Specifications</h3>
+              <table className="specs-table">
+                <tbody>
+                  {product.specifications.split('\n').map((line, i) => {
+                    const parts = line.split('=');
+                    if (parts.length === 2) return (
+                      <tr key={i}>
+                        <td className="spec-label">{parts[0].trim()}</td>
+                        <td className="spec-value">{parts[1].trim()}</td>
+                      </tr>
+                    );
+                    return null;
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
           <div className="detail-benefits">
             <h3>What's Included</h3>
             <div className="benefits-list">

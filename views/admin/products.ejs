@@ -114,6 +114,10 @@ body { display: block; }
           <label>Features (comma separated)</label>
           <input type="text" name="features" placeholder="e.g. 5-star energy rating, Sleep mode, Turbo cooling">
         </div>
+        <div class="form-group">
+          <label>Specifications (one per line: Key = Value)</label>
+          <textarea name="specifications" rows="5" placeholder="e.g. Cooling Capacity = 5.0 kW&#10;Power Consumption = 2.1 kW&#10;Refrigerant = R-32&#10;Noise Level = 52 dB"></textarea>
+        </div>
         <button type="submit" class="btn-submit">Add Product</button>
       </form>
     </div>
@@ -157,7 +161,7 @@ body { display: block; }
             <td><%= product.stock %></td>
             <td>
               <div class="admin-actions">
-                 <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>, '<%= (product.card_image || '').replace(/'/g, "\\'") %>', <%= JSON.stringify(product.detail_images && product.detail_images.length ? product.detail_images : []) %>, '<%= (product.carousel_image || '').replace(/'/g, "\\'") %>')">Edit</button>
+                 <button class="btn-sm btn-edit" onclick="editProduct(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', '<%= product.type %>', '<%= product.monthly_price %>', '<%= (product.description || '').replace(/'/g, "\\'") %>', '<%= (product.features || '').replace(/'/g, "\\'") %>', <%= product.stock %>, <%= JSON.stringify(product.images && product.images.length ? product.images : (product.image ? [product.image] : [])) %>, <%= JSON.stringify(product.tiers || []) %>, <%= product.use_flat_pricing ? 'true' : 'false' %>, <%= product.flat_days || 0 %>, <%= product.flat_price || 0 %>, <%= product.extra_day_rate || 0 %>, '<%= (product.card_image || '').replace(/'/g, "\\'") %>', <%= JSON.stringify(product.detail_images && product.detail_images.length ? product.detail_images : []) %>, '<%= (product.carousel_image || '').replace(/'/g, "\\'") %>', '<%= (product.specifications || '').replace(/'/g, "\\'") %>')">Edit</button>
                 <form method="POST" action="/admin/products/delete/<%= product.id %>" style="display:inline;" onsubmit="return confirm('Delete this product?')">
                   <button class="btn-sm btn-delete">Delete</button>
                 </form>
@@ -260,6 +264,10 @@ body { display: block; }
         <label>Features</label>
         <input type="text" name="features" id="edit_features">
       </div>
+      <div class="form-group">
+        <label>Specifications (one per line: Key = Value)</label>
+        <textarea name="specifications" id="edit_specifications" rows="5" placeholder="Cooling Capacity = 5.0 kW&#10;Power Consumption = 2.1 kW"></textarea>
+      </div>
       <div style="display:flex;gap:12px;">
         <button type="submit" class="btn-submit">Update Product</button>
         <button type="button" onclick="closeEdit()" style="padding:14px 32px;border-radius:50px;font-weight:700;border:2px solid #e2e8f0;background:white;cursor:pointer;">Cancel</button>
@@ -312,7 +320,7 @@ function addEditTierRow(minVal, maxVal, priceVal) {
   addTierRow('editTierRows', minVal, maxVal, priceVal);
 }
 
-function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate, cardImg, detailImgs, carouselImg) {
+function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate, cardImg, detailImgs, carouselImg, specs) {
   document.getElementById('editForm').action = '/admin/products/edit/' + id;
   document.getElementById('edit_name').value = name;
   document.getElementById('edit_brand').value = brand;
@@ -322,6 +330,7 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   document.getElementById('edit_stock').value = stock;
   document.getElementById('edit_desc').value = desc;
   document.getElementById('edit_features').value = features;
+  document.getElementById('edit_specifications').value = specs || '';
 
   function showPreview(elId, src) {
     const el = document.getElementById(elId);

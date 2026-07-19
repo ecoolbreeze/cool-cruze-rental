@@ -261,7 +261,7 @@ app.post('/admin/products', requireAuth, prodUpload, asyncRoute(async (req, res)
   const detail_images = imageUrl ? [imageUrl] : [];
   const carousel_image = imageUrl;
   const tiers = parseTiers(req.body);
-  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 
@@ -275,7 +275,7 @@ app.post('/admin/products/edit/:id', requireAuth, prodUpload, asyncRoute(async (
   const detail_images = imageUrl ? [imageUrl] : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
   const carousel_image = imageUrl || existing.carousel_image || existing.card_image || (existing.detail_images && existing.detail_images[0]) || '';
   const tiers = parseTiers(req.body);
-  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 

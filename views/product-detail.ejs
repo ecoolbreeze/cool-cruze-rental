@@ -97,6 +97,19 @@
         </div>
         <% } %>
 
+        <% if (product.specifications) { %>
+        <div class="detail-specs">
+          <h3>Specifications</h3>
+          <table class="specs-table">
+            <% product.specifications.trim().split('\n').forEach(function(line) { %>
+              <% var parts = line.split('='); if (parts.length === 2) { %>
+                <tr><td class="spec-label"><%= parts[0].trim() %></td><td class="spec-value"><%= parts[1].trim() %></td></tr>
+              <% } %>
+            <% }) %>
+          </table>
+        </div>
+        <% } %>
+
         <div class="detail-benefits">
           <h3>What's Included</h3>
           <div class="benefits-list">
@@ -310,6 +323,15 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
+
+.detail-specs { margin-top: 24px; }
+.detail-specs h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.specs-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.specs-table tr { border-bottom: 1px solid #f1f5f9; }
+.specs-table tr:last-child { border-bottom: none; }
+.specs-table td { padding: 10px 16px; font-size: 14px; }
+.spec-label { font-weight: 600; color: var(--text); width: 40%; background: #f8fafc; }
+.spec-value { color: var(--text-light); }
 
 .detail-feature-item {
   background: #f0fdf4;
