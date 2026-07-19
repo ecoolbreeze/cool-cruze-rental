@@ -111,8 +111,8 @@ body { display: block; }
           <textarea name="description" rows="3" placeholder="Brief description of the product"></textarea>
         </div>
         <div class="form-group">
-          <label>Features (comma separated)</label>
-          <input type="text" name="features" placeholder="e.g. 5-star energy rating, Sleep mode, Turbo cooling">
+          <label>Features (one per line)</label>
+          <textarea name="features" rows="4" placeholder="5-star energy rating&#10;Sleep mode&#10;Turbo cooling"></textarea>
         </div>
         <div class="form-group">
           <label>Specifications (one per line: Key = Value)</label>
@@ -261,8 +261,8 @@ body { display: block; }
         <textarea name="description" id="edit_desc" rows="3"></textarea>
       </div>
       <div class="form-group">
-        <label>Features</label>
-        <input type="text" name="features" id="edit_features">
+        <label>Features (one per line)</label>
+        <textarea name="features" id="edit_features" rows="4"></textarea>
       </div>
       <div class="form-group">
         <label>Specifications (one per line: Key = Value)</label>

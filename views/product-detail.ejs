@@ -90,7 +90,7 @@
         <div class="detail-features">
           <h3>Key Features</h3>
           <div class="detail-features-grid">
-            <% product.features.split(',').forEach(f => { %>
+            <% product.features.trim().split('\n').forEach(f => { %>
               <div class="detail-feature-item">✓ <%= f.trim() %></div>
             <% }) %>
           </div>
