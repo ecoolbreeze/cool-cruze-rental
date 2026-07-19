@@ -98,7 +98,7 @@
         <% } %>
 
         <% if (product.specifications) { %>
-        <div class="detail-specs">
+        <div class="detail-specs-table">
           <h3>Specifications</h3>
           <table class="specs-table">
             <% product.specifications.trim().split('\n').forEach(function(line) { %>
@@ -324,8 +324,8 @@
   gap: 8px;
 }
 
-.detail-specs { margin-top: 24px; }
-.detail-specs h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.detail-specs-table { margin-top: 24px; }
+.detail-specs-table h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
 .specs-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
 .specs-table tr { border-bottom: 1px solid #f1f5f9; }
 .specs-table tr:last-child { border-bottom: none; }
