@@ -21,10 +21,12 @@ async function init() {
       type TEXT DEFAULT '',
       monthly_price NUMERIC DEFAULT 0,
       card_image TEXT DEFAULT '',
+      carousel_image TEXT DEFAULT '',
       detail_images JSONB DEFAULT '[]',
       images JSONB DEFAULT '[]',
       description TEXT DEFAULT '',
       features TEXT DEFAULT '',
+      specifications TEXT DEFAULT '',
       stock INTEGER DEFAULT 1,
       tiers JSONB DEFAULT '[]',
       use_flat_pricing BOOLEAN DEFAULT false,
@@ -59,7 +61,19 @@ async function init() {
       ALTER TABLE products ADD COLUMN detail_images JSONB DEFAULT '[]';
       EXCEPTION WHEN duplicate_column THEN NULL;
     END $$`);
-  } catch(e) { console.error('Migration detail_images failed:', e.message); }
+    } catch(e) { console.error('Migration detail_images failed:', e.message); }
+  try {
+    await query(`DO $$ BEGIN
+      ALTER TABLE products ADD COLUMN carousel_image TEXT DEFAULT '';
+      EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$`);
+  } catch(e) { console.error('Migration carousel_image failed:', e.message); }
+  try {
+    await query(`DO $$ BEGIN
+      ALTER TABLE products ADD COLUMN specifications TEXT DEFAULT '';
+      EXCEPTION WHEN duplicate_column THEN NULL;
+    END $$`);
+  } catch(e) { console.error('Migration specifications failed:', e.message); }
   const { count } = (await query('SELECT COUNT(*) FROM products')).rows[0];
   if (parseInt(count) === 0) {
     const seed = require('./seed');
@@ -104,13 +118,13 @@ async function getProduct(id) {
 }
 
 async function addProduct(data) {
-  const { name, brand, capacity, type, monthly_price, card_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate } = data;
+  const { name, brand, capacity, type, monthly_price, card_image, carousel_image, detail_images, description, features, specifications, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate } = data;
   const dimgs = detail_images && detail_images.length ? JSON.stringify(detail_images) : '[]';
   const t = tiers && tiers.length ? JSON.stringify(tiers) : '[]';
   try {
     const { rows } = await query(
-      'INSERT INTO products (name, brand, capacity, type, monthly_price, card_image, detail_images, description, features, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *',
-      [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, card_image||'', dimgs, description||'', features||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
+      'INSERT INTO products (name, brand, capacity, type, monthly_price, card_image, carousel_image, detail_images, description, features, specifications, stock, tiers, use_flat_pricing, flat_days, flat_price, extra_day_rate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING *',
+      [name||'', brand||'', capacity||'', type||'', parseFloat(monthly_price)||0, card_image||'', carousel_image||'', dimgs, description||'', features||'', specifications||'', parseInt(stock)||1, t, !!use_flat_pricing, parseInt(flat_days)||0, parseFloat(flat_price)||0, parseFloat(extra_day_rate)||0]
     );
     return rowToProduct(rows[0]);
   } catch (e) {
@@ -134,8 +148,8 @@ async function updateProduct(id, data) {
   const t = merged.tiers && merged.tiers.length ? JSON.stringify(merged.tiers) : '[]';
   try {
     const { rows } = await query(
-      'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, card_image=$6, detail_images=$7, description=$8, features=$9, stock=$10, tiers=$11, use_flat_pricing=$12, flat_days=$13, flat_price=$14, extra_day_rate=$15 WHERE id=$16 RETURNING *',
-      [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.card_image||'', dimgs, merged.description||'', merged.features||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
+      'UPDATE products SET name=$1, brand=$2, capacity=$3, type=$4, monthly_price=$5, card_image=$6, carousel_image=$7, detail_images=$8, description=$9, features=$10, specifications=$11, stock=$12, tiers=$13, use_flat_pricing=$14, flat_days=$15, flat_price=$16, extra_day_rate=$17 WHERE id=$18 RETURNING *',
+      [merged.name||'', merged.brand||'', merged.capacity||'', merged.type||'', parseFloat(merged.monthly_price)||0, merged.card_image||'', merged.carousel_image||'', dimgs, merged.description||'', merged.features||'', merged.specifications||'', parseInt(merged.stock)||1, t, !!merged.use_flat_pricing, parseInt(merged.flat_days)||0, parseFloat(merged.flat_price)||0, parseFloat(merged.extra_day_rate)||0, id]
     );
     return rows.length ? rowToProduct(rows[0]) : null;
   } catch (e) {
