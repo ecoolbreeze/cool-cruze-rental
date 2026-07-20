@@ -156,7 +156,7 @@ app.use((req, res, next) => {
   res.locals.baseUrl = BASE_URL;
   res.locals.whatsappNumber = WHATSAPP_NUMBER;
   res.locals.robotsMeta = req.path.startsWith('/admin') ? 'noindex, nofollow' : 'index, follow';
-  const desc = 'Premium tower AC rental in Mumbai. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Free installation & 24/7 support for events, offices & industries.';
+  const desc = 'Best tower AC rental in Mumbai — Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support. AC rental Mumbai for events, offices & industries.';
   res.locals.metaDescription = desc;
   res.locals.ogImage = '/uploads/hero.png';
   next();
