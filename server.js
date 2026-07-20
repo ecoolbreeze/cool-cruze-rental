@@ -3,7 +3,7 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const db = require('./db');
@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
+const GMAIL_USER = process.env.GMAIL_USER || '';
+const GMAIL_PASS = process.env.GMAIL_PASS || '';
 const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@coolcruze.in';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -92,7 +93,10 @@ async function saveUploads(files) {
   return Promise.all(files.map(f => saveUpload(f)));
 }
 
-if (SENDGRID_API_KEY) sgMail.setApiKey(SENDGRID_API_KEY);
+const transporter = (GMAIL_USER && GMAIL_PASS) ? nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: GMAIL_USER, pass: GMAIL_PASS }
+}) : null;
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
@@ -192,13 +196,13 @@ app.post('/rent/:id', asyncRoute(async (req, res) => {
     message: message || ''
   });
 
-  if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
-    sgMail.send({
+  if (transporter && NOTIFY_EMAIL) {
+    transporter.sendMail({
       from: SENDER_EMAIL,
       to: NOTIFY_EMAIL,
       subject: `New Rental Lead - ${product.name}`,
       html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-    }).then(() => console.log('Email sent via SendGrid')).catch(e => console.log('Email failed:', e.message));
+    }).then(() => console.log('Email sent via Gmail')).catch(e => console.log('Email failed:', e.message));
   }
 
   res.json({
@@ -356,8 +360,8 @@ app.post('/api/rent/:id', asyncRoute(async (req, res) => {
     address: email || '',
     message: `Duration: ${months} days | ₹${totalPrice} | ${message || ''}`
   });
-  if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
-    sgMail.send({
+  if (transporter && NOTIFY_EMAIL) {
+    transporter.sendMail({
       from: SENDER_EMAIL,
       to: NOTIFY_EMAIL,
       subject: `New Rental Lead - ${product.name}`,
@@ -535,17 +539,17 @@ if (fs.existsSync(clientIndex)) {
   });
 }
 
-const emailOk = SENDGRID_API_KEY && NOTIFY_EMAIL;
+const emailOk = !!transporter && !!NOTIFY_EMAIL;
 
 app.get('/offline', (req, res) => {
   res.render('offline', { title: 'Offline' });
 });
 
 app.get('/test-email', async (req, res) => {
-  if (!SENDGRID_API_KEY) return res.send('SENDGRID_API_KEY not set');
+  if (!transporter) return res.send('GMAIL_USER/GMAIL_PASS not set');
   if (!NOTIFY_EMAIL) return res.send('NOTIFY_EMAIL not set');
   try {
-    await sgMail.send({
+    await transporter.sendMail({
       from: SENDER_EMAIL,
       to: NOTIFY_EMAIL,
       subject: 'Test from Cool Cruze',
@@ -606,8 +610,8 @@ app.post('/contact', asyncRoute(async (req, res) => {
   if (!name || !phone || !message) {
     return res.status(400).json({ error: 'Please fill all required fields' });
   }
-  if (SENDGRID_API_KEY && NOTIFY_EMAIL) {
-    sgMail.send({
+  if (transporter && NOTIFY_EMAIL) {
+    transporter.sendMail({
       from: SENDER_EMAIL,
       to: NOTIFY_EMAIL,
       subject: `Contact Form - ${name}`,
