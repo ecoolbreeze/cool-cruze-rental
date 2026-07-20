@@ -17,6 +17,7 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@coolcruze.in';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 const DATABASE_URL = process.env.DATABASE_URL;
+const cacheVersion = Date.now();
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME || '';
 const isPG = !!DATABASE_URL;
 
@@ -29,6 +30,17 @@ if (GCS_BUCKET_NAME) {
 }
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Disable browser caching for HTML pages so updates show immediately
+app.use((req, res, next) => {
+  if (req.accepts('html') && !req.path.startsWith('/api/') && !req.path.startsWith('/uploads/')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -49,6 +61,7 @@ if (isPG) {
 app.use(session(sessionConfig));
 
 app.set('view engine', 'ejs');
+app.locals.cacheVersion = cacheVersion;
 app.set('views', path.join(__dirname, 'views'));
 
 // Upload handling — memory storage, upload to GCS or local disk
