@@ -44,7 +44,7 @@ body { display: block; }
             <td><%= i + 1 %></td>
             <td><strong><%= lead.customer_name %></strong></td>
             <td>
-              <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20<%= encodeURIComponent(lead.customer_name) %>%2C%20regarding%20<%= encodeURIComponent(lead.product_name) %>" target="_blank" style="color:#1a56db;font-weight:600;">
+              <a href="https://wa.me/<%= whatsappNumber %>?text=Hi%20<%= encodeURIComponent(lead.customer_name) %>%2C%20regarding%20<%= encodeURIComponent(lead.product_name) %>" target="_blank" rel="noopener noreferrer" style="color:#1a56db;font-weight:600;">
                 <%= lead.phone %>
               </a>
             </td>
