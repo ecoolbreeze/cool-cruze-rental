@@ -108,7 +108,10 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.locals.currentPath = req.path;
+  let canonicalPath = req.path;
+  if (canonicalPath.length > 1) canonicalPath = canonicalPath.replace(/\/+$/, '');
+  res.locals.currentPath = canonicalPath;
+  res.locals.baseUrl = BASE_URL;
   res.locals.whatsappNumber = WHATSAPP_NUMBER;
   res.locals.robotsMeta = req.path.startsWith('/admin') ? 'noindex, nofollow' : 'index, follow';
   const desc = 'Premium tower AC rental in Mumbai. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Free installation & 24/7 support for events, offices & industries.';
