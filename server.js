@@ -96,9 +96,11 @@ async function saveUploads(files) {
 console.log('GMAIL_USER=' + GMAIL_USER + ' GMAIL_PASS=' + (GMAIL_PASS ? '****' : 'MISSING') + ' SENDER_EMAIL=' + SENDER_EMAIL + ' NOTIFY_EMAIL=' + NOTIFY_EMAIL);
 const transporter = (GMAIL_USER && GMAIL_PASS) ? nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: { user: GMAIL_USER, pass: GMAIL_PASS }
+  port: 587,
+  secure: false,
+  auth: { user: GMAIL_USER, pass: GMAIL_PASS },
+  tls: { rejectUnauthorized: false },
+  connectionTimeout: 10000
 }) : null;
 
 function requireAuth(req, res, next) {
