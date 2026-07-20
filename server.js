@@ -3,7 +3,6 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const db = require('./db');
@@ -14,10 +13,10 @@ const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const GMAIL_USER = process.env.GMAIL_USER || '';
-const GMAIL_PASS = process.env.GMAIL_PASS || '';
-const SENDER_EMAIL = process.env.SENDER_EMAIL || (GMAIL_USER || 'info@coolcruze.in');
+const SENDER_EMAIL = process.env.SENDER_EMAIL || 'coolcruze@gmail.com';
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
+const MJ_APIKEY = process.env.MJ_APIKEY || '';
+const MJ_APISECRET = process.env.MJ_APISECRET || '';
 const DATABASE_URL = process.env.DATABASE_URL;
 const cacheVersion = Date.now();
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME || '';
@@ -93,24 +92,43 @@ async function saveUploads(files) {
   return Promise.all(files.map(f => saveUpload(f)));
 }
 
-console.log('GMAIL_USER=' + GMAIL_USER + ' GMAIL_PASS=' + (GMAIL_PASS ? '****' : 'MISSING') + ' SENDER_EMAIL=' + SENDER_EMAIL + ' NOTIFY_EMAIL=' + NOTIFY_EMAIL);
-let transporter;
-if (GMAIL_USER && GMAIL_PASS) {
-  transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: { user: GMAIL_USER, pass: GMAIL_PASS },
-    tls: { rejectUnauthorized: false },
-    connectionTimeout: 6000
+console.log('MJ_APIKEY=' + (MJ_APIKEY ? '****' : 'MISSING') + ' MJ_APISECRET=' + (MJ_APISECRET ? '****' : 'MISSING') + ' SENDER_EMAIL=' + SENDER_EMAIL + ' NOTIFY_EMAIL=' + NOTIFY_EMAIL);
+
+async function sendEmail(subject, html) {
+  if (!MJ_APIKEY || !MJ_APISECRET || !NOTIFY_EMAIL) {
+    console.log('Email not sent: missing Mailjet API keys or NOTIFY_EMAIL');
+    return;
+  }
+  const https = require('https');
+  const data = JSON.stringify({
+    Messages: [{
+      From: { Email: SENDER_EMAIL, Name: 'Cool Cruze' },
+      To: [{ Email: NOTIFY_EMAIL, Name: 'Admin' }],
+      Subject: subject,
+      HTMLPart: html
+    }]
   });
-  // test connection immediately
-  transporter.verify().then(() => console.log('SMTP connected')).catch(e => {
-    console.error('SMTP connection failed, trying sendmail fallback:', e.message);
-    transporter = nodemailer.createTransport({ sendmail: true, newline: 'unix' });
+  const auth = Buffer.from(MJ_APIKEY + ':' + MJ_APISECRET).toString('base64');
+  const options = {
+    hostname: 'api.mailjet.com',
+    port: 443,
+    path: '/v3.1/send',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + auth,
+      'Content-Length': Buffer.byteLength(data)
+    }
+  };
+  return new Promise((resolve) => {
+    const req = https.request(options, (res) => {
+      console.log('Email sent, status: ' + res.statusCode);
+      resolve();
+    });
+    req.on('error', (e) => { console.error('Email error:', e.message); resolve(); });
+    req.write(data);
+    req.end();
   });
-} else {
-  transporter = nodemailer.createTransport({ sendmail: true, newline: 'unix' });
 }
 
 function requireAuth(req, res, next) {
@@ -211,14 +229,7 @@ app.post('/rent/:id', asyncRoute(async (req, res) => {
     message: message || ''
   });
 
-  if (transporter && NOTIFY_EMAIL) {
-    transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: NOTIFY_EMAIL,
-      subject: `New Rental Lead - ${product.name}`,
-      html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
-  }
+  sendEmail(`New Rental Lead - ${product.name}`, `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`);
 
   res.json({
     success: true,
@@ -375,14 +386,7 @@ app.post('/api/rent/:id', asyncRoute(async (req, res) => {
     address: email || '',
     message: `Duration: ${months} days | ₹${totalPrice} | ${message || ''}`
   });
-  if (transporter && NOTIFY_EMAIL) {
-    transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: NOTIFY_EMAIL,
-      subject: `New Rental Lead - ${product.name}`,
-      html: `<div><h2>New Rental Inquiry</h2><p>Product: ${product.name}</p><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Duration: ${months} days</p><p>Total: ₹${totalPrice}</p><p>Message: ${message || 'N/A'}</p></div>`
-    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
-  }
+  sendEmail(`New Rental Lead - ${product.name}`, `<div><h2>New Rental Inquiry</h2><p>Product: ${product.name}</p><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Duration: ${months} days</p><p>Total: ₹${totalPrice}</p><p>Message: ${message || 'N/A'}</p></div>`);
   res.json({ success: true, whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${name}.`)}` });
 }));
 
@@ -554,22 +558,17 @@ if (fs.existsSync(clientIndex)) {
   });
 }
 
-const emailOk = !!transporter && !!NOTIFY_EMAIL;
+const emailOk = !!(MJ_APIKEY && MJ_APISECRET && NOTIFY_EMAIL);
 
 app.get('/offline', (req, res) => {
   res.render('offline', { title: 'Offline' });
 });
 
 app.get('/test-email', async (req, res) => {
-  if (!transporter) return res.send('GMAIL_USER/GMAIL_PASS not set');
+  if (!MJ_APIKEY || !MJ_APISECRET) return res.send('MJ_APIKEY/MJ_APISECRET not set');
   if (!NOTIFY_EMAIL) return res.send('NOTIFY_EMAIL not set');
   try {
-    await transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: NOTIFY_EMAIL,
-      subject: 'Test from Cool Cruze',
-      html: '<p>Test email sent successfully!</p>'
-    });
+    await sendEmail('Test from Cool Cruze', '<p>Test email sent successfully!</p>');
     res.send('Test email sent to ' + NOTIFY_EMAIL);
   } catch (e) {
     res.send('Failed: ' + e.message);
@@ -625,14 +624,7 @@ app.post('/contact', asyncRoute(async (req, res) => {
   if (!name || !phone || !message) {
     return res.status(400).json({ error: 'Please fill all required fields' });
   }
-  if (transporter && NOTIFY_EMAIL) {
-    transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: NOTIFY_EMAIL,
-      subject: `Contact Form - ${name}`,
-      html: `<div><h2>Contact Form Submission</h2><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Message: ${message}</p></div>`
-    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
-  }
+  sendEmail(`Contact Form - ${name}`, `<div><h2>Contact Form Submission</h2><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Message: ${message}</p></div>`);
   res.json({ success: true });
 }));
 
