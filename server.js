@@ -93,12 +93,13 @@ async function saveUploads(files) {
   return Promise.all(files.map(f => saveUpload(f)));
 }
 
+console.log('GMAIL_USER=' + GMAIL_USER + ' GMAIL_PASS=' + (GMAIL_PASS ? '****' : 'MISSING') + ' SENDER_EMAIL=' + SENDER_EMAIL + ' NOTIFY_EMAIL=' + NOTIFY_EMAIL);
 const transporter = (GMAIL_USER && GMAIL_PASS) ? nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: { user: GMAIL_USER, pass: GMAIL_PASS }
 }) : null;
-if (transporter) { console.log('Email configured: from=' + SENDER_EMAIL + ' to=' + NOTIFY_EMAIL); }
-if (!transporter) { console.log('Email not configured (GMAIL_USER/GMAIL_PASS missing)'); }
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
