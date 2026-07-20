@@ -83,7 +83,7 @@
 
         <div class="detail-description">
           <h3>Description</h3>
-          <p><%= product.description || 'Premium quality air conditioner available for rent. Contact us for more details about this product.' %></p>
+          <div><%- product.description || 'Premium quality air conditioner available for rent. Contact us for more details about this product.' %></div>
         </div>
 
         <% if (product.features) { %>
@@ -312,11 +312,12 @@
   margin-bottom: 12px;
 }
 
-.detail-description p {
+.detail-description div {
   color: var(--text-light);
   line-height: 1.8;
   font-size: 15px;
 }
+.detail-description div p { margin: 0 0 8px; }
 
 .detail-features-grid {
   display: grid;

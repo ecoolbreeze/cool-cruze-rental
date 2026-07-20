@@ -1,9 +1,15 @@
 <%- include('../partials/header') %>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <style>
 body { display: block; }
 .navbar { display: none; }
 .footer { display: none; }
 .whatsapp-float { display: none; }
+.quill-editor { margin-bottom: 8px; }
+.quill-editor .ql-editor { min-height: 120px; }
+.ql-toolbar { border-radius: 8px 8px 0 0; }
+.ql-container { border-radius: 0 0 8px 8px; }
 </style>
 
 <div class="admin-layout">
@@ -108,7 +114,8 @@ body { display: block; }
         </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea name="description" rows="3" placeholder="Brief description of the product"></textarea>
+          <div id="descEditor" class="quill-editor"></div>
+          <input type="hidden" name="description" id="descInput">
         </div>
         <div class="form-group">
           <label>Features (one per line)</label>
@@ -258,7 +265,8 @@ body { display: block; }
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea name="description" id="edit_desc" rows="3"></textarea>
+        <div id="editDescEditor" class="quill-editor"></div>
+        <input type="hidden" name="description" id="editDescInput">
       </div>
       <div class="form-group">
         <label>Features (one per line)</label>
@@ -320,6 +328,22 @@ function addEditTierRow(minVal, maxVal, priceVal) {
   addTierRow('editTierRows', minVal, maxVal, priceVal);
 }
 
+let descQuill, editDescQuill;
+
+document.addEventListener('DOMContentLoaded', function() {
+  const toolbar = [['bold','italic','underline','strike'], [{align:[]}], [{list:'ordered'},{list:'bullet'}], ['clean']];
+
+  descQuill = new Quill('#descEditor', { theme: 'snow', modules: { toolbar } });
+  editDescQuill = new Quill('#editDescEditor', { theme: 'snow', modules: { toolbar } });
+
+  document.querySelector('#addForm form').addEventListener('submit', function() {
+    document.getElementById('descInput').value = descQuill.root.innerHTML;
+  });
+  document.getElementById('editForm').addEventListener('submit', function() {
+    document.getElementById('editDescInput').value = editDescQuill.root.innerHTML;
+  });
+});
+
 function editProduct(id, name, brand, capacity, type, price, desc, features, stock, images, tiers, useFlat, flatDays, flatPrice, extraRate, cardImg, detailImgs, carouselImg, specs) {
   document.getElementById('editForm').action = '/admin/products/edit/' + id;
   document.getElementById('edit_name').value = name;
@@ -328,7 +352,7 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   document.getElementById('edit_type').value = type;
   document.getElementById('edit_price').value = price;
   document.getElementById('edit_stock').value = stock;
-  document.getElementById('edit_desc').value = desc;
+  editDescQuill.root.innerHTML = desc || '';
   document.getElementById('edit_features').value = features;
   document.getElementById('edit_specifications').value = specs || '';
 
