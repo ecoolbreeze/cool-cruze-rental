@@ -94,14 +94,24 @@ async function saveUploads(files) {
 }
 
 console.log('GMAIL_USER=' + GMAIL_USER + ' GMAIL_PASS=' + (GMAIL_PASS ? '****' : 'MISSING') + ' SENDER_EMAIL=' + SENDER_EMAIL + ' NOTIFY_EMAIL=' + NOTIFY_EMAIL);
-const transporter = (GMAIL_USER && GMAIL_PASS) ? nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: { user: GMAIL_USER, pass: GMAIL_PASS },
-  tls: { rejectUnauthorized: false },
-  connectionTimeout: 10000
-}) : null;
+let transporter;
+if (GMAIL_USER && GMAIL_PASS) {
+  transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: { user: GMAIL_USER, pass: GMAIL_PASS },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 6000
+  });
+  // test connection immediately
+  transporter.verify().then(() => console.log('SMTP connected')).catch(e => {
+    console.error('SMTP connection failed, trying sendmail fallback:', e.message);
+    transporter = nodemailer.createTransport({ sendmail: true, newline: 'unix' });
+  });
+} else {
+  transporter = nodemailer.createTransport({ sendmail: true, newline: 'unix' });
+}
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
