@@ -16,7 +16,7 @@ const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
 const GMAIL_USER = process.env.GMAIL_USER || '';
 const GMAIL_PASS = process.env.GMAIL_PASS || '';
-const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@coolcruze.in';
+const SENDER_EMAIL = process.env.SENDER_EMAIL || (GMAIL_USER || 'info@coolcruze.in');
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || '';
 const DATABASE_URL = process.env.DATABASE_URL;
 const cacheVersion = Date.now();
@@ -97,6 +97,8 @@ const transporter = (GMAIL_USER && GMAIL_PASS) ? nodemailer.createTransport({
   service: 'gmail',
   auth: { user: GMAIL_USER, pass: GMAIL_PASS }
 }) : null;
+if (transporter) { console.log('Email configured: from=' + SENDER_EMAIL + ' to=' + NOTIFY_EMAIL); }
+if (!transporter) { console.log('Email not configured (GMAIL_USER/GMAIL_PASS missing)'); }
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
@@ -202,7 +204,7 @@ app.post('/rent/:id', asyncRoute(async (req, res) => {
       to: NOTIFY_EMAIL,
       subject: `New Rental Lead - ${product.name}`,
       html: `<div><h2>New Rental Inquiry - Cool Cruze</h2><p>Product: ${product.name}</p><p>Name: ${customer_name}</p><p>Phone: ${phone}</p><p>Address: ${address}</p><p>Message: ${message || 'N/A'}</p></div>`
-    }).then(() => console.log('Email sent via Gmail')).catch(e => console.log('Email failed:', e.message));
+    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
   }
 
   res.json({
@@ -366,7 +368,7 @@ app.post('/api/rent/:id', asyncRoute(async (req, res) => {
       to: NOTIFY_EMAIL,
       subject: `New Rental Lead - ${product.name}`,
       html: `<div><h2>New Rental Inquiry</h2><p>Product: ${product.name}</p><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Duration: ${months} days</p><p>Total: ₹${totalPrice}</p><p>Message: ${message || 'N/A'}</p></div>`
-    }).catch(e => console.log('Email failed:', e.message));
+    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
   }
   res.json({ success: true, whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Cool Cruze! I'm interested in renting ${product.name}. My name is ${name}.`)}` });
 }));
@@ -616,7 +618,7 @@ app.post('/contact', asyncRoute(async (req, res) => {
       to: NOTIFY_EMAIL,
       subject: `Contact Form - ${name}`,
       html: `<div><h2>Contact Form Submission</h2><p>Name: ${name}</p><p>Phone: ${phone}</p><p>Email: ${email || 'N/A'}</p><p>Message: ${message}</p></div>`
-    }).catch(e => console.log('Email failed:', e.message));
+    }).then(() => console.log('Email sent')).catch(e => console.error('Email error:', e));
   }
   res.json({ success: true });
 }));
