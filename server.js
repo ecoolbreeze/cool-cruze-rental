@@ -108,6 +108,7 @@ app.use((req, res, next) => {
   if (req.headers.host && req.headers.host.startsWith('www.')) {
     return res.redirect(301, 'https://' + req.headers.host.replace('www.', '') + req.url);
   }
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   next();
 });
 
