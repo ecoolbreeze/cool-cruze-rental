@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const db = require('./db');
 
+const sharp = require('sharp');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '917977471369';
@@ -72,14 +73,17 @@ if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 async function saveUpload(file) {
   if (!file) return '';
-  const filename = Date.now() + '-' + file.originalname.replace(/\s+/g, '_');
+  const ext = path.extname(file.originalname).toLowerCase();
+  const base = Date.now() + '-' + file.originalname.replace(/\s+/g, '_').replace(/\.[^.]+$/, '');
+  const webpFilename = base + '.webp';
+  const webpBuffer = await sharp(file.buffer).webp({ quality: 80 }).toBuffer();
   if (storageBucket) {
-    const blob = storageBucket.file(filename);
-    await blob.save(file.buffer, { contentType: file.mimetype, public: true });
-    return `https://storage.googleapis.com/${GCS_BUCKET_NAME}/${filename}`;
+    const blob = storageBucket.file(webpFilename);
+    await blob.save(webpBuffer, { contentType: 'image/webp', public: true });
+    return `https://storage.googleapis.com/${GCS_BUCKET_NAME}/${webpFilename}`;
   } else {
-    fs.writeFileSync(path.join(uploadsDir, filename), file.buffer);
-    return '/uploads/' + filename;
+    fs.writeFileSync(path.join(uploadsDir, webpFilename), webpBuffer);
+    return '/uploads/' + webpFilename;
   }
 }
 
