@@ -3,7 +3,7 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config(); // retrigger deploy
+require('dotenv').config();
 
 const db = require('./db');
 
