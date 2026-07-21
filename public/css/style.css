@@ -180,11 +180,13 @@ ul { list-style: none; }
   opacity: 0;
 }
 
-.hero-overlay {
+.hero-watermark {
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 1;
+  bottom: 8px;
+  right: 12px;
+  z-index: 2;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
   pointer-events: none;
 }
 
