@@ -31,7 +31,7 @@ body { display: block; }
 
     <div id="addForm" class="admin-form" style="display:none;">
       <h2 style="font-size:20px;margin-bottom:20px;">Add New Product</h2>
-      <form method="POST" action="/admin/products" enctype="multipart/form-data">
+      <form method="POST" action="/admin/products">
         <div class="form-row">
           <div class="form-group">
             <label>Product Name *</label>
@@ -109,10 +109,6 @@ body { display: block; }
         </div>
 
         <div class="form-group">
-          <label>Product Image (used for the product card, carousel, and detail view)</label>
-          <input type="file" name="image" accept="image/*">
-        </div>
-        <div class="form-group">
           <label>Description</label>
           <div id="descEditor" class="quill-editor"></div>
           <input type="hidden" name="description" id="descInput">
@@ -185,7 +181,7 @@ body { display: block; }
 <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeEdit()">
   <div class="edit-modal-inner" style="background:white;border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
     <h2 style="font-size:20px;margin-bottom:20px;">Edit Product</h2>
-    <form method="POST" id="editForm" enctype="multipart/form-data">
+    <form method="POST" id="editForm">
       <div class="form-row">
         <div class="form-group">
           <label>Product Name *</label>
@@ -258,11 +254,6 @@ body { display: block; }
         <button type="button" onclick="addEditTierRow()" style="background:var(--primary);color:white;border:none;padding:8px 20px;border-radius:50px;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;">+ Add Tier</button>
       </div>
 
-      <div class="form-group">
-        <label>Product Image (leave empty to keep current image)</label>
-        <input type="file" name="image" accept="image/*">
-        <div id="edit_image_preview" style="margin-top:4px;"></div>
-      </div>
       <div class="form-group">
         <label>Description</label>
         <div id="editDescEditor" class="quill-editor"></div>
@@ -355,13 +346,6 @@ function editProduct(id, name, brand, capacity, type, price, desc, features, sto
   editDescQuill.root.innerHTML = desc || '';
   document.getElementById('edit_features').value = features;
   document.getElementById('edit_specifications').value = specs || '';
-
-  function showPreview(elId, src) {
-    const el = document.getElementById(elId);
-    if (src) { el.innerHTML = '<img src="' + src + '" style="width:64px;height:64px;object-fit:contain;padding:4px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">'; }
-    else { el.innerHTML = ''; }
-  }
-  showPreview('edit_image_preview', cardImg || carouselImg || (detailImgs && detailImgs[0]) || '');
 
   const cb = document.getElementById('edit_use_flat_pricing');
   cb.checked = !!useFlat;

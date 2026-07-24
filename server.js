@@ -287,46 +287,28 @@ function parseTiers(body) {
   return tiers;
 }
 
-const prodUpload = upload.any();
-
-function getUploadedFiles(req) {
-  return Array.isArray(req.files) ? req.files : [];
+function typeImage(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('ductable')) return '/uploads/ductable.png';
+  if (t.includes('portable')) return '/uploads/portabel.png';
+  return '/uploads/tower.png';
 }
 
-function getPrimaryUpload(req) {
-  const files = getUploadedFiles(req);
-  const imageFile = files.find(file => file.fieldname === 'image');
-  if (imageFile) return imageFile;
-  return files.find(file => file.fieldname === 'card_image' || file.fieldname === 'carousel_image') || null;
-}
-
-function getDetailUploads(req) {
-  return getUploadedFiles(req).filter(file => file.fieldname === 'detail_images');
-}
-
-app.post('/admin/products', requireAuth, prodUpload, asyncRoute(async (req, res) => {
+app.post('/admin/products', requireAuth, asyncRoute(async (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
-  const uploadFile = getPrimaryUpload(req);
-  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
-  const card_image = imageUrl;
-  const detail_images = imageUrl ? [imageUrl] : [];
-  const carousel_image = imageUrl;
+  const img = typeImage(type);
   const tiers = parseTiers(req.body);
-  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.addProduct({ name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image: img, detail_images: [img], carousel_image: img, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 
-app.post('/admin/products/edit/:id', requireAuth, prodUpload, asyncRoute(async (req, res) => {
+app.post('/admin/products/edit/:id', requireAuth, asyncRoute(async (req, res) => {
   const { name, brand, capacity, type, monthly_price, description, features, stock, use_flat_pricing, flat_days, flat_price, extra_day_rate } = req.body;
   const existing = await db.getProduct(req.params.id);
   if (!existing) return res.redirect('/admin/products');
-  const uploadFile = getPrimaryUpload(req);
-  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
-  const card_image = imageUrl || existing.card_image || existing.carousel_image || (existing.detail_images && existing.detail_images[0]) || '';
-  const detail_images = imageUrl ? [imageUrl] : (existing.detail_images && existing.detail_images.length ? existing.detail_images : []);
-  const carousel_image = imageUrl || existing.carousel_image || existing.card_image || (existing.detail_images && existing.detail_images[0]) || '';
+  const img = typeImage(type);
   const tiers = parseTiers(req.body);
-  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image, detail_images, carousel_image, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
+  await db.updateProduct(req.params.id, { name, brand, capacity, type, monthly_price: parseFloat(monthly_price), card_image: img, detail_images: [img], carousel_image: img, description, features, specifications: req.body.specifications || '', stock: parseInt(stock) || 1, tiers, use_flat_pricing: !!use_flat_pricing, flat_days: parseInt(flat_days) || 0, flat_price: parseFloat(flat_price) || 0, extra_day_rate: parseFloat(extra_day_rate) || 0 });
   res.redirect('/admin/products');
 }));
 
@@ -436,22 +418,19 @@ app.get('/api/admin/products', apiAuth, asyncRoute(async (req, res) => {
   res.json(products.map(normalizeApiProduct));
 }));
 
-app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res) => {
-  const uploadFile = getPrimaryUpload(req);
-  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
-  const card_image = imageUrl;
-  const detail_images = imageUrl ? [imageUrl] : [];
-  const carousel_image = imageUrl;
+app.post('/api/admin/products', apiAuth, asyncRoute(async (req, res) => {
+  const type = req.body.type || 'Tower AC';
+  const img = typeImage(type);
   const price_per_day = parseFloat(req.body.price_per_day) || 0;
   const product = await db.addProduct({
     name: req.body.name || 'Unnamed',
     brand: req.body.brand || '',
     capacity: req.body.capacity || '1.5 Ton',
-    type: req.body.type || 'Tower AC',
+    type,
     monthly_price: price_per_day,
-    card_image,
-    detail_images,
-    carousel_image,
+    card_image: img,
+    detail_images: [img],
+    carousel_image: img,
     description: req.body.description || '',
     short_desc: req.body.short_desc || '',
     features: req.body.features || '',
@@ -465,24 +444,21 @@ app.post('/api/admin/products', apiAuth, prodUpload, asyncRoute(async (req, res)
   res.status(201).json({ success: true, product: normalizeApiProduct(product) });
 }));
 
-app.put('/api/admin/products/:id', apiAuth, prodUpload, asyncRoute(async (req, res) => {
+app.put('/api/admin/products/:id', apiAuth, asyncRoute(async (req, res) => {
   const existing = await db.getProduct(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Product not found' });
-  const uploadFile = getPrimaryUpload(req);
-  const imageUrl = uploadFile ? await saveUpload(uploadFile) : '';
-  const card_image = imageUrl || existing.card_image || existing.carousel_image || (existing.detail_images && existing.detail_images[0]) || '';
-  const detail_images = imageUrl ? [imageUrl] : (existing.detail_images || []);
-  const carousel_image = imageUrl || existing.carousel_image || existing.card_image || (existing.detail_images && existing.detail_images[0]) || '';
+  const type = req.body.type || existing.type || 'Tower AC';
+  const img = typeImage(type);
   const price_per_day = parseFloat(req.body.price_per_day) || parseFloat(existing.monthly_price) || 0;
   const updated = await db.updateProduct(req.params.id, {
     name: req.body.name || existing.name,
     brand: req.body.brand || existing.brand || '',
     capacity: req.body.capacity || existing.capacity || '1.5 Ton',
-    type: req.body.type || existing.type || 'Tower AC',
+    type,
     monthly_price: price_per_day,
-    card_image,
-    detail_images,
-    carousel_image,
+    card_image: img,
+    detail_images: [img],
+    carousel_image: img,
     description: req.body.description || existing.description || '',
     short_desc: req.body.short_desc || existing.short_desc || '',
     features: req.body.features || existing.features || '',
