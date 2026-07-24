@@ -519,7 +519,17 @@ app.delete('/api/admin/leads/:id', apiAuth, asyncRoute(async (req, res) => {
 app.get('/api/admin/export', apiAuth, asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   const leads = await db.getAllLeads();
-  res.json({ products, leads });
+  const images = {};
+  for (const p of products) {
+    const urls = [p.card_image, p.carousel_image, ...(p.detail_images || []), ...(p.images || [])].filter(Boolean);
+    for (const url of urls) {
+      if (url.startsWith('/uploads/') && !images[url]) {
+        const filePath = path.join(__dirname, 'public', url);
+        try { images[url] = fs.readFileSync(filePath).toString('base64'); } catch(e) {}
+      }
+    }
+  }
+  res.json({ products, leads, _images: images });
 }));
 
 const apiMulterImport = multer({ dest: path.join(__dirname, 'data', 'import') });
@@ -528,15 +538,26 @@ app.post('/api/admin/import', apiAuth, apiMulterImport.single('backup'), asyncRo
   const src = req.file.path;
   try {
     const data = JSON.parse(fs.readFileSync(src, 'utf-8'));
+    if (data._images) {
+      for (const [url, b64] of Object.entries(data._images)) {
+        if (url.startsWith('/uploads/')) {
+          const filePath = path.join(__dirname, 'public', url);
+          try { fs.mkdirSync(path.dirname(filePath), { recursive: true }); } catch(e) {}
+          fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
+        }
+      }
+    }
     if (data.products) {
       if (isPG) {
         for (const p of data.products) {
-          const existing = await db.getProduct(p.id);
-          if (existing) await db.updateProduct(p.id, p);
-          else await db.addProduct(p);
+          const { _images, ...clean } = p;
+          const existing = await db.getProduct(clean.id);
+          if (existing) await db.updateProduct(clean.id, clean);
+          else await db.addProduct(clean);
         }
       } else {
-        fs.writeFileSync(db.getDataFile(), JSON.stringify(data, null, 2));
+        const { _images, ...rest } = data;
+        fs.writeFileSync(db.getDataFile(), JSON.stringify(rest, null, 2));
       }
     }
     try { fs.unlinkSync(src); } catch(e) {}
@@ -578,10 +599,23 @@ app.get('/test-email', async (req, res) => {
 app.get('/admin/export', requireAuth, asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   const leads = await db.getAllLeads();
-  const data = JSON.stringify({ products, leads }, null, 2);
+  const images = {};
+  // Collect local image files and embed them as base64
+  for (const p of products) {
+    const urls = [p.card_image, p.carousel_image, ...(p.detail_images || []), ...(p.images || [])].filter(Boolean);
+    for (const url of urls) {
+      if (url.startsWith('/uploads/') && !images[url]) {
+        const filePath = path.join(__dirname, 'public', url);
+        try {
+          const buf = fs.readFileSync(filePath);
+          images[url] = buf.toString('base64');
+        } catch(e) {}
+      }
+    }
+  }
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Content-Disposition', 'attachment; filename="cool-cruze-backup.json"');
-  res.send(data);
+  res.json({ products, leads, _images: images });
 }));
 
 const multerImport = multer({ dest: path.join(__dirname, 'data', 'import') });
@@ -590,18 +624,31 @@ app.post('/admin/import', requireAuth, multerImport.single('backup'), asyncRoute
   const src = req.file.path;
   try {
     const data = JSON.parse(fs.readFileSync(src, 'utf-8'));
+    // Restore embedded images
+    if (data._images) {
+      for (const [url, b64] of Object.entries(data._images)) {
+        if (url.startsWith('/uploads/')) {
+          const filePath = path.join(__dirname, 'public', url);
+          try { fs.mkdirSync(path.dirname(filePath), { recursive: true }); } catch(e) {}
+          fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
+        }
+      }
+    }
     if (data.products) {
       if (isPG) {
         for (const p of data.products) {
-          const existing = await db.getProduct(p.id);
+          // Remove _images key if present on product
+          const { _images, ...clean } = p;
+          const existing = await db.getProduct(clean.id);
           if (existing) {
-            await db.updateProduct(p.id, p);
+            await db.updateProduct(clean.id, clean);
           } else {
-            await db.addProduct(p);
+            await db.addProduct(clean);
           }
         }
       } else {
-        fs.writeFileSync(db.getDataFile(), JSON.stringify(data, null, 2));
+        const { _images, ...rest } = data;
+        fs.writeFileSync(db.getDataFile(), JSON.stringify(rest, null, 2));
       }
     }
     try { fs.unlinkSync(src); } catch(e) {}
