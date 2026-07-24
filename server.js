@@ -164,6 +164,21 @@ app.use((req, res, next) => {
 
 const BASE_URL = 'https://coolcruze.in';
 
+// Startup migration: update existing products to use type-based images
+(async () => {
+  try {
+    const all = await db.getAllProducts();
+    for (const p of all) {
+      const img = typeImage(p.type);
+      const needsUpdate = (p.card_image || '').startsWith('/uploads/') && !['tower.png','ductable.png','portabel.png'].some(n => (p.card_image || '').endsWith(n));
+      if (needsUpdate || !p.card_image) {
+        await db.updateProduct(p.id, { card_image: img, carousel_image: img, detail_images: [img] });
+      }
+    }
+    console.log('Product images migrated');
+  } catch(e) { console.error('Migration error:', e.message); }
+})();
+
 app.get('/', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   const featured = [...products].reverse().slice(0, 4);
