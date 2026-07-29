@@ -68,7 +68,7 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "<%= title %> | Cool Cruze",
+    "name": "<%= typeof pageTitle !== 'undefined' ? pageTitle : 'Cool Cruze' %> | Cool Cruze",
     "description": "<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar' %>",
     "url": "https://coolcruze.in<%= currentPath %>",
     "isPartOf": { "@id": "https://coolcruze.in/#website" },
