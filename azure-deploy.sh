@@ -31,8 +31,7 @@ echo "=== Configuring Environment Variables ==="
 az webapp config appsettings set \
   --name $APP_NAME \
   --resource-group $RESOURCE_GROUP \
-  --settings \
-    NODE_ENV=production \
+  --settings \xc
     SESSION_SECRET="cool-cruze-secret-$(openssl rand -hex 16)" \
     ADMIN_USER=admin \
     ADMIN_PASS=admin123 \

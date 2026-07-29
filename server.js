@@ -184,8 +184,8 @@ app.get('/', asyncRoute(async (req, res) => {
   const featured = [...products].reverse().slice(0, 4);
   res.render('index', {
     title: 'Home',
-    metaDescription: 'Premium tower AC rental in Mumbai. Heavy-duty commercial ACs for events, offices & industries. Reliable HVAC support with fast installation & 24/7 service.',
-    ogDescription: 'Premium tower AC rental in Mumbai. Commercial cooling solutions for events, offices & industries.',
+    metaDescription: 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi & Virar. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support. AC rental for events, offices & industries across Mumbai Metropolitan Region.',
+    ogDescription: 'Premium tower AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. Commercial cooling solutions for events, offices & industries.',
     featured, products
   });
 }));
@@ -193,8 +193,9 @@ app.get('/', asyncRoute(async (req, res) => {
 app.get('/products', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   res.render('products', {
-    title: 'Products',
-    metaDescription: 'Browse our collection of tower, portable, ductable & cassette ACs for rent. LG, Samsung, Voltas, Daikin — affordable daily rental plans with zero deposit.',
+    title: 'AC Rental Products',
+    metaDescription: 'Browse tower AC, portable AC, ductable AC & cassette AC for rent in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. LG, Samsung, Voltas, Daikin — affordable daily rental plans with zero deposit. Free delivery & installation across MMR.',
+    ogDescription: 'Premium AC rental collection in Mumbai & MMR. Tower, portable, ductable & cassette ACs for events & offices.',
     products
   });
 }));
@@ -202,17 +203,27 @@ app.get('/products', asyncRoute(async (req, res) => {
 app.get('/about', (req, res) => {
   res.render('about', {
     title: 'About Us',
-    metaDescription: 'Learn about Cool Cruze — your trusted partner for premium AC rentals. Affordable, reliable, and hassle-free air conditioning solutions.',
+    metaDescription: 'Cool Cruze — trusted AC rental partner serving Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. 500+ happy customers, 50+ AC models, 24hr delivery, free installation & maintenance. Zero deposit, flexible rental plans.',
+    ogDescription: 'About Cool Cruze - Mumbai\'s trusted AC rental service across Thane, Navi Mumbai, Kharghar, Vashi, Virar.',
+  });
+});
+
+app.get('/sitemap', (req, res) => {
+  res.render('sitemap', {
+    title: 'Site Map',
+    metaDescription: 'Cool Cruze site map - browse all AC rental pages, service areas in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar, product categories and legal pages.',
+    ogDescription: 'Complete site map for Cool Cruze AC rental website.',
   });
 });
 
 app.get('/product/:id', asyncRoute(async (req, res) => {
   const product = await db.getProduct(req.params.id);
   if (!product) return res.redirect('/products');
+  const locations = 'Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar';
   res.render('product-detail', {
     title: product.name + ' - ' + product.brand + ' ' + product.capacity + ' AC Rental',
-    metaDescription: (product.description || '').substring(0, 160) || 'Rent ' + product.name + ' ' + product.brand + ' ' + product.capacity + ' AC from Cool Cruze. Affordable daily rental, zero deposit, free installation.',
-    ogDescription: 'Rent ' + product.name + ' by ' + product.brand + '. ₹' + Number(product.monthly_price).toLocaleString() + '/day. Zero deposit, free delivery & maintenance.',
+    metaDescription: ((product.description || '').substring(0, 140) + ' Available for rent in ' + locations + '.') || 'Rent ' + product.name + ' ' + product.brand + ' ' + product.capacity + ' AC from Cool Cruze. Affordable daily rental, zero deposit, free installation across ' + locations + '.',
+    ogDescription: 'Rent ' + product.name + ' by ' + product.brand + '. ₹' + Number(product.monthly_price).toLocaleString() + '/day. Zero deposit, free delivery & maintenance in ' + locations + '.',
     ogImage: product.card_image || (product.images && product.images.length ? product.images[0] : '/uploads/hero.png'),
     product
   });
@@ -651,10 +662,36 @@ app.post('/admin/import', requireAuth, multerImport.single('backup'), asyncRoute
 }));
 
 app.get('/contact', (req, res) => {
+  const locations = 'Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar';
   res.render('contact', {
     title: 'Contact Us',
-    metaDescription: 'Get in touch with Cool Cruze. Call, WhatsApp, or email us for AC rental inquiries. We respond within minutes.',
+    metaDescription: 'Contact Cool Cruze for AC rental in ' + locations + '. Call, WhatsApp, or email us for tower AC, portable AC, ductable AC & cassette AC inquiries. Free delivery & installation across Mumbai Metropolitan Region. We respond within minutes.',
+    ogDescription: 'Get in touch with Cool Cruze for premium AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar.',
   });
+});
+
+// Location-specific service area pages
+const LOCATIONS = {
+  mumbai: { name: 'Mumbai', areas: 'Andheri, Bandra, Powai, Borivali, Malad, Goregaon, Lower Parel, Worli, Dadar, Chembur, Ghatkopar, Mulund, Dahisar, Mira Road', title: 'AC Rental Mumbai' },
+  thane: { name: 'Thane', areas: 'Thane West, Thane East, Ghodbunder Road, Majiwada, Kapurbawdi, Kolshet, Manpada, Vartak Nagar, Hiranandani Estate, Kasarvadavali', title: 'AC Rental Thane' },
+  'navi-mumbai': { name: 'Navi Mumbai', areas: 'Vashi, Nerul, Belapur, Kharghar, Panvel, Airoli, Koparkhairane, Ghansoli, Sanpada, CBD Belapur, Ulwe', title: 'AC Rental Navi Mumbai' },
+  kharghar: { name: 'Kharghar', areas: 'Kharghar Sectors 1-50, Taloja, Kalamboli, Roadpali, Kamothe', title: 'AC Rental Kharghar' },
+  vashi: { name: 'Vashi', areas: 'Vashi Sectors 1-30, APMC Market, Juhu Nagar, Sanpada, Turbhe', title: 'AC Rental Vashi' },
+  virar: { name: 'Virar', areas: 'Virar West, Virar East, Nalasopara, Vasai, Boisar, Arnala, Bolinj', title: 'AC Rental Virar' }
+};
+
+Object.keys(LOCATIONS).forEach(loc => {
+  const locData = LOCATIONS[loc];
+  app.get('/ac-rental-' + loc, asyncRoute(async (req, res) => {
+    const products = await db.getAllProducts();
+    res.render('location', {
+      title: locData.title + ' | Cool Cruze',
+      location: locData,
+      metaDescription: locData.title + ' by Cool Cruze — Tower AC, Portable AC, Ductable AC & Cassette AC on rent in ' + locData.name + ' (' + locData.areas + '). Zero deposit, free installation & maintenance. Best daily rental rates. Call/WA: +' + WHATSAPP_NUMBER,
+      ogDescription: 'Premium AC rental in ' + locData.name + ' — ' + locData.areas + '. Tower, portable, ductable & cassette ACs for events, offices & homes.',
+      products
+    });
+  }));
 });
 
 app.post('/contact', asyncRoute(async (req, res) => {
@@ -671,13 +708,22 @@ app.get('/sitemap.xml', asyncRoute(async (req, res) => {
   const today = new Date().toISOString().split('T')[0];
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   const pages = [
-    { loc: '/', priority: '1.0' },
-    { loc: '/products', priority: '0.9' },
-    { loc: '/about', priority: '0.7' },
-    { loc: '/contact', priority: '0.6' }
+    { loc: '/', priority: '1.0', changefreq: 'weekly' },
+    { loc: '/products', priority: '0.9', changefreq: 'weekly' },
+    { loc: '/about', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/contact', priority: '0.6', changefreq: 'monthly' },
+    { loc: '/privacy-policy', priority: '0.5', changefreq: 'yearly' },
+    { loc: '/terms-of-service', priority: '0.5', changefreq: 'yearly' },
+    { loc: '/sitemap', priority: '0.5', changefreq: 'monthly' },
+    { loc: '/ac-rental-mumbai', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/ac-rental-thane', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/ac-rental-navi-mumbai', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/ac-rental-kharghar', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/ac-rental-vashi', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/ac-rental-virar', priority: '0.8', changefreq: 'weekly' }
   ];
   pages.forEach(p => {
-    xml += `  <url>\n    <loc>${BASE_URL}${p.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${BASE_URL}${p.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
   });
   products.forEach(p => {
     xml += `  <url>\n    <loc>${BASE_URL}/product/${p.id}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
@@ -689,7 +735,11 @@ app.get('/sitemap.xml', asyncRoute(async (req, res) => {
 
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain');
-  res.send('User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /test-email\nDisallow: /offline\n\nSitemap: https://coolcruze.in/sitemap.xml');
+  res.send('User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /test-email\nDisallow: /offline\n\nSitemap: https://coolcruze.in/sitemap.xml\nSitemap: https://coolcruze.in/sitemap');
+});
+
+app.get('/sitemap', (req, res) => {
+  res.render('sitemap', { title: 'Sitemap' });
 });
 
 app.get('/privacy-policy', (req, res) => {

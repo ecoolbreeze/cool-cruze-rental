@@ -4,9 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cool Cruze - <%= title %> | AC Rental</title>
-  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Best tower AC rental in Mumbai — Cool Cruze offers heavy-duty commercial tower, portable &amp; ductable ACs on rent. Zero deposit, free installation &amp; 24/7 support. AC rental Mumbai for events, offices &amp; industries.' %>">
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Best tower AC rental in Mumbai — Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support. AC rental Mumbai for events, offices & industries.' %>">
   <meta name="robots" content="<%= robotsMeta %>">
-  <meta name="keywords" content="tower AC rental in Mumbai, tower AC on rent Mumbai, AC rental Mumbai, commercial AC rental Mumbai, portable AC rental Mumbai, ductable AC on rent, cassette AC rental, air conditioner rental Mumbai, Cool Cruze, heavy duty AC rental, industrial AC rental Mumbai, AC on rent for events Mumbai, temporary AC rental, tower air conditioner rental">
+  <meta name="keywords" content="tower AC rental in Mumbai, tower AC on rent Mumbai, AC rental Mumbai, commercial AC rental Mumbai, portable AC rental Mumbai, ductable AC on rent, cassette AC rental, air conditioner rental Mumbai, Cool Cruze, heavy duty AC rental, industrial AC rental Mumbai, AC on rent for events Mumbai, temporary AC rental, tower air conditioner rental, AC rental Thane, AC rental Navi Mumbai, AC rental Kharghar, AC rental Vashi, AC rental Virar, AC rental Andheri, AC rental Bandra, AC rental Powai">
+
+  <!-- hreflang for English India -->
+  <link rel="alternate" hreflang="en-IN" href="https://coolcruze.in<%= currentPath %>">
+  <link rel="alternate" hreflang="en" href="https://coolcruze.in<%= currentPath %>">
+  <link rel="alternate" hreflang="x-default" href="https://coolcruze.in<%= currentPath %>">
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D3E2K228E6"></script>
@@ -39,6 +44,41 @@
   <link rel="stylesheet" href="/css/style.css?v=<%= typeof cacheVersion !== 'undefined' ? cacheVersion : 3 %>">
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
 
+  <!-- WebSite Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Cool Cruze",
+    "url": "https://coolcruze.in",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://coolcruze.in/products?search={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": { "@type": "Organization", "@id": "https://coolcruze.in/#organization" }
+  }
+  </script>
+
+  <!-- WebPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "<%= title %> | Cool Cruze",
+    "description": "<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar' %>",
+    "url": "https://coolcruze.in<%= currentPath %>",
+    "isPartOf": { "@id": "https://coolcruze.in/#website" },
+    "about": { "@id": "https://coolcruze.in/#localbusiness" },
+    "inLanguage": "en-IN",
+    "datePublished": "<%= typeof pageDate !== 'undefined' ? pageDate : new Date().toISOString().split('T')[0] %>",
+    "dateModified": "<%= typeof pageModified !== 'undefined' ? pageModified : new Date().toISOString().split('T')[0] %>"
+  }
+  </script>
+
   <!-- Organization Schema -->
   <script type="application/ld+json">
   {
@@ -55,6 +95,59 @@
     },
     "sameAs": ["https://wa.me/<%= whatsappNumber %>"],
     "description": "Best tower AC rental in Mumbai. Heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support."
+  }
+  </script>
+
+  <!-- LocalBusiness Schema - Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar Service Area -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://coolcruze.in/#localbusiness",
+    "name": "Cool Cruze",
+    "description": "Premium tower AC rental service in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar and surrounding areas. Heavy-duty commercial ACs for events, offices, warehouses & industries.",
+    "url": "https://coolcruze.in",
+    "telephone": "+<%= whatsappNumber %>",
+    "email": "info@coolcruze.in",
+    "logo": "https://coolcruze.in/icons/icon.svg",
+    "image": "https://coolcruze.in/uploads/hero.png",
+    "priceRange": "₹₹",
+    "currenciesAccepted": "INR",
+    "paymentAccepted": "Cash, UPI, Bank Transfer, Card",
+    "areaServed": [
+      { "@type": "City", "name": "Mumbai", "@id": "https://en.wikipedia.org/wiki/Mumbai" },
+      { "@type": "City", "name": "Thane", "@id": "https://en.wikipedia.org/wiki/Thane" },
+      { "@type": "City", "name": "Navi Mumbai", "@id": "https://en.wikipedia.org/wiki/Navi_Mumbai" },
+      { "@type": "AdministrativeArea", "name": "Kharghar", "containedInPlace": { "@type": "City", "name": "Navi Mumbai" } },
+      { "@type": "AdministrativeArea", "name": "Vashi", "containedInPlace": { "@type": "City", "name": "Navi Mumbai" } },
+      { "@type": "City", "name": "Virar", "@id": "https://en.wikipedia.org/wiki/Virar" }
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Mumbai",
+      "addressRegion": "Maharashtra",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "19.0760",
+      "longitude": "72.8777"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "20:00" }
+    ],
+    "serviceType": "AC Rental",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "AC Rental Services",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tower AC Rental", "description": "Heavy-duty commercial tower AC rental for events, offices & industries" }, "priceCurrency": "INR", "availability": "https://schema.org/InStock" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Portable AC Rental", "description": "Portable air conditioner rental for temporary cooling needs" }, "priceCurrency": "INR", "availability": "https://schema.org/InStock" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ductable AC Rental", "description": "Ductable AC rental for commercial spaces and large areas" }, "priceCurrency": "INR", "availability": "https://schema.org/InStock" },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cassette AC Rental", "description": "Cassette AC rental for offices and commercial spaces" }, "priceCurrency": "INR", "availability": "https://schema.org/InStock" }
+      ]
+    },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "127" }
   }
   </script>
 </head>

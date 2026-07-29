@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coolcruze.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Sitemap", "item": "https://coolcruze.in/sitemap" }
+  ]
+}
+</script>
+
+<section class="about-hero">
+  <div class="hero-content">
+    <h1>Sitemap — Cool Cruze</h1>
+    <p>Complete site structure for AC rental services across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar</p>
+  </div>
+</section>
+
+<div class="about-content" style="max-width: 1000px;">
+  <section class="section">
+    <div class="section-title">
+      <h2>Main Pages</h2>
+      <div class="accent-line"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <a href="/" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600; transition: transform 0.2s;">🏠 Home</a>
+      <a href="/products" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600; transition: transform 0.2s;">📦 All AC Products</a>
+      <a href="/about" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600; transition: transform 0.2s;">ℹ️ About Us</a>
+      <a href="/contact" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600; transition: transform 0.2s;">📞 Contact Us</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h2>Service Area Pages</h2>
+      <div class="accent-line"></div>
+      <p>Location-specific AC rental pages for better local SEO</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+      <a href="/ac-rental-mumbai" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🏙️ AC Rental Mumbai</div>
+        <div style="color: var(--text-light); font-size: 14px;">Andheri, Bandra, Powai, Borivali, Malad, Goregaon, Lower Parel, Worli, Dadar, Chembur, Ghatkopar, Mulund, Dahisar, Mira Road</div>
+      </a>
+      <a href="/ac-rental-thane" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🏭 AC Rental Thane</div>
+        <div style="color: var(--text-light); font-size: 14px;">Thane West, Thane East, Ghodbunder Road, Majiwada, Kapurbawdi, Kolshet, Manpada, Vartak Nagar, Hiranandani Estate, Kasarvadavali</div>
+      </a>
+      <a href="/ac-rental-navi-mumbai" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🌆 AC Rental Navi Mumbai</div>
+        <div style="color: var(--text-light); font-size: 14px;">Vashi, Nerul, Belapur, Kharghar, Panvel, Airoli, Koparkhairane, Ghansoli, Sanpada, CBD Belapur, Ulwe</div>
+      </a>
+      <a href="/ac-rental-kharghar" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🏘️ AC Rental Kharghar</div>
+        <div style="color: var(--text-light); font-size: 14px;">Kharghar Sectors 1-50, Taloja, Kalamboli, Roadpali, Kamothe</div>
+      </a>
+      <a href="/ac-rental-vashi" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🏬 AC Rental Vashi</div>
+        <div style="color: var(--text-light); font-size: 14px;">Vashi Sectors 1-30, APMC Market, Juhu Nagar, Sanpada, Turbhe</div>
+      </a>
+      <a href="/ac-rental-virar" style="padding: 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--primary);">
+        <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">🏡 AC Rental Virar</div>
+        <div style="color: var(--text-light); font-size: 14px;">Virar West, Virar East, Nalasopara, Vasai, Boisar, Arnala, Bolinj</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h2>AC Product Categories</h2>
+      <div class="accent-line"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <a href="/products?type=Tower" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">❄️ Tower AC Rental</a>
+      <a href="/products?type=Portable" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">📦 Portable AC Rental</a>
+      <a href="/products?type=Ductable" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">🌬️ Ductable AC Rental</a>
+      <a href="/products?type=Cassette" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">🔲 Cassette AC Rental</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h2>Legal & Policy</h2>
+      <div class="accent-line"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <a href="/privacy-policy" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">🔒 Privacy Policy</a>
+      <a href="/terms-of-service" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;">📋 Terms of Service</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h2>Technical Files</h2>
+      <div class="accent-line"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <a href="/sitemap.xml" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;" target="_blank">🗺️ XML Sitemap</a>
+      <a href="/robots.txt" style="padding: 16px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); font-weight: 600;" target="_blank">🤖 Robots.txt</a>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,9 +1,21 @@
 <%- include('partials/header') %>
 
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json>
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coolcruze.in/" },
+    { "@type": "ListItem", "position": 2, "name": "About Us", "item": "https://coolcruze.in/about" }
+  ]
+}
+</script>
+
 <section class="about-hero">
   <div class="hero-content">
-    <h1>About Cool Cruze</h1>
-    <p>Your trusted partner for premium AC rentals — comfort made affordable</p>
+    <h1>About Cool Cruze — Mumbai's Trusted AC Rental Partner</h1>
+    <p>Premium tower AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi & Virar since 2018</p>
   </div>
 </section>
 
@@ -13,41 +25,52 @@
     Cool Cruze was founded with a simple mission — to make cooling comfort accessible to everyone without the burden of high upfront costs. We believe that everyone deserves a comfortable living and working space, regardless of their budget.
   </p>
   <p>
-    With years of experience in the HVAC industry, we've curated a collection of top-brand air conditioners that are well-maintained and ready for installation. Our team of certified technicians ensures every unit is serviced, cleaned, and tested before delivery.
+    With years of experience in the HVAC industry, we've curated a collection of top-brand air conditioners that are well-maintained and ready for installation. Our team of certified technicians ensures every unit is serviced, cleaned, and tested before delivery across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi and Virar.
   </p>
 
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-number">500+</div>
-      <div class="stat-label">Happy Customers</div>
+      <div class="stat-label">Happy Customers Across MMR</div>
     </div>
     <div class="stat-card">
       <div class="stat-number">50+</div>
-      <div class="stat-label">AC Models</div>
+      <div class="stat-label">AC Models in Stock</div>
     </div>
     <div class="stat-card">
       <div class="stat-number">24hr</div>
-      <div class="stat-label">Delivery Time</div>
+      <div class="stat-label">Delivery Time (Mumbai, Thane, Navi Mumbai)</div>
     </div>
     <div class="stat-card">
       <div class="stat-number">100%</div>
-      <div class="stat-label">Satisfaction</div>
+      <div class="stat-label">Satisfaction Guaranteed</div>
     </div>
   </div>
 
   <h2>Why Rent from Cool Cruze?</h2>
   <p>
     <strong>Zero Down Payment</strong> — No massive upfront investment. Just pay a simple monthly rental.<br>
-    <strong>Free Installation</strong> — Our team installs the AC at no extra cost.<br>
+    <strong>Free Installation</strong> — Our team installs the AC at no extra cost across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar.<br>
     <strong>Free Maintenance</strong> — Regular servicing keeps your AC running efficiently.<br>
     <strong>Flexible Tenure</strong> — Rent monthly, quarterly, or yearly. Upgrade anytime.<br>
     <strong>Top Brands</strong> — LG, Samsung, Voltas, Daikin, Blue Star, and more.<br>
     <strong>Quick Support</strong> — 24/7 customer support for any issues.
   </p>
 
+  <h2>Our Service Areas</h2>
+  <p>We proudly serve the entire Mumbai Metropolitan Region:</p>
+  <ul style="margin: 16px 0; padding-left: 24px; color: var(--text-light);">
+    <li><strong>Mumbai:</strong> Andheri, Bandra, Powai, Borivali, Malad, Goregaon, Lower Parel, Worli, Dadar, Chembur, Ghatkopar, Mulund, Dahisar, Mira Road</li>
+    <li><strong>Thane:</strong> Thane West, Thane East, Ghodbunder Road, Majiwada, Kolshet, Vartak Nagar, Hiranandani Estate, Kasarvadavali</li>
+    <li><strong>Navi Mumbai:</strong> Vashi, Nerul, Belapur, Kharghar, Panvel, Airoli, Koparkhairane, Ghansoli, Sanpada, CBD Belapur, Ulwe</li>
+    <li><strong>Kharghar:</strong> All sectors 1-50, Taloja, Kalamboli, Roadpali, Kamothe</li>
+    <li><strong>Vashi:</strong> Sectors 1-30, APMC Market, Juhu Nagar, Sanpada, Turbhe</li>
+    <li><strong>Virar:</strong> Virar West, Virar East, Nalasopara, Vasai, Arnala, Bolinj</li>
+  </ul>
+
   <h2>Ready to Beat the Heat?</h2>
   <p>
-    Browse our collection and find the perfect AC for your home or office. 
+    Browse our collection and find the perfect AC for your home or office in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi or Virar.
     Click below to get started — we'll handle the rest!
   </p>
   <div style="text-align: center; margin-top: 32px;">
@@ -59,16 +82,24 @@
 {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  "name": "About Cool Cruze",
-  "description": "Your trusted partner for premium AC rentals — comfort made affordable",
+  "name": "About Cool Cruze - Mumbai's AC Rental Experts",
+  "description": "Cool Cruze provides premium tower AC rental services across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi and Virar. Zero deposit, free installation & maintenance.",
   "mainEntity": {
     "@type": "LocalBusiness",
+    "@id": "https://coolcruze.in/#localbusiness",
     "name": "Cool Cruze",
-    "description": "Cool Cruze was founded with a simple mission — to make cooling comfort accessible to everyone without the burden of high upfront costs.",
+    "description": "Premium AC rental service in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. Heavy-duty commercial ACs for events, offices, warehouses & industries.",
     "url": "https://coolcruze.in",
     "telephone": "+<%= whatsappNumber %>",
-    "areaServed": "IN",
-    "priceRange": "₹500-₹5000"
+    "areaServed": [
+      { "@type": "City", "name": "Mumbai" },
+      { "@type": "City", "name": "Thane" },
+      { "@type": "City", "name": "Navi Mumbai" },
+      { "@type": "AdministrativeArea", "name": "Kharghar" },
+      { "@type": "AdministrativeArea", "name": "Vashi" },
+      { "@type": "City", "name": "Virar" }
+    ],
+    "priceRange": "₹₹"
   }
 }
 </script>

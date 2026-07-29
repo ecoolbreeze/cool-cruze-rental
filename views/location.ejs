@@ -1,0 +1,229 @@
+<%- include('partials/header') %>
+
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coolcruze.in/" },
+    { "@type": "ListItem", "position": 2, "name": "AC Rental Products", "item": "https://coolcruze.in/products" },
+    { "@type": "ListItem", "position": 3, "name": "<%= location.title %>", "item": "https://coolcruze.in/ac-rental-<%= location.name.toLowerCase().replace(' ', '-') %>" }
+  ]
+}
+</script>
+
+<section class="about-hero">
+  <div class="hero-content">
+    <h1><%= location.title %> — Cool Cruze</h1>
+    <p>Premium Tower AC, Portable AC, Ductable AC & Cassette AC for rent across <%= location.name %>. Free delivery, installation & maintenance. Zero deposit, flexible plans.</p>
+  </div>
+</section>
+
+<div class="about-content" style="max-width: 1200px;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+    <div>
+      <h2>AC Rental Services in <%= location.name %></h2>
+      <p style="color: var(--text-light); line-height: 1.8; margin: 16px 0; font-size: 16px;">
+        Cool Cruze is the trusted AC rental partner for businesses, events, offices and homes across <strong><%= location.name %></strong>. 
+        We provide heavy-duty commercial tower ACs, portable ACs, ductable ACs and cassette ACs on rent with 
+        <strong>zero deposit</strong>, <strong>free installation</strong>, <strong>free maintenance</strong> and <strong>24/7 support</strong>.
+      </p>
+      <p style="color: var(--text-light); line-height: 1.8; font-size: 16px;">
+        Serving areas: <strong><%= location.areas %></strong>
+      </p>
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0;">
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Tower AC Rental <%= location.name %></span>
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Portable AC on Rent <%= location.name %></span>
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Ductable AC Rental <%= location.name %></span>
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Cassette AC Rental <%= location.name %></span>
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Event AC Rental <%= location.name %></span>
+        <span class="tag" style="background: var(--primary-light); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 13px;">Office AC Rental <%= location.name %></span>
+      </div>
+
+      <h3>Why Choose Cool Cruze in <%= location.name %>?</h3>
+      <ul style="margin: 16px 0; padding-left: 24px; color: var(--text-light); line-height: 2;">
+        <li><strong>24-hour delivery</strong> across <%= location.name %></li>
+        <li><strong>Zero deposit</strong> — no upfront security payment</li>
+        <li><strong>Free installation & demo</strong> by certified technicians</li>
+        <li><strong>Free maintenance & repairs</strong> throughout rental period</li>
+        <li><strong>Flexible plans:</strong> Daily, weekly, monthly, quarterly, yearly</li>
+        <li><strong>Top brands:</strong> LG, Samsung, Voltas, Daikin, Blue Star, Hitachi</li>
+        <li><strong>Capacity range:</strong> 1.5 Ton to 8.5 Ton</li>
+        <li><strong>24/7 customer support</strong> via WhatsApp & phone</li>
+      </ul>
+    </div>
+
+    <div style="background: #f8fafc; border-radius: 16px; padding: 32px; height: fit-content; position: sticky; top: 100px;">
+      <h3 style="margin-bottom: 16px; color: var(--text);">Get a Quick Quote</h3>
+      <p style="color: var(--text-light); margin-bottom: 20px; font-size: 14px;">Fill the form and we'll call you within 15 minutes</p>
+      <form id="locationQuoteForm" style="display: flex; flex-direction: column; gap: 16px;">
+        <input type="hidden" name="location" value="<%= location.name %>">
+        <input type="text" name="name" placeholder="Your Name *" required style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%;">
+        <input type="tel" name="phone" placeholder="Phone Number *" required style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%;">
+        <input type="text" name="address" placeholder="Delivery Address in <%= location.name %> *" required style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%;">
+        <select name="acType" required style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%; background: white;">
+          <option value="">Select AC Type *</option>
+          <option value="Tower AC">Tower AC</option>
+          <option value="Portable AC">Portable AC</option>
+          <option value="Ductable AC">Ductable AC</option>
+          <option value="Cassette AC">Cassette AC</option>
+        </select>
+        <select name="capacity" style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%; background: white;">
+          <option value="">Select Capacity</option>
+          <option value="1.5 Ton">1.5 Ton</option>
+          <option value="3.5 Ton">3.5 Ton</option>
+          <option value="5.5 Ton">5.5 Ton</option>
+          <option value="8.5 Ton">8.5 Ton</option>
+        </select>
+        <textarea name="message" placeholder="Any specific requirements?" rows="3" style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; width: 100%; resize: vertical;"></textarea>
+        <button type="submit" class="btn-submit" style="padding: 14px 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 16px; cursor: pointer;">Submit & Chat on WhatsApp</button>
+      </form>
+      <div id="locationQuoteSuccess" style="display:none; text-align: center; padding: 24px; background: #f0fdf4; border-radius: 12px; margin-top: 16px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+        <h4 style="margin-bottom: 4px;">Request Submitted!</h4>
+        <p style="color: var(--text-light); font-size: 14px;">We'll contact you shortly on WhatsApp</p>
+      </div>
+    </div>
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 40px 0;">
+
+  <h2 style="text-align: center; margin-bottom: 8px;">Available ACs for Rent in <%= location.name %></h2>
+  <p style="text-align: center; color: var(--text-light); margin-bottom: 32px;">Browse our collection — all available for delivery to <%= location.name %></p>
+
+  <div class="products-grid" id="locationProductGrid">
+    <% products.forEach(product => { %>
+    <article class="product-card" data-name="<%= (product.name||'').toLowerCase() %>" data-type="<%= product.type %>" data-capacity="<%= product.capacity %>">
+      <% const img = product.card_image || (product.images && product.images.length ? product.images[0] : product.image); %>
+      <div class="product-img" role="img" aria-label="<%= product.name || 'AC' %> - <%= product.brand || '' %> <%= product.capacity || '' %> <%= product.type || '' %> AC for rent in <%= location.name %>" style="<%= img ? 'background-image:url('+img+');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#f8fafc' : '' %>">
+        <% if (!img) { %>❄️<% } %>
+      </div>
+      <div class="product-body">
+        <div class="product-brand"><%= product.brand %></div>
+        <div class="product-name"><%= product.name %></div>
+        <div class="product-specs">
+          <span class="product-spec"><%= product.capacity %></span>
+          <span class="product-spec"><%= product.type %></span>
+        </div>
+        <div class="product-price"><%= product.tiers && product.tiers.length ? 'From ' : '' %>₹<%= Number(product.monthly_price).toLocaleString() %> <span>/day</span></div>
+        <div class="product-desc"><%= product.description ? product.description.substring(0, 100) + (product.description.length > 100 ? '...' : '') : 'Premium quality AC available for rent in ' + location.name + '. Contact us for more details.' %></div>
+        <div class="product-actions">
+          <button onclick="openRentModal(<%= product.id %>, '<%= (product.name||'').replace(/'/g, "\\'") %>', '<%= (product.brand||'').replace(/'/g, "\\'") %>', '<%= product.capacity %>', <%= product.monthly_price %>)" class="btn-rent">Rent Now</button>
+          <a href="/product/<%= product.id %>" class="btn-details">Details</a>
+        </div>
+      </div    </article>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Service Schema for this location -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "AC Rental",
+  "name": "<%= location.title %> by Cool Cruze",
+  "provider": { "@type": "LocalBusiness", "@id": "https://coolcruze.in/#localbusiness" },
+  "areaServed": {
+    "@type": "City",
+    "name": "<%= location.name %>"
+  },
+  "description": "Premium tower AC, portable AC, ductable AC & cassette AC rental in <%= location.name %>. Serving: <%= location.areas %>. Zero deposit, free installation, free maintenance, 24/7 support.",
+  "availableChannel": {
+    "@type": "ServiceChannel",
+    "serviceUrl": "https://coolcruze.in/ac-rental-<%= location.name.toLowerCase().replace(' ', '-') %>",
+    "servicePhone": "+<%= whatsappNumber %>",
+    "availableLanguage": ["en", "hi"]
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "INR",
+    "availability": "https://schema.org/InStock",
+    "eligibleRegion": { "@type": "City", "name": "<%= location.name %>" }
+  }
+}
+</script>
+
+<!-- FAQ Schema for location -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What types of ACs are available for rent in <%= location.name %>?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer Tower AC, Portable AC, Ductable AC and Cassette AC for rent in <%= location.name %>. Capacities range from 1.5 Ton to 8.5 Ton from brands like LG, Samsung, Voltas, Daikin, Blue Star and Hitachi."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How quickly can you deliver and install AC in <%= location.name %>?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We typically deliver and install within 24 hours across <%= location.name %>. For urgent requirements, we can expedite to same-day delivery based on stock availability."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is installation and maintenance included in the rental price for <%= location.name %>?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Free installation, regular maintenance, servicing and repairs are all included in your rental price. No hidden charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the minimum rental period for AC rental in <%= location.name %>?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer flexible rentals starting from 1 day. Monthly, quarterly and yearly plans are available with discounted rates for longer commitments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you provide ACs for events and exhibitions in <%= location.name %>?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely! We specialize in temporary cooling solutions for events, exhibitions, weddings, corporate functions and film shoots across <%= location.name %>. Short-term event rentals available."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+document.getElementById('locationQuoteForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData);
+  
+  try {
+    const params = new URLSearchParams(data);
+    const res = await fetch('/rent/' + (products[0]?.id || 1), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    });
+    const result = await res.json();
+    if (result.success) {
+      this.style.display = 'none';
+      document.getElementById('locationQuoteSuccess').style.display = 'block';
+      if (result.whatsappUrl) window.open(result.whatsappUrl, '_blank');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Submit & Chat on WhatsApp';
+  }
+});
+</script>
+
+<%- include('partials/footer') %>

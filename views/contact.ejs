@@ -1,9 +1,21 @@
 <%- include('partials/header') %>
 
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coolcruze.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Contact Us", "item": "https://coolcruze.in/contact" }
+  ]
+}
+</script>
+
 <section class="about-hero">
   <div class="hero-content">
-    <h1>Contact Cool Cruze</h1>
-    <p>We're here to help — reach out to us anytime</p>
+    <h1>Contact Cool Cruze — AC Rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar</h1>
+    <p>Get in touch for tower AC rental, portable AC, ductable AC & cassette AC across Mumbai Metropolitan Region</p>
   </div>
 </section>
 
@@ -11,7 +23,7 @@
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
     <div>
       <h2>Get In Touch</h2>
-      <p>Have questions about our AC rentals? Want to know more about pricing or availability? We'd love to hear from you.</p>
+      <p>Have questions about our AC rentals? Want to know more about pricing or availability in your area? We'd love to hear from you. We serve all of Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar and surrounding areas.</p>
 
       <div style="display:flex;flex-direction:column;gap:20px;margin-top:24px;">
         <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#f8fafc;border-radius:12px;">
@@ -32,7 +44,14 @@
           <span style="font-size:24px;">📍</span>
           <div>
             <div style="font-size:13px;color:var(--text-light);">Service Area</div>
-            <div style="font-size:18px;font-weight:700;">Mumbai, India</div>
+            <div style="font-size:18px;font-weight:700;">Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#f8fafc;border-radius:12px;">
+          <span style="font-size:24px;">🕐</span>
+          <div>
+            <div style="font-size:13px;color:var(--text-light);">Business Hours</div>
+            <div style="font-size:18px;font-weight:700;">Mon - Sat: 9AM - 8PM</div>
           </div>
         </div>
       </div>
@@ -43,10 +62,10 @@
     <div>
       <h2>Send Us a Message</h2>
       <form id="contactForm" style="display:flex;flex-direction:column;gap:16px;margin-top:16px;">
-        <input type="text" id="contactName" placeholder="Your Name *" required style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;">
-        <input type="tel" id="contactPhone" placeholder="Phone Number *" required style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;">
-        <input type="email" id="contactEmail" placeholder="Email (Optional)" style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;">
-        <textarea id="contactMsg" placeholder="Your Message *" required rows="4" style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;resize:vertical;"></textarea>
+        <input type="text" id="contactName" placeholder="ursday *" required style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;" aria-label="Your Name">
+        <input type="tel" id="contactPhone" placeholder="Phone Number *" required style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;" aria-label="Phone Number">
+        <input type="email" id="contactEmail" placeholder="Email (Optional)" style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;" aria-label="Email">
+        <textarea id="contactMsg" placeholder="Your Message *" required rows="4" style="padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;width:100%;resize:vertical;" aria-label="Your Message"></textarea>
         <button type="submit" id="contactSubmitBtn" style="padding:14px 32px;background:var(--primary);color:white;border:none;border-radius:50px;font-weight:700;font-size:16px;cursor:pointer;">Send Message</button>
       </form>
       <div id="contactSuccess" style="display:none;text-align:center;padding:32px;background:#f0fdf4;border-radius:12px;margin-top:16px;">
@@ -92,6 +111,41 @@ document.getElementById('contactForm').addEventListener('submit', async function
     btn.textContent = 'Send Message';
   }
 });
+</script>
+
+<!-- ContactPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact Cool Cruze - AC Rental Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar",
+  "description": "Contact Cool Cruze for tower AC rental, portable AC, ductable AC & cassette AC across Mumbai Metropolitan Region. Free delivery, installation & maintenance.",
+  "mainEntity": {
+    "@type": "LocalBusiness",
+    "@id": "https://coolcruze.in/#localbusiness",
+    "name": "Cool Cruze",
+    "url": "https://coolcruze.in",
+    "telephone": "+<%= whatsappNumber %>",
+    "email": "info@coolcruze.in",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Mumbai",
+      "addressRegion": "Maharashtra",
+      "addressCountry": "IN"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "Mumbai" },
+      { "@type": "City", "name": "Thane" },
+      { "@type": "City", "name": "Navi Mumbai" },
+      { "@type": "AdministrativeArea", "name": "Kharghar" },
+      { "@type": "AdministrativeArea", "name": "Vashi" },
+      { "@type": "City", "name": "Virar" }
+    ],
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "20:00" }
+    ]
+  }
+}
 </script>
 
 <%- include('partials/footer') %>
