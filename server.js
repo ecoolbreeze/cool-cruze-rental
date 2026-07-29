@@ -183,7 +183,7 @@ app.get('/', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   const featured = [...products].reverse().slice(0, 4);
   res.render('index', {
-    title: 'Home',
+    pageTitle: 'AC Rental Mumbai - Tower, Portable, Ductable AC | Cool Cruze',
     metaDescription: 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi & Virar. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support. AC rental for events, offices & industries across Mumbai Metropolitan Region.',
     ogDescription: 'Premium tower AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. Commercial cooling solutions for events, offices & industries.',
     featured, products
@@ -193,16 +193,16 @@ app.get('/', asyncRoute(async (req, res) => {
 app.get('/products', asyncRoute(async (req, res) => {
   const products = await db.getAllProducts();
   res.render('products', {
-    title: 'AC Rental Products',
-    metaDescription: 'Browse tower AC, portable AC, ductable AC & cassette AC for rent in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. LG, Samsung, Voltas, Daikin — affordable daily rental plans with zero deposit. Free delivery & installation across MMR.',
-    ogDescription: 'Premium AC rental collection in Mumbai & MMR. Tower, portable, ductable & cassette ACs for events & offices.',
+    pageTitle: 'AC Rental Mumbai - Tower, Portable, Ductable, Cassette AC | Cool Cruze',
+    metaDescription: 'Browse tower AC, portable AC, ductable AC & cassette AC for rent in Mumbai, Thane, Navi Mumbai. LG, Samsung, Voltas, Daikin — affordable daily rental plans with zero deposit. Free delivery & installation across MMR.',
+    ogDescription: 'Premium AC rental collection in Mumbai MMR. Tower, portable, ductable & cassette ACs for events & offices.',
     products
   });
 }));
 
 app.get('/about', (req, res) => {
   res.render('about', {
-    title: 'About Us',
+    pageTitle: 'About Cool Cruze - Mumbai AC Rental Experts Since 2018',
     metaDescription: 'Cool Cruze — trusted AC rental partner serving Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. 500+ happy customers, 50+ AC models, 24hr delivery, free installation & maintenance. Zero deposit, flexible rental plans.',
     ogDescription: 'About Cool Cruze - Mumbai\'s trusted AC rental service across Thane, Navi Mumbai, Kharghar, Vashi, Virar.',
   });
@@ -210,7 +210,7 @@ app.get('/about', (req, res) => {
 
 app.get('/sitemap', (req, res) => {
   res.render('sitemap', {
-    title: 'Site Map',
+    pageTitle: 'Sitemap - Cool Cruze AC Rental Mumbai',
     metaDescription: 'Cool Cruze site map - browse all AC rental pages, service areas in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar, product categories and legal pages.',
     ogDescription: 'Complete site map for Cool Cruze AC rental website.',
   });
@@ -220,9 +220,10 @@ app.get('/product/:id', asyncRoute(async (req, res) => {
   const product = await db.getProduct(req.params.id);
   if (!product) return res.redirect('/products');
   const locations = 'Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar';
+  const productTitle = product.name + ' ' + product.brand + ' ' + product.capacity + ' AC Rental';
   res.render('product-detail', {
-    title: product.name + ' - ' + product.brand + ' ' + product.capacity + ' AC Rental',
-    metaDescription: ((product.description || '').substring(0, 140) + ' Available for rent in ' + locations + '.') || 'Rent ' + product.name + ' ' + product.brand + ' ' + product.capacity + ' AC from Cool Cruze. Affordable daily rental, zero deposit, free installation across ' + locations + '.',
+    pageTitle: productTitle + ' | Cool Cruze - Rent from ₹' + Number(product.monthly_price).toLocaleString() + '/day',
+    metaDescription: 'Rent ' + product.name + ' ' + product.brand + ' ' + product.capacity + ' AC from Cool Cruze. ₹' + Number(product.monthly_price).toLocaleString() + '/day. Zero deposit, free installation & maintenance in ' + locations + '.',
     ogDescription: 'Rent ' + product.name + ' by ' + product.brand + '. ₹' + Number(product.monthly_price).toLocaleString() + '/day. Zero deposit, free delivery & maintenance in ' + locations + '.',
     ogImage: product.card_image || (product.images && product.images.length ? product.images[0] : '/uploads/hero.png'),
     product
@@ -664,8 +665,8 @@ app.post('/admin/import', requireAuth, multerImport.single('backup'), asyncRoute
 app.get('/contact', (req, res) => {
   const locations = 'Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar';
   res.render('contact', {
-    title: 'Contact Us',
-    metaDescription: 'Contact Cool Cruze for AC rental in ' + locations + '. Call, WhatsApp, or email us for tower AC, portable AC, ductable AC & cassette AC inquiries. Free delivery & installation across Mumbai Metropolitan Region. We respond within minutes.',
+    pageTitle: 'Contact Cool Cruze - AC Rental Mumbai | Call/WhatsApp +91-7977471369',
+    metaDescription: 'Contact Cool Cruze for AC rental in Mumbai, Thane, Navi Mumbai. Call/WhatsApp +91-7977471369 for tower AC, portable AC, ductable AC & cassette AC. Free delivery & installation across MMR.',
     ogDescription: 'Get in touch with Cool Cruze for premium AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar.',
   });
 });
@@ -682,13 +683,29 @@ const LOCATIONS = {
 
 Object.keys(LOCATIONS).forEach(loc => {
   const locData = LOCATIONS[loc];
+  const locationTitles = {
+    mumbai: 'AC Rental Mumbai - Tower, Portable, Ductable AC | Cool Cruze',
+    thane: 'AC Rental Thane - Commercial & Event AC Hire | Cool Cruze',
+    'navi-mumbai': 'AC Rental Navi Mumbai - Office, Event, Industrial AC | Cool Cruze',
+    kharghar: 'AC Rental Kharghar - Society, Office, Event AC Hire | Cool Cruze',
+    vashi: 'AC Rental Vashi - Showroom, Office, Commercial AC | Cool Cruze',
+    virar: 'AC Rental Virar - Wedding, Factory, Society AC Hire | Cool Cruze'
+  };
+  const locationDescriptions = {
+    mumbai: 'AC rental Mumbai - Tower, portable, ductable & cassette ACs on rent in Andheri, Bandra, Powai, Borivali, Malad. Zero deposit, free installation, 24/7 support. Best rates from ₹500/day.',
+    thane: 'AC rental Thane - Commercial tower & ductable ACs for offices, warehouses in Thane West, Ghodbunder, Majiwada. Zero deposit, free install & maintenance. Call +91-7977471369.',
+    'navi-mumbai': 'AC rental Navi Mumbai - Tower, cassette & ductable ACs for IT parks, offices in Vashi, Nerul, Belapur, Kharghar, Panvel. Free delivery, zero deposit, 24hr service.',
+    kharghar: 'AC rental Kharghar - Portable & tower ACs for societies, events, site offices in Sectors 1-50, Taloja, Kalamboli. No deposit, free installation, 24/7 support.',
+    vashi: 'AC rental Vashi - Cassette & ductable ACs for showrooms, offices, restaurants in Vashi, Sanpada, APMC. Zero deposit, free installation, flexible monthly plans.',
+    virar: 'AC rental Virar - Tower & portable ACs for weddings, factories, societies in Virar, Nalasopara, Vasai. Affordable rates, free delivery & setup, 24hr support.'
+  };
   app.get('/ac-rental-' + loc, asyncRoute(async (req, res) => {
     const products = await db.getAllProducts();
     res.render('location', {
-      title: locData.title + ' | Cool Cruze',
+      pageTitle: locationTitles[loc],
       location: locData,
-      metaDescription: locData.title + ' by Cool Cruze — Tower AC, Portable AC, Ductable AC & Cassette AC on rent in ' + locData.name + ' (' + locData.areas + '). Zero deposit, free installation & maintenance. Best daily rental rates. Call/WA: +' + WHATSAPP_NUMBER,
-      ogDescription: 'Premium AC rental in ' + locData.name + ' — ' + locData.areas + '. Tower, portable, ductable & cassette ACs for events, offices & homes.',
+      metaDescription: locationDescriptions[loc],
+      ogDescription: 'Premium AC rental in ' + locData.name + ' - ' + locData.areas + '. Tower, portable, ductable & cassette ACs for events, offices & homes.',
       products
     });
   }));
