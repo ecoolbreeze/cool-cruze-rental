@@ -81,6 +81,13 @@ async function init() {
   }
 }
 
+function typeImage(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('ductable')) return '/uploads/ductable.png';
+  if (t.includes('portable')) return '/uploads/portabel.png';
+  return '/uploads/tower.png';
+}
+
 function rowToProduct(r) {
   const p = { ...r };
   p.monthly_price = parseFloat(p.monthly_price) || 0;
@@ -93,6 +100,14 @@ function rowToProduct(r) {
   if (!p.card_image && p.image) p.card_image = p.image;
   if (!p.detail_images || !p.detail_images.length) {
     p.detail_images = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+  }
+  const img = typeImage(p.type);
+  const staticImages = ['tower.png','ductable.png','portabel.png'];
+  const isStale = (url) => url.startsWith('/uploads/') && !staticImages.some(n => url.endsWith(n));
+  if (!p.card_image || isStale(p.card_image)) p.card_image = img;
+  if (!p.carousel_image || isStale(p.carousel_image)) p.carousel_image = img;
+  if (!p.detail_images || !p.detail_images.length) {
+    p.detail_images = [img];
   }
   p.created_at = p.created_at ? new Date(p.created_at).toISOString() : new Date().toISOString();
   delete p.image;
