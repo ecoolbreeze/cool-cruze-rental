@@ -140,6 +140,8 @@ function asyncRoute(fn) {
   return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 }
 
+const BASE_URL = 'https://coolcruze.in';
+
 // www redirect
 app.use((req, res, next) => {
   if (req.headers.host && req.headers.host.startsWith('www.')) {
@@ -162,8 +164,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const BASE_URL = 'https://coolcruze.in';
-
 // Startup migration: update existing products to use type-based images
 (async () => {
   try {
@@ -184,8 +184,8 @@ app.get('/', asyncRoute(async (req, res) => {
   const featured = [...products].reverse().slice(0, 4);
   res.render('index', {
     pageTitle: 'AC Rental Mumbai - Tower, Portable, Ductable AC | Cool Cruze',
-    metaDescription: 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi & Virar. Cool Cruze offers heavy-duty commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support. AC rental for events, offices & industries across Mumbai Metropolitan Region.',
-    ogDescription: 'Premium tower AC rental across Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. Commercial cooling solutions for events, offices & industries.',
+    metaDescription: 'Best tower AC rental in Mumbai, Thane, Navi Mumbai, Kharghar, Vashi, Virar. Cool Cruze offers commercial tower, portable & ductable ACs on rent. Zero deposit, free installation & 24/7 support.',
+    ogDescription: 'Premium tower AC rental across Mumbai MMR. Commercial cooling for events, offices & industries.',
     featured, products
   });
 }));
