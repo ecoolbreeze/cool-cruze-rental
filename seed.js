@@ -2,63 +2,63 @@ const db = require('./db');
 
 const sampleProducts = [
   {
-    name: '1.5 Ton 5-Star Inverter Portable AC',
+    name: '1.5 Ton 5-Star Inverter Split AC',
     brand: 'LG',
     capacity: '1.5 Ton',
-    type: 'Portable',
-    monthly_price: 1499,
-    description: 'Premium LG 1.5 Ton 5-Star Inverter Portable AC with dual inverter compressor, 100% copper, and anti-virus filter. Perfect for medium-sized rooms.',
-    features: '5-Star Energy Rating,Dual Inverter Compressor,100% Copper,Hindi+English Display,Anti-Virus Filter',
+    type: 'Split',
+    monthly_price: 999,
+    description: 'Premium LG 1.5 Ton 5-Star Inverter Split AC with dual inverter compressor, 100% copper, and anti-virus filter. Perfect for bedrooms and offices.',
+    features: '5-Star Energy Rating,Dual Inverter Compressor,100% Copper,Anti-Virus Filter,Wi-Fi Ready',
     stock: 5
   },
   {
-    name: '3.5 Ton 3-Star Tower AC',
+    name: '1 Ton 3-Star Window AC',
     brand: 'Voltas',
-    capacity: '3.5 Ton',
-    type: 'Tower',
-    monthly_price: 1299,
-    description: 'Reliable Voltas 3.5 Ton Tower AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for large rooms and small offices.',
+    capacity: '1 Ton',
+    type: 'Window',
+    monthly_price: 799,
+    description: 'Reliable Voltas 1 Ton Window AC with high ambient cooling, turbo mode, and anti-dust filter. Ideal for small rooms and shops.',
     features: '3-Star Energy Rating,Turbo Mode,Anti-Dust Filter,High Ambient Cooling',
-    stock: 3
+    stock: 4
   },
   {
-    name: '1.5 Ton 4-Star Inverter Portable AC',
+    name: '2 Ton 4-Star Inverter Split AC',
     brand: 'Samsung',
-    capacity: '1.5 Ton',
-    type: 'Portable',
-    monthly_price: 1399,
-    description: 'Samsung 1.5 Ton 4-Star Inverter Portable AC with digital inverter technology, fast cooling, and auto-clean feature.',
+    capacity: '2 Ton',
+    type: 'Split',
+    monthly_price: 1299,
+    description: 'Samsung 2 Ton 4-Star Inverter Split AC with digital inverter technology, fast cooling, and auto-clean feature. Great for large rooms.',
     features: '4-Star Energy Rating,Digital Inverter,Auto Clean,Fast Cooling,Triple Protector Plus',
     stock: 4
   },
   {
-    name: '5.5 Ton 5-Star Inverter Ductable AC',
-    brand: 'Daikin',
-    capacity: '5.5 Ton',
-    type: 'Ductable',
-    monthly_price: 1799,
-    description: 'Daikin 5.5 Ton 5-Star Inverter Ductable AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces.',
-    features: '5-Star Energy Rating,Swing Compressor,PM 2.5 Filter,Powerful Cooling,Coanda Airflow',
-    stock: 2
-  },
-  {
-    name: '3.5 Ton 3-Star Tower AC',
+    name: '1.5 Ton 3-Star Window AC',
     brand: 'Blue Star',
-    capacity: '3.5 Ton',
-    type: 'Tower',
-    monthly_price: 999,
-    description: 'Blue Star 3.5 Ton Tower AC — budget-friendly cooling for small rooms. Features anti-bacterial filter and sleep mode.',
+    capacity: '1.5 Ton',
+    type: 'Window',
+    monthly_price: 899,
+    description: 'Blue Star 1.5 Ton Window AC — budget-friendly cooling for homes and small offices. Features anti-bacterial filter and sleep mode.',
     features: '3-Star Energy Rating,Anti-Bacterial Filter,Sleep Mode,Compact Design',
     stock: 6
   },
   {
-    name: '8.5 Ton Tower AC',
-    brand: 'LG',
-    capacity: '8.5 Ton',
+    name: '2 Ton 5-Star Inverter Tower AC',
+    brand: 'Daikin',
+    capacity: '2 Ton',
     type: 'Tower',
-    monthly_price: 2499,
-    description: 'LG 8.5 Ton Tower AC for large commercial spaces. Powerful cooling with wide airflow distribution and smart inverter technology.',
-    features: 'Inverter Technology,Wide Airflow,Commercial Grade,Smart Diagnosis,Anti-Bacterial',
+    monthly_price: 1499,
+    description: 'Daikin 2 Ton Tower AC with swing compressor, PM 2.5 filter, and powerful cooling for larger spaces and events.',
+    features: '5-Star Energy Rating,Swing Compressor,PM 2.5 Filter,Powerful Cooling,Coanda Airflow',
+    stock: 3
+  },
+  {
+    name: '1 Ton 3-Star Portable AC',
+    brand: 'LG',
+    capacity: '1 Ton',
+    type: 'Portable',
+    monthly_price: 1099,
+    description: 'LG 1 Ton Portable AC with wide airflow distribution and smart inverter technology. Perfect for temporary cooling needs.',
+    features: 'Inverter Technology,Wide Airflow,Portable Design,Smart Diagnosis,Anti-Bacterial',
     stock: 2
   }
 ];

@@ -85,6 +85,8 @@ function typeImage(type) {
   const t = (type || '').toLowerCase();
   if (t.includes('ductable')) return '/uploads/ductable.png';
   if (t.includes('portable')) return '/uploads/portabel.png';
+  if (t.includes('split')) return '/uploads/split.png';
+  if (t.includes('window')) return '/uploads/window.png';
   return '/uploads/tower.png';
 }
 
@@ -102,7 +104,7 @@ function rowToProduct(r) {
     p.detail_images = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
   }
   const img = typeImage(p.type);
-  const staticImages = ['tower.png','ductable.png','portabel.png'];
+  const staticImages = ['tower.png','ductable.png','portabel.png','split.png','window.png'];
   const isStale = (url) => url.startsWith('/uploads/') && !staticImages.some(n => url.endsWith(n));
   if (!p.card_image || isStale(p.card_image)) p.card_image = img;
   if (!p.carousel_image || isStale(p.carousel_image)) p.carousel_image = img;

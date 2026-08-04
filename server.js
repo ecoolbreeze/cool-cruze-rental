@@ -303,6 +303,8 @@ function typeImage(type) {
   const t = (type || '').toLowerCase();
   if (t.includes('ductable')) return '/uploads/ductable.png';
   if (t.includes('portable')) return '/uploads/portabel.png';
+  if (t.includes('split')) return '/uploads/split.png';
+  if (t.includes('window')) return '/uploads/window.png';
   return '/uploads/tower.png';
 }
 
