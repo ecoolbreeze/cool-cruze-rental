@@ -763,6 +763,10 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error: ' + err.message);
 });
 
-app.listen(PORT, () => {
-  console.log('Cool Cruze running at http://localhost:' + PORT);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('Cool Cruze running at http://localhost:' + PORT);
+  });
+}
+
+module.exports = app;
