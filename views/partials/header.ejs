@@ -159,7 +159,7 @@
       <span class="logo-icon">❄️</span>
       Cool Cruze
     </a>
-    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation menu">☰</button>
     <div class="nav-links">
       <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Home</a>
       <a href="/products" class="<%= currentPath === '/products' ? 'active' : '' %>">Products</a>
@@ -173,7 +173,7 @@
 <!-- Rent Now Modal -->
 <div id="rentModal" class="modal-overlay" onclick="if(event.target===this)closeRentModal()">
   <div class="modal-content">
-    <button class="modal-close" onclick="closeRentModal()">&times;</button>
+    <button class="modal-close" onclick="closeRentModal()" aria-label="Close modal">&times;</button>
     <h2 class="modal-title">Rent Now</h2>
     <p class="modal-subtitle">Fill in your details and we'll contact you within minutes</p>
     <div id="modalError" class="form-error"></div>
