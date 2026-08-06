@@ -1,0 +1,3 @@
+## 2024-08-06 - Accessibility Fundamentals: Keyboard Navigation & Icon Buttons
+**Learning:** Found critical gaps in fundamental accessibility patterns: icon-only buttons lacked ARIA labels making them invisible to screen readers, and the absence of global `:focus-visible` styles made keyboard navigation extremely difficult for users relying on tabbing.
+**Action:** Always ensure icon-only buttons include `aria-label` attributes describing their function, and implement global `:focus-visible` utility styles across all projects to ensure keyboard focus states are always clear without relying purely on specific component definitions.
