@@ -33,12 +33,12 @@ export default function AdminLogin() {
         {error && <div className="form-error" style={{ display: 'block' }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Username</label>
-            <input value={username} onChange={e => setUsername(e.target.value)} required autoFocus />
+            <label htmlFor="username">Username</label>
+            <input id="username" value={username} onChange={e => setUsername(e.target.value)} required autoFocus />
           </div>
           <div className="form-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+            <label htmlFor="password">Password</label>
+            <input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <button type="submit" className="btn-submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
