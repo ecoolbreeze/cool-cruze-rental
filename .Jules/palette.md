@@ -1,0 +1,3 @@
+## 2024-08-09 - Missing Form Accessibility Associations
+**Learning:** This application has a pattern of missing accessibility attributes on forms. Standard forms (like Contact) lack `htmlFor` and `id` bindings between labels and inputs, while modal forms (like RentModal) rely entirely on placeholders without `aria-label`s. Additionally, custom controls like range sliders lack `aria-label` and `aria-valuetext` bindings to convey their purpose and current value to screen reader users.
+**Action:** When working on form components in this app, always ensure labels are explicitly tied to inputs using `htmlFor`/`id`, add `aria-label` to placeholder-only inputs, and verify that custom controls (like sliders) properly broadcast their state to assistive technologies.
