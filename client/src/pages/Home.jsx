@@ -213,11 +213,16 @@ export default function Home({ onRent }) {
         <div className="faq-list">
           {FAQS.map((f, i) => (
             <div key={i} className={`faq-item${faqOpen === i ? ' open' : ''}`}>
-              <button className="faq-question" onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
+              <button
+                className="faq-question"
+                onClick={() => setFaqOpen(faqOpen === i ? null : i)}
+                aria-expanded={faqOpen === i}
+                aria-controls={`faq-answer-${i}`}
+              >
                 {f.q}
                 <span className="faq-arrow">▼</span>
               </button>
-              <div className="faq-answer">
+              <div id={`faq-answer-${i}`} className="faq-answer">
                 <p>{f.a}</p>
               </div>
             </div>
