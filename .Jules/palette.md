@@ -1,0 +1,3 @@
+## 2025-03-01 - Missing Label Associations in Forms
+**Learning:** React components in this app frequently use visually distinct `<label>` elements without binding them to `<input>` or `<textarea>` elements via `htmlFor` and `id`, reducing accessibility and preventing click-to-focus behavior. Placeholder-only inputs are also common and lack screen reader support.
+**Action:** Always ensure explicitly structured forms bind `<label>` components with `htmlFor` matching the `id` of the form controls. For placeholder-only inputs, always add descriptive `aria-label`s.
