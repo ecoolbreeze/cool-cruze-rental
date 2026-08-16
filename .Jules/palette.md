@@ -1,0 +1,3 @@
+## 2024-08-16 - Form Field Accessibility
+**Learning:** Relying solely on `placeholder` attributes for form fields is a major accessibility barrier. Screen readers often don't announce placeholders correctly, and they disappear when the user starts typing, leaving users with cognitive disabilities without context.
+**Action:** When visual constraints prevent visible `<label>` elements, use `aria-label` directly on the `<input>` or `<textarea>` element rather than adding custom CSS to visually hide a `<label>`. This adheres to boundaries against adding custom CSS while maintaining screen reader support.
