@@ -1,0 +1,3 @@
+## 2026-08-17 - Form Accessibility Constraints
+**Learning:** Found a specific design constraint in this app where standalone forms (like on the Contact page) can accommodate visible labels, but modal forms (like RentModal) have visual constraints that prevent adding them without breaking layout or adding custom CSS.
+**Action:** When working on forms in this app, default to using explicit visible `<label>` elements with matching `htmlFor` and `id` attributes. If space is constrained (e.g., in modals) and new CSS is forbidden, fall back to adding descriptive `aria-label` attributes directly to the `<input>` or `<textarea>` elements to ensure screen reader accessibility.
