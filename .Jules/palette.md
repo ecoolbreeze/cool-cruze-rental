@@ -1,0 +1,3 @@
+## 2024-08-18 - Form Accessibility Patterns
+**Learning:** Found two common patterns of inaccessible forms in this application. First, forms using placeholders as visual constraints rather than visible labels (e.g., `RentModal.jsx`) require `aria-label` attributes on the input fields. Second, forms with visible `<label>` elements (e.g., `Contact.jsx`) often missed the explicit `id`/`htmlFor` association, relying on structure rather than semantic mapping.
+**Action:** When creating or reviewing forms, always verify that visible labels use `htmlFor` matching the input's `id`, and inputs without visible labels include an `aria-label`.
