@@ -1,0 +1,3 @@
+## 2026-08-21 - Form Accessibility: Explicit vs. Implicit Labeling
+**Learning:** React requires explicit association of visible `<label>` elements with their corresponding inputs using matching `htmlFor` and `id` attributes, instead of relying solely on structural nesting or proximity, for proper screen reader support. When visual design constraints prevent visible labels, `aria-label` must be added directly to the input element instead of using custom CSS to visually hide a label, adhering strictly to the rule against custom CSS.
+**Action:** Always ensure `htmlFor` matches the input `id` in forms with visible labels. When visible labels are absent due to design, apply `aria-label` directly to the input.
