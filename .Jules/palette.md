@@ -1,0 +1,1 @@
+## 2024-08-23 - Accessibility Issues in Modals\n**Learning:** Found that custom modal implementations often lack visible labels for aesthetic reasons but omit aria-labels for screen readers.\n**Action:** Add aria-labels to all form inputs where visual labels are omitted in custom modals.
