@@ -1,0 +1,3 @@
+## 2024-08-27 - Form Accessibility Design Constraints
+**Learning:** When visual design constraints prevent the use of explicit visible `<label>` elements for forms, it is better to add an `aria-label` attribute directly to the `<input>` or `<textarea>` element rather than adding custom CSS (e.g. `sr-only`) to visually hide a standard label, adhering strictly to the rule against adding custom CSS.
+**Action:** Use `htmlFor` with explicit labels where possible, but default to `aria-label` when the UI design cannot accommodate visible labels and custom CSS is not allowed.
