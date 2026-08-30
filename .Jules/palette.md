@@ -1,0 +1,3 @@
+## 2026-08-30 - Explicit Form Labeling
+**Learning:** Relying solely on structural proximity (nesting an input near a label) is insufficient for robust accessibility across all screen readers, whereas explicit association (using `htmlFor` and `id`) guarantees the connection. When visual constraints prevent using a visible label, the `aria-label` attribute effectively communicates the field's purpose directly on the input element.
+**Action:** Always link visible labels to their corresponding inputs with matching `htmlFor` and `id` attributes. If visual labels are restricted, apply `aria-label` directly to the input to comply with accessibility standards without adding visually hidden CSS classes.
