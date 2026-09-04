@@ -91,52 +91,52 @@ export default function AdminProducts() {
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>{editing === 'new' ? 'Add Product' : 'Edit Product'}</h2>
             <form onSubmit={handleSave}>
               <div className="form-group">
-                <label>Product Name *</label>
-                <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                <label htmlFor="product-name">Product Name *</label>
+                <input id="product-name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Type</label>
-                  <select value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+                  <label htmlFor="product-type">Type</label>
+                  <select id="product-type" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
                     {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Capacity</label>
-                  <select value={form.capacity} onChange={e => setForm({...form, capacity: e.target.value})}>
+                  <label htmlFor="product-capacity">Capacity</label>
+                  <select id="product-capacity" value={form.capacity} onChange={e => setForm({...form, capacity: e.target.value})}>
                     {CAPACITIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Brand</label>
-                  <input value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} />
+                  <label htmlFor="product-brand">Brand</label>
+                  <input id="product-brand" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label>Price per Day (₹) *</label>
-                  <input type="number" min="0" step="1" value={form.price_per_day} onChange={e => setForm({...form, price_per_day: e.target.value})} required />
+                  <label htmlFor="product-price">Price per Day (₹) *</label>
+                  <input id="product-price" type="number" min="0" step="1" value={form.price_per_day} onChange={e => setForm({...form, price_per_day: e.target.value})} required />
                 </div>
               </div>
               <div className="form-group">
-                <label>Card Image</label>
-                <input type="file" accept="image/*" onChange={e => setCardFile(e.target.files[0])} />
+                <label htmlFor="product-card-image">Card Image</label>
+                <input id="product-card-image" type="file" accept="image/*" onChange={e => setCardFile(e.target.files[0])} />
               </div>
               <div className="form-group">
-                <label>Detail Gallery Images (multiple)</label>
-                <input type="file" accept="image/*" multiple onChange={e => setDetailFiles(e.target.files)} />
+                <label htmlFor="product-detail-images">Detail Gallery Images (multiple)</label>
+                <input id="product-detail-images" type="file" accept="image/*" multiple onChange={e => setDetailFiles(e.target.files)} />
               </div>
               <div className="form-group">
-                <label>Short Description</label>
-                <textarea rows={2} value={form.short_desc} onChange={e => setForm({...form, short_desc: e.target.value})} />
+                <label htmlFor="product-short-desc">Short Description</label>
+                <textarea id="product-short-desc" rows={2} value={form.short_desc} onChange={e => setForm({...form, short_desc: e.target.value})} />
               </div>
               <div className="form-group">
-                <label>Full Description</label>
-                <textarea rows={4} value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+                <label htmlFor="product-desc">Full Description</label>
+                <textarea id="product-desc" rows={4} value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
               </div>
               <div className="form-group">
-                <label>Features (comma-separated)</label>
-                <input value={form.features} onChange={e => setForm({...form, features: e.target.value})} placeholder="e.g. Energy Efficient, Low Noise, Quick Cooling" />
+                <label htmlFor="product-features">Features (comma-separated)</label>
+                <input id="product-features" value={form.features} onChange={e => setForm({...form, features: e.target.value})} placeholder="e.g. Energy Efficient, Low Noise, Quick Cooling" />
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
                 <button type="submit" className="btn-submit" style={{ width: 'auto', padding: '12px 32px' }} disabled={saving}>
