@@ -1,0 +1,3 @@
+## 2026-09-05 - Form Accessibility Strategies
+**Learning:** There are two different patterns for form accessibility in this app. Standard forms (like Contact) should use explicit `<label>` elements linked to inputs via `htmlFor` and `id`. However, when visual design constraints prevent visible labels (like in RentModal where placeholders act as pseudo-labels), `aria-label` attributes should be added directly to the inputs to ensure screen reader compatibility without relying on custom CSS to visually hide labels.
+**Action:** When improving form accessibility, always evaluate if a visible label is present. If it is, link it using `id` and `htmlFor`. If not, and design constraints forbid adding one, use `aria-label` directly on the input element.
