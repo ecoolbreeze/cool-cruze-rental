@@ -1,0 +1,3 @@
+## 2024-09-07 - Form Accessibility Label Association
+**Learning:** For inputs with standard visual labels, explicit associations (`htmlFor` with `id`) must be strictly used over structural proximity. When visual design constraints prevent visible labels (like in the RentModal form which relies heavily on placeholders), adding `aria-label` directly to the `<input>` or `<textarea>` ensures screen reader accessibility without modifying or adding custom CSS to visually hide a label.
+**Action:** Always prefer explicit `htmlFor`+`id` matching for visible labels, and fall back to `aria-label` for inputs that cannot visually display an independent label due to established design constraints.
