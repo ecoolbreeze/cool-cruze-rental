@@ -1,0 +1,3 @@
+## 2024-09-08 - Explicit Form Label Associations
+**Learning:** Found a recurring pattern in the app where forms visually present labels but omitted explicit `htmlFor` and `id` bindings, relying on structural proximity instead. This is problematic for screen readers. Some forms intentionally hid labels for visual design, requiring fallback to `aria-label`.
+**Action:** Always ensure that when visual labels exist, they are explicitly linked using matching `htmlFor` and `id` attributes. If visual labels are intentionally omitted for design, fallback to adding `aria-label` directly on the input/textarea elements.
