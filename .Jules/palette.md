@@ -1,0 +1,3 @@
+## 2024-05-20 - Missing Form Control Associations
+**Learning:** React components in this application frequently lack explicit form control associations (`id` and `htmlFor`), relying instead on structural proximity. Additionally, inputs that lack a visible `<label>` due to visual design constraints (like those with `placeholder` only) are missing `aria-label` attributes.
+**Action:** When adding new forms or modifying existing ones, always ensure screen readers can identify the input purpose. Add explicit `id`/`htmlFor` pairs for visible labels and fallback to `aria-label` when visible labels are omitted for design reasons.
