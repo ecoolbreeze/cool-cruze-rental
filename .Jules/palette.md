@@ -1,0 +1,3 @@
+## 2024-05-14 - Pattern of missing form accessibility attributes
+**Learning:** Found a recurring pattern where forms lack explicit accessibility attributes. Some forms had structural `<label>` elements without explicitly mapping them to inputs via `htmlFor` and `id`, while other forms with visual constraints (no visible labels) lacked `aria-label` attributes on inputs, which harms screen reader compatibility.
+**Action:** Always ensure visible labels have matching `htmlFor` and `id` tags. When visual design prevents explicit visible labels, add `aria-label` directly to input/textarea elements to provide context without relying on custom CSS.
