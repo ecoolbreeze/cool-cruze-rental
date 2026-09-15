@@ -1,0 +1,3 @@
+## 2026-09-15 - Missing Form-Label Associations
+**Learning:** This application's codebase consistently structural proximity instead of explicit associations for visible form labels, breaking screen reader functionality, and uses purely visual placeholders instead of visible labels in modals due to design constraints.
+**Action:** When adding or auditing forms in this application, strictly verify that all visible `<label>` elements use `htmlFor` paired with an input `id`, and in scenarios where visible labels are prohibited by design constraints (like compact modals), default to applying an `aria-label` directly to the input.
