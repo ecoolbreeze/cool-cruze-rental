@@ -1,0 +1,3 @@
+## 2024-09-16 - Form Label Associations
+**Learning:** Screen readers and assistive technologies require explicit associations between labels and input fields. Relying solely on visual proximity or structure is insufficient for a truly accessible experience.
+**Action:** Always use `htmlFor` on `<label>` elements and matching `id` attributes on their corresponding `<input>` or `<textarea>` elements. When visual constraints prevent using a visible label, use the `aria-label` attribute directly on the input element.
