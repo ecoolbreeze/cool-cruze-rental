@@ -1,0 +1,4 @@
+
+## 2024-05-24 - Form Label Accessibility Approaches
+**Learning:** When addressing form accessibility in React components, different visual constraints require different solutions. In full-page forms (like Contact.jsx), standard `<label>` tags with explicitly paired `htmlFor`/`id` attributes work perfectly and replace structural proximity pairing. However, in condensed UI elements (like RentModal.jsx) where visible labels break the visual design constraints and custom CSS is prohibited, `aria-label` directly on the input provides equivalent screen reader accessibility without altering the visual presentation.
+**Action:** Default to explicit `<label htmlFor="id">` for full forms. Fall back to `aria-label` only when visual constraints strictly prohibit visible labels and custom CSS cannot be added to visually hide them.
