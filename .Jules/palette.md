@@ -1,0 +1,3 @@
+## 2024-05-15 - Form Accessibility Insights
+**Learning:** Found two distinct accessibility patterns in the app's forms: 1) Forms with visible labels (like Contact) relied solely on structural proximity without explicit `htmlFor`/`id` associations. 2) Modals (like RentModal) omitted visible labels entirely due to design constraints, relying only on placeholders which are inaccessible to screen readers.
+**Action:** 1) Always strictly associate visible `<label>` elements with their inputs using matching `htmlFor` and `id` attributes. 2) When visual design prevents explicit visible labels, add the `aria-label` attribute directly to the input/textarea element rather than adding custom CSS to visually hide a label.
