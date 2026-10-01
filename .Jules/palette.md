@@ -1,0 +1,3 @@
+## 2024-10-01 - Form Accessibility
+**Learning:** For components with visual design constraints preventing explicit visible `<label>` elements (like RentModal), `aria-label` attributes must be added directly to the `<input>` or `<textarea>` element to ensure accessibility for screen readers while strictly adhering to the rule against adding custom CSS to visually hide a label. For standard forms with visible text labels, they must be properly linked to their inputs using matching `htmlFor` and `id` attributes.
+**Action:** Always check form inputs for associated labels (either via `htmlFor`/`id` or `aria-label`) and fix them if missing to improve both screen reader support and hit area size for inputs.
