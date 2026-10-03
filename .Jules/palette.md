@@ -1,0 +1,3 @@
+## 2026-10-03 - Explicit Form Labeling
+**Learning:** Structural proximity of labels and inputs is insufficient for robust accessibility; screen readers often fail to correctly associate them unless explicitly linked. Furthermore, when visual constraints prevent visible `<label>` elements, `aria-label` attributes must be used on inputs to ensure accessibility without breaking design rules (like no custom CSS).
+**Action:** Always link visible `<label>` elements to `<input>`/`<textarea>` using matching `htmlFor` and `id` attributes. If visible labels are not possible due to design constraints, apply an `aria-label` attribute directly to the input element.
