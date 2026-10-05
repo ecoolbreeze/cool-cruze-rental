@@ -1,0 +1,3 @@
+## 2024-10-05 - Form Explicit Label Association and Emoji Semantics
+**Learning:** Found that structural proximity (nesting or adjacent placement without explicit IDs) is insufficient for screen readers on standard form inputs. Also, visual success indicators like emojis (✅) must have explicit semantic meaning (`role="img"` and `aria-label`) to convey state properly to assistive technologies.
+**Action:** Always ensure visible `<label>` elements are explicitly associated with their corresponding inputs using matching `htmlFor` and `id` attributes, instead of relying solely on structural proximity. When emojis are used to communicate success or status visually, always add `role="img"` and a descriptive `aria-label`.
