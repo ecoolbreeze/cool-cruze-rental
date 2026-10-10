@@ -1,0 +1,3 @@
+## 2024-10-10 - Explicit Form Label Associations
+**Learning:** When visible `<label>` elements exist, they must explicitly be associated with their inputs using matching `htmlFor` and `id` attributes rather than relying on implicit structural proximity for optimal screen reader support. However, when visual design constraints prevent visible labels (like in the Rent Modal form), adding `aria-label` directly to the `<input>` or `<textarea>` is the preferred fallback strategy to maintain accessibility without resorting to custom CSS to visually hide a label.
+**Action:** Always ensure visible `<label>`s use `htmlFor` and `id`. For inputs without visible labels due to strict design constraints, use `aria-label` to provide context for screen readers.
