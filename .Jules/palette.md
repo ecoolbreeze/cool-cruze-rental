@@ -1,0 +1,3 @@
+## 2026-10-11 - Form Accessibility and Missing Labels
+**Learning:** When visible `<label>` elements are present in forms, they must be explicitly associated with their corresponding inputs using matching `htmlFor` and `id` attributes. When visual design constraints prevent visible `<label>` elements (e.g. relying only on placeholders), `aria-label` attributes must be added directly to the `<input>` or `<textarea>` elements.
+**Action:** Always ensure form inputs have accessible names either through properly associated visible labels (`htmlFor`/`id`) or `aria-label` attributes when visible labels are missing.
