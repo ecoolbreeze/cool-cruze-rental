@@ -63,7 +63,7 @@ export default function RentModal({ product, onClose }) {
         <button className="modal-close" onClick={onClose} aria-label="Close">&times;</button>
         {success ? (
           <div className="modal-success">
-            <div className="check">✅</div>
+            <div className="check" role="img" aria-label="Success">✅</div>
             <h3>Request Sent!</h3>
             <p>We'll contact you shortly at {form.phone}.</p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
