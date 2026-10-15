@@ -1,0 +1,5 @@
+## 2023-10-15 - Explicit and Implicit Form Labeling Patterns
+
+**Learning:** This application utilizes two distinct patterns for form accessibility depending on visual constraints. Standard forms (like the Contact page) rely on explicit visual `<label>` elements which need `htmlFor` and `id` attributes to associate them with inputs for screen readers properly. In contrast, compact forms (like RentModal) intentionally omit visible labels to save space and rely on placeholders. In these cases, adding an `aria-label` directly to the input ensures it remains accessible without altering the visual design or requiring hidden elements.
+
+**Action:** Ensure standard forms always use `htmlFor`/`id` linking between visible labels and inputs. For visually constrained forms where labels are omitted, add `aria-label` matching the placeholder text to ensure accessibility without breaking the UI.
