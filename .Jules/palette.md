@@ -1,0 +1,3 @@
+## 2026-10-16 - Form Accessibility Insights
+**Learning:** For screen readers, structural proximity of a `<label>` element to an input is insufficient. Forms require either explicitly matching `htmlFor` on the label with the `id` on the input, OR the use of an `aria-label` attribute directly on the input when visual design constraints prevent visible labels.
+**Action:** When creating forms, always verify explicit association (via `htmlFor`/`id`) for visible labels. When visible labels are hidden for layout reasons, never use custom CSS to hide them visually; instead, directly apply `aria-label` to the input element.
