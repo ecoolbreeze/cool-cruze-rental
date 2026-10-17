@@ -126,16 +126,16 @@ export default function RentModal({ product, onClose }) {
             <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
               {error && <div className="form-error" style={{ display: 'block' }}>{error}</div>}
               <div className="form-group">
-                <input name="name" placeholder="Your Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                <input name="name" placeholder="Your Name *" aria-label="Your Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
               </div>
               <div className="form-group">
-                <input name="phone" placeholder="Phone Number *" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} required />
+                <input name="phone" placeholder="Phone Number *" aria-label="Phone Number *" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} required />
               </div>
               <div className="form-group">
-                <input name="email" placeholder="Email (optional)" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                <input name="email" placeholder="Email (optional)" aria-label="Email (optional)" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
               </div>
               <div className="form-group">
-                <textarea name="message" placeholder="Message (optional)" rows={3} value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+                <textarea name="message" placeholder="Message (optional)" aria-label="Message (optional)" rows={3} value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
               </div>
               <button type="submit" className="btn-submit" disabled={submitting}>
                 {submitting ? 'Sending...' : 'Send Request'}
