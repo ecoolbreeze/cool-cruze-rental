@@ -1,0 +1,3 @@
+## 2023-10-24 - Form Accessibility Patterns
+**Learning:** Found a pattern where form accessibility was compromised due to missing explicit label associations (`htmlFor` matching `id`) in Contact form, and missing `aria-label` attributes on inputs where visual labels were intentionally omitted (like in the RentModal). These issues degrade the experience for screen reader users.
+**Action:** Always ensure that every input field is properly labeled. When explicit visible labels are used, associate them via `htmlFor` and `id`. When visible labels are hidden due to design constraints, apply `aria-label` directly to the input elements.
