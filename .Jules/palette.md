@@ -1,0 +1,3 @@
+## 2024-05-24 - Missing Form Accessibility Semantics
+**Learning:** A recurring pattern in the app's components is the lack of explicit form labels (`htmlFor`/`id` combinations) and missing `aria-label` attributes where visual constraints hide standard labels. This severely impacts screen reader users who cannot associate inputs with their purpose.
+**Action:** Always ensure that `htmlFor` and `id` attributes are properly matching on form fields, and when visual design constraints prevent visible labels, apply `aria-label` directly to the input element rather than relying on structural proximity or placeholder text.
