@@ -63,7 +63,7 @@ export default function RentModal({ product, onClose }) {
         <button className="modal-close" onClick={onClose} aria-label="Close">&times;</button>
         {success ? (
           <div className="modal-success">
-            <div className="check">✅</div>
+            <div className="check" role="img" aria-label="Success">✅</div>
             <h3>Request Sent!</h3>
             <p>We'll contact you shortly at {form.phone}.</p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
@@ -80,7 +80,7 @@ export default function RentModal({ product, onClose }) {
 
             <div className="rent-calculator">
               <div className="calc-header">
-                <span className="calc-header-icon">📅</span>
+                <span className="calc-header-icon" role="img" aria-label="Calendar">📅</span>
                 <div>
                   <div className="calc-title">Rent Calculator</div>
                   <div className="calc-subtitle">Slide to select duration</div>
@@ -126,16 +126,16 @@ export default function RentModal({ product, onClose }) {
             <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
               {error && <div className="form-error" style={{ display: 'block' }}>{error}</div>}
               <div className="form-group">
-                <input name="name" placeholder="Your Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                <input name="name" aria-label="Your Name *" placeholder="Your Name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
               </div>
               <div className="form-group">
-                <input name="phone" placeholder="Phone Number *" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} required />
+                <input name="phone" aria-label="Phone Number *" placeholder="Phone Number *" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} required />
               </div>
               <div className="form-group">
-                <input name="email" placeholder="Email (optional)" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                <input name="email" aria-label="Email (optional)" placeholder="Email (optional)" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
               </div>
               <div className="form-group">
-                <textarea name="message" placeholder="Message (optional)" rows={3} value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+                <textarea name="message" aria-label="Message (optional)" placeholder="Message (optional)" rows={3} value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
               </div>
               <button type="submit" className="btn-submit" disabled={submitting}>
                 {submitting ? 'Sending...' : 'Send Request'}
