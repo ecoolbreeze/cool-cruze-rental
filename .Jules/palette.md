@@ -1,0 +1,5 @@
+## 2024-10-25 - Form Accessibility: Structural Proximity vs Explicit Association
+
+**Learning:** When building forms, structural proximity (placing a `<label>` next to an `<input>`) is not sufficient for screen readers to associate them correctly. Screen readers require explicit association via matching `htmlFor` and `id` attributes. Additionally, for inputs that rely entirely on placeholder text without a visible label (like in the RentModal), adding an `aria-label` attribute directly to the input ensures it remains accessible without needing to add custom CSS to visually hide a label. Finally, emojis used as visual indicators (like checkmarks or calendars) must be given explicit `role="img"` and an `aria-label` so their meaning is conveyed correctly.
+
+**Action:** Always verify that `<label>` elements have a `htmlFor` attribute that exactly matches the `id` of their target input. When visual constraints prevent a visible label, use `aria-label` on the input element. Treat emojis as informative images by applying `role="img"` and a descriptive `aria-label`.
