@@ -1,0 +1,3 @@
+## 2024-05-24 - Form Labeling Constraints
+**Learning:** When visual design constraints prevent explicit visible `<label>` elements for form accessibility (like in placeholder-only forms), adding `aria-label` directly to the `<input>` or `<textarea>` element is the preferred accessible approach, strictly avoiding custom CSS to visually hide labels. Ensure standard forms without these constraints use explicit `htmlFor` and `id` linking.
+**Action:** Always verify form structure before applying labels. If `label` tags are missing by design, default to `aria-label` on the input element directly. Also add `role="img"` and `aria-label` to decorative/informative emojis to prevent them from being ignored or read incorrectly by screen readers.
