@@ -48,20 +48,20 @@ export default function Contact() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Your Name *</label>
-            <input name="name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+            <label htmlFor="name">Your Name *</label>
+            <input id="name" name="name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
           </div>
           <div className="form-group">
-            <label>Email Address *</label>
-            <input name="email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+            <label htmlFor="email">Email Address *</label>
+            <input id="email" name="email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
           </div>
           <div className="form-group">
-            <label>Phone Number</label>
-            <input name="phone" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+            <label htmlFor="phone">Phone Number</label>
+            <input id="phone" name="phone" type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
           </div>
           <div className="form-group">
-            <label>Message *</label>
-            <textarea name="message" rows={5} value={form.message} onChange={e => setForm({...form, message: e.target.value})} required />
+            <label htmlFor="message">Message *</label>
+            <textarea id="message" name="message" rows={5} value={form.message} onChange={e => setForm({...form, message: e.target.value})} required />
           </div>
           <button type="submit" className="btn-submit" disabled={submitting}>
             {submitting ? 'Sending...' : 'Send Message'}
