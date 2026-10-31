@@ -1,0 +1,3 @@
+## 2026-10-31 - Explicit Form Labeling and ARIA Attributes
+**Learning:** In React components with visual design constraints that omit explicit `<label>` elements or structural associations, adding explicit `htmlFor`/`id` linking or `aria-label` attributes ensures screen readers correctly interpret input fields without requiring custom CSS modifications to hide labels.
+**Action:** When working on form accessibility improvements under strict "no custom CSS" constraints, prioritize adding `aria-label` attributes directly to `<input>` or `<textarea>` elements, and rigorously use matching `htmlFor` and `id` attributes when visible labels are present but disconnected structurally.
