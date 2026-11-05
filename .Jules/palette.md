@@ -1,0 +1,3 @@
+## 2023-11-20 - Forms without Visible Labels
+**Learning:** Some components in this app (like the `RentModal`) use placeholder text instead of visible explicit `<label>` elements due to specific design constraints or UI minimalism. Without proper attributes, these inputs become inaccessible to screen readers as the structure alone is insufficient.
+**Action:** Always ensure visible `<label>` elements are explicitly associated with their corresponding inputs using matching `htmlFor` and `id` attributes. When visual design constraints absolutely prevent visible `<label>` elements, ensure `aria-label` attributes are added directly to the `<input>` or `<textarea>` element rather than adding custom CSS to visually hide a label.
